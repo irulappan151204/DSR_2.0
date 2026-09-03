@@ -40,38 +40,8 @@ load_dotenv()
 os.environ['FLASK_APP'] = 'app.py'
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL') 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Flask session config for browser-based apps (auto expiry)
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=45)  # Auto-expiry after 45 minutes of inactivity
-
-# Caching configuration
-# Priority:
-# 1) Respect explicit CACHE_TYPE if provided
-# 2) On Windows → force SimpleCache by default
-# 3) Else if REDIS_URL provided → RedisCache
-# 4) Else → SimpleCache
-app.config['CACHE_DEFAULT_TIMEOUT'] = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
-cache_type_env = (os.getenv('CACHE_TYPE') or '').strip()
-redis_url_env = os.getenv('REDIS_URL')
-
-if cache_type_env:
-    # Explicit override
-    app.config['CACHE_TYPE'] = cache_type_env
-    if cache_type_env.lower() == 'rediscache' and redis_url_env:
-        app.config['CACHE_REDIS_URL'] = redis_url_env
-else:
-    is_windows = platform.system().lower().startswith('win')
-    if is_windows:
-        app.config['CACHE_TYPE'] = 'SimpleCache'
-    elif redis_url_env:
-        app.config['CACHE_TYPE'] = 'RedisCache'
-        app.config['CACHE_REDIS_URL'] = redis_url_env
-    else:
-        app.config['CACHE_TYPE'] = 'SimpleCache'
+from config import Config
+app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
@@ -101,23 +71,8 @@ app.register_blueprint(critical_bp)
 app.cli.add_command(create_admin_command)
 
 # Custom Jinja2 filter for JSON escaping
-@app.template_filter('json_escape')
-def json_escape(value):
-    """Escape a value for safe inclusion in JSON strings"""
-    if value is None:
-        return ''
-    
-    # Convert to string and escape special characters
-    value_str = str(value)
-    
-    # Escape quotes, newlines, carriage returns, and backslashes
-    escaped = value_str.replace('\\', '\\\\')  # Must be first
-    escaped = escaped.replace('"', '\\"')
-    escaped = escaped.replace('\n', '\\n')
-    escaped = escaped.replace('\r', '\\r')
-    escaped = escaped.replace('\t', '\\t')
-    
-    return escaped
+from utils.filters import json_escape
+app.template_filter('json_escape')(json_escape)
 
 # Context processor to check for pending actions
 @app.context_processor
@@ -385,33 +340,8 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# --- Helper functions from models.py (or define them here) ---
-def safe_int(value):
-    try:
-        return int(value) if value and value.strip() else None
-    except (ValueError, TypeError):
-        return None
-
-def safe_float(value):
-    try:
-        return float(value) if value and value.strip() else None
-    except (ValueError, TypeError):
-        return None
-
-def safe_date(value):
-    try:
-        return datetime.strptime(value, '%Y-%m-%d').date() if value and value.strip() else None
-    except (ValueError, TypeError):
-        return None
-
-def safe_time(value):
-    try:
-        return datetime.strptime(value, '%H:%M').time() if value and value.strip() else None
-    except (ValueError, TypeError):
-        try:
-            return datetime.strptime(value, '%H:%M:%S').time() if value and value.strip() else None
-        except (ValueError, TypeError):
-            return None
+# Helper functions
+from utils.helpers import safe_int, safe_float, safe_date, safe_time
 
 def ensure_default_teams():
     # Create Team 1 if it doesn't exist
