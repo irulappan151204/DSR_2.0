@@ -1,0 +1,420 @@
+/* =====================  Monochromatic Slate Palette  ===================== */
+:root {
+    --primary-color: #2c3e50; /* Dark slate */
+    --primary-light: #3f5771; /* Slightly lighter */
+    --bg-light: #f5f6f7; /* Light background */
+    --text-color: #2c3e50; /* Main text */
+    --border-color: #e1e4e8; /* Neutral border */
+}
+
+/* Override core colors using custom properties */
+body {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+}
+
+/* --- Main Container --- */
+.dsr-container {
+    max-width: 1400px; /* Increased max-width for wider tables */
+    margin: 25px auto;
+    background-color: #ffffff; /* White background */
+    padding: 25px 30px;
+    border: 1px solid #dee2e6; /* Light grey border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+    overflow-x: visible;
+}
+
+/* --- Header --- */
+.dsr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--primary-color); /* QMIRA blue - slightly darker */
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.title-area {
+    flex-basis: 60%; /* Give more space to title */
+    text-align: left; /* Align title left */
+}
+
+.title-area h1 {
+    margin: 0 0 5px 0;
+    color: var(--primary-color); /* QMIRA blue */
+    font-size: 2em; /* Larger main title */
+    font-weight: 600;
+}
+
+.title-area h2 {
+    margin: 0 0 15px 0;
+    color: var(--primary-light); /* Bootstrap danger red */
+    font-size: 1.5em; /* Larger subtitle */
+    font-weight: 500;
+}
+
+.title-area label {
+    font-weight: 600; /* Bold label */
+    margin-right: 5px;
+    color: #495057; /* Medium grey */
+}
+
+.title-area input[type="date"] {
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+
+.kural-area {
+    flex-basis: 35%; /* Adjust space for Kural */
+    font-size: 0.85em; /* Slightly larger Kural text */
+    text-align: right;
+    border-left: 1px solid #e9ecef; /* Lighter border */
+    padding-left: 20px;
+    color: #6c757d; /* Grey text */
+}
+
+.kural-area p {
+    margin: 3px 0;
+}
+
+/* --- Quick Navigation --- */
+.quick-nav {
+    text-align: right;
+    margin-bottom: 20px; /* Space below nav */
+}
+
+.quick-nav label {
+    font-weight: 600;
+    margin-right: 8px;
+    color: #495057;
+}
+
+.quick-nav select {
+    padding: 8px 12px;
+    font-size: 0.95em;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* --- Sections --- */
+.dsr-section {
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #ced4da; /* Lighter dashed border */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dsr-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0; /* No margin at the very end */
+}
+
+.dsr-section h3 {
+    color: var(--primary-color); /* QMIRA blue */
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e9ecef; /* Lighter underline */
+    padding-bottom: 8px;
+    font-size: 1.3em; /* Larger section headings */
+    font-weight: 600;
+}
+
+/* --- Table Wrapper for Scrolling --- */
+.table-scroll-wrapper {
+    overflow-x: auto; /* Enable horizontal scrolling ONLY when needed */
+    margin-bottom: 15px; /* Space below the scrolling area */
+    padding-bottom: 5px; /* Add padding for scrollbar visibility */
+    -webkit-overflow-scrolling: touch; /* Smooth inertial scrolling on iOS */
+}
+
+/* --- Tables --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0; /* Remove margin as it's on the wrapper now */
+    font-size: 0.9em; /* Base font size for tables */
+    min-width: 1000px; /* Set a minimum width to encourage scrolling rather than squishing */
+}
+
+th, td {
+    border: 1px solid #dee2e6; /* Slightly darker border for cells */
+    padding: 10px 12px; /* Increased padding */
+    text-align: left;
+    vertical-align: middle; /* Vertically align content in the middle */
+    white-space: nowrap; /* Prevent content wrapping by default */
+}
+
+/* Allow wrapping for specific columns if needed by adding a class */
+td.wrap, th.wrap {
+    white-space: normal;
+}
+
+th {
+    background-color: var(--border-color); /* Lighter grey header background */
+    font-weight: 600; /* Bolder headers */
+    text-align: center; /* Center align header text */
+    color: var(--text-color); /* Darker grey header text */
+}
+
+thead th[colspan] {
+    background-color: #dee2e6; /* Slightly darker for grouped headers */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Very light grey for zebra striping */
+}
+
+tbody tr:hover {
+    background-color: #e9ecef; /* Highlight on hover */
+}
+
+/* --- Form Elements within Tables --- */
+td input[type="text"],
+td input[type="number"],
+td input[type="date"],
+td input[type="time"],
+td select,
+td textarea {
+    width: 100%; /* Make inputs fill cell width */
+    padding: 6px 10px; /* Consistent padding */
+    border: 1px solid #ced4da; /* Standard border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding/border in width */
+    font-size: 1em; /* Match parent font size */
+    background-color: #fff; /* Ensure white background */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Focus states */
+td input:focus,
+td select:focus,
+td textarea:focus {
+    border-color: var(--primary-light); /* Highlight focus */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+}
+
+td input[type="number"] {
+    text-align: right; /* Right align numbers */
+}
+
+td textarea {
+    min-height: 38px; /* Default height for textareas */
+    resize: vertical; /* Allow vertical resizing */
+    vertical-align: top; /* Align text area content top */
+    white-space: normal; /* Allow text wrapping in textareas */
+}
+
+/* Expand input field min-width for better visibility */
+td input[type="text"],
+td input[type="number"],
+td input[type="date"],
+td input[type="time"],
+td select,
+td textarea {
+    min-width: 100px;
+}
+
+/* Specific tweaks for School Counsellor section */
+#school-counsellor td input,
+#school-counsellor td select,
+#school-counsellor td textarea {
+    min-width: 110px;
+}
+
+td select {
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 8px 10px;
+    padding-right: 30px; /* Space for custom arrow */
+}
+
+/* --- Specific Input Widths --- */
+/* Make Total input field wider - Increased width */
+.wide-input {
+  min-width: 60px !important; /* Ensure a minimum width, use !important if needed */
+  width: 60px !important; /* Set a specific wider width */
+}
+
+/* Adjust width for percentage inputs */
+td input[type="number"][placeholder="%"] {
+    min-width: 70px;
+    width: 80px; /* Slightly wider percentage fields */
+}
+
+/* --- Add Row Button (Team 1 - Modern Blue Style) --- */
+.add-row-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.8em;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 15px auto;
+  display: block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-row-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.add-row-btn:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.add-row-btn:hover::before {
+  left: 100%;
+}
+
+.add-row-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+}
+
+/* --- Submit Button --- */
+.submit-area {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef; /* Light separator line */
+}
+
+.submit-area button {
+    padding: 12px 30px; /* Larger padding */
+    font-size: 1.1em;
+    font-weight: 500;
+    background-color: var(--primary-color); /* Bootstrap success green */
+    color: white;
+    border: none;
+    border-radius: 5px; /* Slightly more rounded */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-area button:hover {
+    background-color: var(--primary-light); /* Darker green on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1200px) {
+    .dsr-container {
+        max-width: 95%; /* Use more screen width */
+        padding: 20px;
+    }
+    table {
+        min-width: 900px; /* Adjust min-width */
+    }
+    th, td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 992px) {
+    .title-area h1 { font-size: 1.8em; }
+    .title-area h2 { font-size: 1.3em; }
+    .kural-area { font-size: 0.8em; padding-left: 15px; }
+    table {
+        font-size: 0.85em;
+        min-width: 750px; /* Further adjust min-width */
+    }
+    th, td {
+        padding: 7px 8px;
+    }
+    td input, td select, td textarea {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 768px) {
+    .dsr-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .title-area, .kural-area {
+        flex-basis: 100%;
+        text-align: center;
+        border-left: none;
+        padding-left: 0;
+        margin-bottom: 15px;
+    }
+    .kural-area {
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-bottom: 0;
+    }
+    .quick-nav {
+        text-align: center; /* Center nav on small screens */
+        margin-top: 0;
+    }
+    table {
+        font-size: 0.8em;
+        min-width: 600px; /* Allow more squishing before scroll */
+    }
+    th, td {
+        padding: 6px;
+        white-space: normal; /* Allow wrapping on smaller screens */
+    }
+    td input, td select, td textarea {
+        font-size: 0.9em;
+        padding: 5px 8px;
+    }
+    .submit-area button {
+        padding: 10px 25px;
+        font-size: 1em;
+    }
+    .wide-input {
+        min-width: 80px !important;
+        width: 90px !important; /* Adjust for smaller screens */
+    }
+}
+
+@media (max-width: 576px) {
+    .dsr-container {
+        padding: 15px;
+        margin: 15px auto;
+    }
+    .title-area h1 { font-size: 1.6em; }
+    .title-area h2 { font-size: 1.2em; }
+    table {
+        font-size: 0.75em;
+        min-width: 100%; /* Allow table to shrink fully, rely on wrapper scroll */
+    }
+    th, td {
+         padding: 5px;
+    }
+    /* Further adjustments if needed for very small screens */
+}
+
+/* Ensure tables are treated as wide blocks within section scroll */
+.dsr-section > table,
+.dsr-section .dsr-table {
+    display: inline-block;
+    min-width: 600px;
+}
+

@@ -1,0 +1,55 @@
+# --- Secrets: never commit ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Database dumps / data (contains real staff records and password hashes;
+#     the DSR dump is also ~142MB, over GitHub's 100MB hard limit) ---
+dsr data/
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Local tooling / editor state ---
+.claude/settings.local.json
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- Logs, caches, temp files ---
+*.log
+logs/
+.cache/
+flask_session/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- OS noise ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

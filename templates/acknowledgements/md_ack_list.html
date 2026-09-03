@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}MD Acknowledgements - QMIS DSR{% endblock %}
+
+{% block content %}
+<style>
+    .ack-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        border-bottom: 2px solid #eaeaea;
+        padding-bottom: 1rem;
+    }
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222b45;
+        margin: 0;
+        position: relative;
+    }
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: #4361ee;
+        border-radius: 2px;
+    }
+    .ack-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 1rem 0 2rem;
+        background: #fff;
+        border-radius: 0.8rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .ack-table th, .ack-table td {
+        padding: 1rem 1.2rem;
+        text-align: center;
+    }
+    .ack-table th {
+        background: #222b45;
+        color: #fff;
+        font-size: 1.08rem;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+    }
+    .ack-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .status-pending {
+        background: #ffeaea;
+        color: #d32f2f;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        padding: 0.3em 1em;
+        transition: all 0.2s;
+    }
+    .status-acknowledged {
+        background: #e8f5e9;
+        color: #388e3c;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        padding: 0.3em 1em;
+        transition: all 0.2s;
+    }
+    .ack-btn {
+        background: #222b45;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.5em 1.5em;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(34,43,69,0.10);
+    }
+    .ack-btn:disabled {
+        background: #e0e0e0;
+        color: #aaa;
+        cursor: not-allowed;
+    }
+    .ack-btn:hover:not(:disabled) {
+        background: #4361ee;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34,43,69,0.15);
+    }
+    .empty-state {
+        text-align: center;
+        color: #388e3c;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 2.5rem 0;
+        background: #e8f5e9;
+        border-radius: 0.8rem;
+        padding: 2.5rem;
+        box-shadow: 0 2px 8px rgba(16,185,129,0.08);
+        animation: fadeIn 0.5s ease-out;
+    }
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+        color: #10b981;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* Mobile tweaks */
+    @media (max-width: 768px) {
+        .ack-container { padding: 1rem; }
+        .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        .page-title { font-size: 1.4rem; }
+        .table-responsive { -webkit-overflow-scrolling: touch; }
+        .ack-table th, .ack-table td { padding: 0.75rem; font-size: 0.85rem; }
+    }
+</style>
+<div class="ack-container">
+    <div class="page-header">
+        <h1 class="page-title">MD Daily Report Acknowledgements</h1>
+        <a href="{{ url_for('md_dashboard.md_dashboard') }}" class="btn btn-primary no-loader" style="background:#6366f1; color:#fff; font-weight:600; border-radius:0.6rem; box-shadow:0 2px 8px rgba(67,97,238,0.15); padding:0.6em 1.5em; text-decoration:none;"> <i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+    <!-- Filter Section -->
+    <div class="filter-section" style="margin-bottom:1.5rem; background:#f1f5f9; border-radius:0.7rem; padding:1.2rem 1.5rem; box-shadow:0 2px 8px rgba(99,102,241,0.07);">
+        <form id="filterForm" class="form-inline d-flex flex-wrap align-items-center gap-3">
+            <div class="form-group mr-3">
+                <label for="statusFilter" style="font-weight:600; margin-right:0.5em;">Status:</label>
+                <select id="statusFilter" class="form-control" style="min-width:120px;">
+                    <option value="all">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Acknowledged">Acknowledged</option>
+                </select>
+            </div>
+            <div class="form-group mr-3">
+                <label for="dateRange" style="font-weight:600; margin-right:0.5em;">Date Range:</label>
+                <select id="dateRange" class="form-control" style="min-width:120px;">
+                    <option value="7">Last 7 days</option>
+                    <option value="14">Last 14 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="all">All</option>
+                </select>
+            </div>
+        </form>
+        <div id="pendingCountDisplay" style="margin-top:1rem; font-weight:600; color:#d32f2f; font-size:1.1rem;"></div>
+    </div>
+    <div id="resultsContainer">
+        {% if rows|length == 0 %}
+            <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                No acknowledgement records found
+            </div>
+        {% else %}
+            <div class="table-responsive" style="overflow-x:auto;">
+            <table class="ack-table" id="ackTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Acknowledged At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr data-status="{{ row.status }}" data-date="{{ row.date_str }}">
+                        <td>{{ row.display_date }}</td>
+                        <td>
+                            {% if row.status == 'Acknowledged' %}
+                                <span class="status-acknowledged">Acknowledged</span>
+                            {% else %}
+                                <span class="status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ row.ack_time_str }}</td>
+                        <td>
+                            {% if row.status == 'Pending' %}
+                                <button class="ack-btn" onclick="acknowledgeDate(this, '{{ row.date_str }}')">Acknowledge</button>
+                                <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ row.date_str }}">
+                                    <input type="hidden" name="date" value="{{ row.date_str }}">
+                                </form>
+                            {% else %}
+                                <span style="color:#10b981; font-weight:600;">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+function acknowledgeDate(btn, date) {
+    btn.disabled = true;
+    fetch('/ack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: date }),
+        credentials: 'same-origin'
+    })
+    .then(resp => {
+        if (!resp.ok) {
+            throw new Error(`HTTP error! Status: ${resp.status}`);
+        }
+        return resp.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Add success animation
+            const successIcon = document.createElement('span');
+            successIcon.innerHTML = '<i class="fas fa-check-circle" style="color:#10b981;margin-left:8px;"></i>';
+            btn.parentNode.appendChild(successIcon);
+            btn.style.transition = 'all 0.3s';
+            btn.style.transform = 'scale(0)';
+            btn.style.opacity = '0';
+            setTimeout(() => {
+                btn.remove();
+                // Optionally reload page to update status
+                location.reload();
+            }, 300);
+        } else {
+            btn.disabled = false;
+            alert('Failed to acknowledge: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        alert('Failed to acknowledge: ' + err.message);
+    });
+}
+
+// FILTER LOGIC
+function filterTable() {
+    const status = document.getElementById('statusFilter').value;
+    const dateRange = document.getElementById('dateRange').value;
+    const rows = document.querySelectorAll('#ackTable tbody tr');
+    let now = new Date();
+    let minDate = null;
+    if (dateRange !== 'all') {
+        minDate = new Date();
+        minDate.setDate(now.getDate() - parseInt(dateRange) + 1);
+    }
+    let pendingCount = 0;
+    let visibleCount = 0;
+    rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const rowDateStr = row.getAttribute('data-date');
+        let show = true;
+        if (status !== 'all' && rowStatus !== status) show = false;
+        if (minDate) {
+            const rowDate = new Date(rowDateStr);
+            if (rowDate < minDate) show = false;
+        }
+        row.style.display = show ? '' : 'none';
+        if (show) {
+            visibleCount++;
+            if (rowStatus === 'Pending') pendingCount++;
+        }
+    });
+    // Update pending count display
+    let msg = '';
+    if (visibleCount === 0) {
+        msg = 'No records found for the selected filter.';
+    } else {
+        msg = `<span style='color:#d32f2f;'>Pending: <b>${pendingCount}</b></span> out of <b>${visibleCount}</b> shown`;
+    }
+    document.getElementById('pendingCountDisplay').innerHTML = msg;
+}
+document.getElementById('statusFilter').addEventListener('change', filterTable);
+document.getElementById('dateRange').addEventListener('change', filterTable);
+window.addEventListener('DOMContentLoaded', filterTable);
+</script>
+{% endblock %} 

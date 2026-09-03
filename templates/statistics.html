@@ -1,0 +1,1913 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stats-dashboard">
+    {% set has_active_filters = (start_date and end_date) or (selected_date and selected_date != 'all' and not defaulted_to_yesterday) or (selected_nature and selected_nature != 'all') %}
+
+    <!-- Statistics Header Bar with Filter Button -->
+    <div class="stats-header-bar">
+        <div class="stats-header-info">
+            <h1 class="stats-title-main">
+                <i class="fas fa-chart-pie"></i> 
+                {% if not is_md and current_user.team_id == 1 %}Academics Statistics
+                {% elif not is_md and current_user.team_id == 2 %}Admin Statistics
+                {% elif not is_md and current_user.team_id == 3 %}Audit Statistics
+                {% else %}Statistics Overview{% endif %}
+            </h1>
+            <div class="stats-current-filter-pill">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="filter-pill-text">
+                    {% if start_date and end_date %}
+                        {{ start_date }} to {{ end_date }}
+                    {% elif selected_date and selected_date != 'all' %}
+                        {{ selected_date }} {% if defaulted_to_yesterday %}<span class="filter-subtext">(Yesterday)</span>{% endif %}
+                    {% else %}
+                        All Dates
+                    {% endif %}
+                </span>
+                {% if selected_nature and selected_nature != 'all' %}
+                    <span class="filter-pill-sep">•</span>
+                    <span class="filter-pill-nature">
+                        {% if selected_nature == 'all_well' %}✓ All Well
+                        {% elif selected_nature == 'manageable' %}⚠ Manageable
+                        {% elif selected_nature == 'critical' %}🔴 Critical
+                        {% else %}{{ selected_nature|replace('_', ' ')|title }}{% endif %}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="stats-header-actions">
+            <button type="button" class="stats-filter-toggle-btn {% if has_active_filters %}has-active-filter{% endif %}" id="statsFilterToggleBtn" aria-expanded="false" aria-controls="statsFiltersContainer">
+                <i class="fas fa-filter"></i>
+                <span class="btn-text">Filter</span>
+                {% if has_active_filters %}
+                <span class="filter-indicator-dot" title="Active filter applied"></span>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Cards Row (role-aware) -->
+    <div class="kpi-row kpi-pro-grid">
+        {% if is_md %}
+        <div class="kpi-card kpi-pro combined">
+            <div class="kpi-title"><i class="fas fa-layer-group"></i> Combined</div>
+            <div class="kpi-trio">
+                <div class="pill green" title="All Well"><span>All Well</span><strong>{{ kpi_totals['combined']['all_well'] }}</strong></div>
+                <div class="pill amber" title="Manageable"><span>Manageable</span><strong>{{ kpi_totals['combined']['manageable'] }}</strong></div>
+                <div class="pill red" title="Critical"><span>Critical</span><strong>{{ kpi_totals['combined']['critical'] }}</strong></div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_md or current_user.team_id == 1 %}
+        <div class="kpi-card kpi-pro team1">
+            <div class="kpi-title"><i class="fas fa-school"></i> Academics</div>
+            <div class="kpi-trio">
+                <div class="pill green"><span>All Well</span><strong>{{ kpi_totals['team1']['all_well'] }}</strong></div>
+                <div class="pill amber"><span>Manageable</span><strong>{{ kpi_totals['team1']['manageable'] }}</strong></div>
+                <div class="pill red"><span>Critical</span><strong>{{ kpi_totals['team1']['critical'] }}</strong></div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_md or current_user.team_id == 2 %}
+        <div class="kpi-card kpi-pro team2">
+            <div class="kpi-title"><i class="fas fa-users-cog"></i> Admin</div>
+            <div class="kpi-trio">
+                <div class="pill green"><span>All Well</span><strong>{{ kpi_totals['team2']['all_well'] }}</strong></div>
+                <div class="pill amber"><span>Manageable</span><strong>{{ kpi_totals['team2']['manageable'] }}</strong></div>
+                <div class="pill red"><span>Critical</span><strong>{{ kpi_totals['team2']['critical'] }}</strong></div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_md or current_user.team_id == 3 %}
+        <div class="kpi-card kpi-pro team3">
+            <div class="kpi-title"><i class="fas fa-clipboard-check"></i> Audit</div>
+            <div class="kpi-trio">
+                <div class="pill green"><span>All Well</span><strong>{{ kpi_totals['team3']['all_well'] }}</strong></div>
+                <div class="pill amber"><span>Manageable</span><strong>{{ kpi_totals['team3']['manageable'] }}</strong></div>
+                <div class="pill red"><span>Critical</span><strong>{{ kpi_totals['team3']['critical'] }}</strong></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Filters Panel (collapsible, hidden by default) -->
+    <div class="filters-container" id="statsFiltersContainer">
+        <div class="filter-panel-header">
+            <div class="filter-panel-title">
+                <i class="fas fa-sliders-h"></i>
+                <span>Filter Controls</span>
+                {% if has_active_filters %}
+                <span class="filter-active-pill">Active</span>
+                {% endif %}
+            </div>
+            <button type="button" class="filter-panel-close-btn" id="closeFilterPanelBtn" title="Close filter panel" aria-label="Close filters">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="filters-grid">
+            <!-- Single Date Filter -->
+            <div class="filter-card">
+                <form method="GET" class="filter-form">
+                    <div class="filter-header">
+                        <i class="fas fa-calendar"></i>
+                        <span>Quick Date</span>
+                        {% if defaulted_to_yesterday %}
+                        <span class="auto-badge"><i class="fas fa-clock"></i> auto</span>
+                        {% endif %}
+                    </div>
+                    <div class="filter-body">
+                        <div class="input-group">
+                            <select name="date" id="date" class="filter-input">
+                                <option value="all" {% if selected_date == 'all' %}selected{% endif %}>All Dates</option>
+                                {% for date in available_dates %}
+                                <option value="{{ date }}" {% if selected_date == date|string %}selected{% endif %}>
+                                    {% if date.strftime %}
+                                        {{ date | ist_strftime('%b %d, %Y') }}
+                                    {% else %}
+                                        {{ date }}
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <select name="nature" id="nature" class="filter-input">
+                                <option value="all" {% if selected_nature == 'all' %}selected{% endif %}>All Issues</option>
+                                <option value="all_well" {% if selected_nature == 'all_well' %}selected{% endif %}>✓ All Well</option>
+                                <option value="manageable" {% if selected_nature == 'manageable' %}selected{% endif %}>⚠ Manageable</option>
+                                <option value="critical" {% if selected_nature == 'critical' %}selected{% endif %}>🔴 Critical</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="filter-btn primary">
+                            <i class="fas fa-search"></i> Apply
+                        </button>
+                    </div>
+                    {% if defaulted_to_yesterday %}
+                    <div class="filter-note">
+                        <i class="fas fa-info-circle"></i> Showing yesterday's data by default
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="filter-card">
+                <form method="GET" class="filter-form">
+                    <div class="filter-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Date Range</span>
+                    </div>
+                    <div class="filter-body">
+                        <div class="input-group range-inputs">
+                            <input type="date" name="start_date" id="start_date" value="{{ start_date|default('') }}" class="filter-input" required>
+                            <span class="range-separator">to</span>
+                            <input type="date" name="end_date" id="end_date" value="{{ end_date|default('') }}" class="filter-input" required>
+                        </div>
+                        <div class="input-group">
+                            <select name="nature" id="nature-range" class="filter-input">
+                                <option value="all" {% if selected_nature == 'all' %}selected{% endif %}>All Issues</option>
+                                <option value="all_well" {% if selected_nature == 'all_well' %}selected{% endif %}>✓ All Well</option>
+                                <option value="manageable" {% if selected_nature == 'manageable' %}selected{% endif %}>⚠ Manageable</option>
+                                <option value="critical" {% if selected_nature == 'critical' %}selected{% endif %}>🔴 Critical</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="filter-btn primary">
+                            <i class="fas fa-filter"></i> Apply Range
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Actions -->
+            <div class="filter-card actions-card">
+                <div class="filter-header">
+                    <i class="fas fa-cog"></i>
+                    <span>Actions</span>
+                </div>
+                <div class="filter-body">
+                    <a href="{{ url_for('statistics.view_statistics') }}" class="filter-btn secondary">
+                        <i class="fas fa-refresh"></i> Reset All
+                    </a>
+                    <div class="current-filter">
+                        <span class="filter-label">Nature:</span>
+                        <span class="filter-value" id="activeNature">All</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-toolbar">
+        <div class="tabs">
+            {% if is_md or is_team_lead %}
+                <button class="tab-btn {% if is_md %}active{% endif %}" data-tab="combined"><i class="fas fa-layer-group"></i> {% if is_md %}Combined{% else %}Overview{% endif %}</button>
+            {% endif %}
+            {% if is_md or current_user.team_id == 1 %}
+                <button class="tab-btn {% if not is_md and current_user.team_id == 1 %}active{% endif %}" data-tab="team1"><i class="fas fa-school"></i> Academics</button>
+            {% endif %}
+            {% if is_md or current_user.team_id == 2 %}
+                <button class="tab-btn {% if not is_md and current_user.team_id == 2 %}active{% endif %}" data-tab="team2"><i class="fas fa-users-cog"></i> Admin</button>
+            {% endif %}
+            {% if is_md or current_user.team_id == 3 %}
+                <button class="tab-btn {% if not is_md and current_user.team_id == 3 %}active{% endif %}" data-tab="team3"><i class="fas fa-clipboard-check"></i> Audit</button>
+            {% endif %}
+        </div>
+        <div class="legend legend-pro">
+            {% if is_md %}
+                <span class="legend-item"><span class="dot green"></span> All Well: <strong>{{ kpi_totals['combined']['all_well'] }}</strong></span>
+                <span class="legend-item"><span class="dot amber"></span> Manageable: <strong>{{ kpi_totals['combined']['manageable'] }}</strong></span>
+                <span class="legend-item"><span class="dot red"></span> Critical: <strong>{{ kpi_totals['combined']['critical'] }}</strong></span>
+            {% else %}
+                {% set key = 'team' ~ current_user.team_id %}
+                <span class="legend-item"><span class="dot green"></span> All Well: <strong>{{ kpi_totals[key]['all_well'] }}</strong></span>
+                <span class="legend-item"><span class="dot amber"></span> Manageable: <strong>{{ kpi_totals[key]['manageable'] }}</strong></span>
+                <span class="legend-item"><span class="dot red"></span> Critical: <strong>{{ kpi_totals[key]['critical'] }}</strong></span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div class="analytics-section">
+        {% if is_md or is_team_lead %}
+        <div class="tab-content {% if is_md %}active{% endif %}" data-tab="combined">
+        <div class="chart-container combined-chart">
+            <div class="chart-header">
+                <h2>{% if is_md %}Combined Teams - Issue Nature Overview{% elif current_user.team_id == 1 %}Academics - Issue Nature Overview{% elif current_user.team_id == 2 %}Admin - Issue Nature Overview{% elif current_user.team_id == 3 %}Audit - Issue Nature Overview{% else %}Team Status Overview{% endif %}</h2>
+            </div>
+            <div class="combined-charts-wrapper">
+                <div class="pie-chart-section">
+                    <h3>Overall Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="combinedPieChart" class="analytics-chart"></canvas>
+                    </div>
+                    <div class="chart-legend" id="legend-combined-pie"></div>
+                </div>
+                <div class="bar-chart-section">
+                    <h3 id="teamsComparisonTitle">{% if is_md %}Teams Comparison{% else %}Status Distribution{% endif %}</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="combinedBarChart" class="analytics-chart"></canvas>
+                    </div>
+                    <div class="chart-legend" id="legend-combined-bar"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        </div>
+
+        <div class="tab-content {% if not is_md and current_user.team_id == 1 %}active{% endif %}" data-tab="team1">
+        <div class="chart-container team1-chart">
+            <div class="chart-header">
+                <h2>Academics - Issue Nature by Department</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="team1Chart" class="analytics-chart"></canvas>
+            </div>
+            <div class="chart-legend" id="legend-team1"></div>
+        </div>
+        </div>
+
+        <div class="tab-content {% if not is_md and current_user.team_id == 2 %}active{% endif %}" data-tab="team2">
+        <div class="chart-container team2-chart">
+            <div class="chart-header">
+                <h2>Admin - HR, Staffing & Training</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="team2Chart1" class="analytics-chart"></canvas>
+            </div>
+            <div class="chart-legend" id="legend-team2-1"></div>
+        </div>
+
+        <div class="chart-container team2-chart">
+            <div class="chart-header">
+                <h2>Admin - Operations, Facilities & Infrastructure</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="team2Chart2" class="analytics-chart"></canvas>
+            </div>
+            <div class="chart-legend" id="legend-team2-2"></div>
+        </div>
+
+        <div class="chart-container team2-chart">
+            <div class="chart-header">
+                <h2>Admin - Security, IT & Digital Marketing</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="team2Chart3" class="analytics-chart"></canvas>
+            </div>
+            <div class="chart-legend" id="legend-team2-3"></div>
+        </div>
+        </div>
+
+        <div class="tab-content {% if not is_md and current_user.team_id == 3 %}active{% endif %}" data-tab="team3">
+        <div class="chart-container team3-chart">
+            <div class="chart-header">
+                <h2>Audit - Issue Nature by Department</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="team3Chart" class="analytics-chart"></canvas>
+            </div>
+            <div class="chart-legend" id="legend-team3"></div>
+        </div>
+        </div>
+    </div>
+
+
+</div>
+
+<style>
+:root {
+  /* Vibrant theme similar to BI palettes */
+  --primary-color: #3b82f6; /* Blue */
+  --primary-light: #93c5fd;
+  --secondary-color: #8b5cf6; /* Violet */
+  --accent-color: #06b6d4; /* Cyan */
+  --success-color: #10b981; /* Emerald */
+  --warning-color: #f59e0b; /* Amber */
+  --danger-color: #ef4444; /* Red */
+  --muted-color: #64748b; /* Slate */
+  --light-bg: #f4f6fb;
+  --dark-bg: #0b1220;
+  --border-color: #e2e8f0;
+  --text-color: #1f2937;
+  --box-shadow: 0 10px 25px rgba(2, 6, 23, 0.06);
+  --border-radius: 0.9rem;
+  --transition: all 0.3s ease;
+}
+
+/* Dark theme toggle */
+.dark-theme .stats-dashboard { background: linear-gradient(135deg, #0f172a 0%, #1f2937 100%); }
+.dark-theme .stats-header, .dark-theme .filters-container, .dark-theme .chart-container, .dark-theme .btn-secondary, .dark-theme .filter-pill { background: #0b1220 !important; color: #e5e7eb; border-color: #1f2a44; }
+.dark-theme .custom-select, .dark-theme .date-inputs input { background: #111827; color: #e5e7eb; border-color: #374151; }
+.dark-theme .analytics-chart { filter: contrast(1.1); }
+.dark-theme .kpi-card { background: linear-gradient(135deg, rgba(31,41,55,0.6), rgba(17,24,39,0.6)); border-color: rgba(55,65,81,0.8); }
+
+.stats-dashboard {
+  padding: 2rem;
+  background: #f4f6fb; /* Light neutral to ensure contrast */
+  min-height: 100vh;
+}
+
+.stats-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.stats-title h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1f2937; /* Fallback for browsers without text gradient support */
+  margin-bottom: 0.5rem;
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .stats-title h1 {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.stats-title p {
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  margin: 0;
+}
+
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.kpi-card { display:flex; gap: 0.75rem; align-items:center; background: linear-gradient(180deg, #ffffff, #fbfdff); padding: 1rem 1.25rem; border-radius: 14px; box-shadow: var(--box-shadow); border: 1px solid #eef2f7; }
+.kpi-icon { font-size: 1.5rem; color: #111827; opacity: 0.9; }
+.kpi-content { display:flex; flex-direction:column; }
+.kpi-label { font-size: 0.85rem; color: var(--muted-color); }
+.kpi-value { font-size: 1.6rem; font-weight: 800; color: #111827; }
+.gradient-green { background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05)); }
+.gradient-amber { background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.05)); }
+.gradient-red { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05)); }
+.glass { background: linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.25)); }
+.team1 .kpi-icon { color: var(--primary-color); }
+.team2 .kpi-icon { color: var(--warning-color); }
+.team3 .kpi-icon { color: var(--success-color); }
+
+.kpi-card.kpi-pro { background: linear-gradient(180deg, #ffffff, #fbfdff); border: 1px solid #eef2f7; border-radius: 14px; box-shadow: var(--box-shadow); padding: 1rem 1.25rem; display:block; }
+.kpi-card.kpi-pro .kpi-title { font-weight: 700; color: var(--text-color); margin-bottom: 0.5rem; display:flex; align-items:center; gap: 0.5rem; }
+.kpi-card.kpi-pro .kpi-trio { display:flex; gap: 0.5rem; flex-wrap: wrap; }
+.kpi-card.kpi-pro .pill { display:flex; align-items:center; gap: 0.5rem; padding: 0.4rem 0.7rem; border-radius: 999px; background:#fff; border:1px solid #e6eefb; box-shadow: 0 2px 6px rgba(59,130,246,0.06); }
+.kpi-card.kpi-pro .pill span { font-size: 0.8rem; color: var(--muted-color); }
+.kpi-card.kpi-pro .pill strong { font-size: 1.05rem; }
+.kpi-card.kpi-pro .pill.green { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border-color: rgba(16,185,129,0.25); }
+.kpi-card.kpi-pro .pill.amber { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05)); border-color: rgba(245,158,11,0.25); }
+.kpi-card.kpi-pro .pill.red { background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)); border-color: rgba(239,68,68,0.25); }
+
+/* Enhanced KPI layout and hover */
+.kpi-pro-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.kpi-card.kpi-pro { position: relative; overflow: hidden; }
+.kpi-card.kpi-pro::after { content: ""; position: absolute; right: -30px; top: -30px; width: 140px; height: 140px; background: radial-gradient(closest-side, rgba(59,130,246,0.08), transparent); border-radius: 50%; }
+.kpi-card.kpi-pro:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(2,6,23,0.08); transition: var(--transition); }
+
+/* Chart legends below charts */
+.chart-legend { margin-top: 0.75rem; display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.chart-legend .legend-item { background: #fff; border: 1px solid #e6eefb; box-shadow: 0 2px 6px rgba(59,130,246,0.06); padding: 0.35rem 0.6rem; border-radius: 999px; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; }
+.chart-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.chart-legend .dot.green { background: var(--success-color); }
+.chart-legend .dot.amber { background: var(--warning-color); }
+.chart-legend .dot.red { background: var(--danger-color); }
+
+/* Make charts consistent including Team 3 */
+.chart-container .chart-header h2 { font-size: 1.25rem; }
+.chart-wrapper { position: relative; height: 460px; }
+
+@media (max-width: 768px) {
+  .kpi-pro-grid { grid-template-columns: 1fr; }
+  .chart-wrapper { height: 360px; }
+}
+
+.legend { display:flex; gap: 0.75rem; align-items:center; flex-wrap: wrap; }
+.legend-item { display:flex; gap: 0.35rem; align-items:center; color: var(--muted-color); font-size: 0.9rem; }
+.legend .dot { width: 10px; height:10px; border-radius:50%; display:inline-block; }
+.legend .dot.green { background: var(--success-color); }
+.legend .dot.amber { background: var(--warning-color); }
+.legend .dot.red { background: var(--danger-color); }
+.legend-pro { gap: 1rem; font-weight: 600; }
+
+/* Statistics Header Bar & Compact Filter Button */
+.stats-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stats-header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stats-title-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.stats-title-main i {
+  color: var(--primary-color);
+  font-size: 1.35rem;
+}
+
+.stats-current-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.stats-current-filter-pill i {
+  color: var(--primary-color);
+  font-size: 0.8rem;
+}
+
+.stats-current-filter-pill .filter-subtext {
+  color: #94a3b8;
+  font-style: normal;
+}
+
+.stats-current-filter-pill .filter-pill-sep {
+  color: #cbd5e1;
+  font-size: 0.7rem;
+}
+
+.stats-current-filter-pill .filter-pill-nature {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Compact Filter Button */
+.stats-header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.stats-filter-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.5rem 1.05rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.stats-filter-toggle-btn i {
+  font-size: 0.85rem;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.stats-filter-toggle-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(67, 97, 238, 0.08);
+}
+
+.stats-filter-toggle-btn:hover i {
+  color: var(--primary-color);
+}
+
+.stats-filter-toggle-btn.active {
+  background: rgba(67, 97, 238, 0.08);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+}
+
+.stats-filter-toggle-btn.active i {
+  color: var(--primary-color);
+}
+
+/* Active Filter Indicator */
+.stats-filter-toggle-btn.has-active-filter {
+  border-color: rgba(67, 97, 238, 0.35);
+  background: #fbfdff;
+}
+
+.filter-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  display: inline-block;
+  animation: pulseFilterDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseFilterDot {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Expandable Filter Panel (collapsed by default) */
+.filters-container {
+  display: none;
+  background: linear-gradient(180deg, #ffffff, #f9fbff);
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+  border: 1px solid #edf2f7;
+  animation: filterPanelSlide 0.25s ease-out;
+}
+
+.filters-container.show {
+  display: block;
+}
+
+@keyframes filterPanelSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.filter-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.filter-panel-title i {
+  color: var(--primary-color);
+}
+
+.filter-active-pill {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+}
+
+.filter-panel-close-btn {
+  background: transparent;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel-close-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.filter-card {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border: 1px solid #e6eefb;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.04);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.filter-header i {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+}
+
+.auto-badge {
+  background: linear-gradient(135deg, var(--warning-color), #d97706);
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.filter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-direction: column;
+}
+
+.range-inputs {
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.range-separator {
+  color: var(--muted-color);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.filter-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d9e6;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: white;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.1);
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.filter-btn.primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+}
+
+.filter-btn.secondary {
+  background: #f8fafc;
+  color: var(--muted-color);
+  border: 1px solid #e2e8f0;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59,130,246,0.15);
+}
+
+.filter-note {
+  font-size: 0.75rem;
+  color: var(--muted-color);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.actions-card {
+  min-width: 160px;
+  justify-content: space-between;
+}
+
+.current-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.filter-label {
+  color: var(--muted-color);
+}
+
+.filter-value {
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .filter-value {
+    color: var(--primary-color);
+  }
+}
+
+.tabs-toolbar { display:flex; justify-content: space-between; align-items:center; margin-bottom: 1rem; gap: 1rem; background: linear-gradient(90deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12)); padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #e6eefb; }
+.tabs { display:flex; gap: 0.5rem; flex-wrap: wrap; }
+.tab-btn { border: 1px solid var(--border-color); background: white; color: var(--text-color); padding: 0.5rem 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px rgba(59,130,246,0.05); }
+.tab-btn.active { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); color: #fff; border-color: transparent; }
+.actions { display:flex; gap: 0.5rem; align-items:center; }
+.filter-pill { background: linear-gradient(90deg, #ffffff, #f7fbff); padding: 0.4rem 0.7rem; border-radius: 999px; border: 1px solid #e6eefb; color: var(--text-color); box-shadow: 0 2px 8px rgba(59,130,246,0.05); }
+.btn-secondary { border: 1px solid var(--border-color); background: white; color: var(--text-color); padding: 0.45rem 0.8rem; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.btn-secondary:hover { background: #f8fafc; }
+
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+.filter-form h4 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.custom-select, .date-inputs input {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: var(--transition);
+  background: white;
+}
+
+.custom-select:focus, .date-inputs input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.date-separator {
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.btn-apply {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-apply:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow);
+}
+
+.analytics-section {
+  display: grid;
+  gap: 2rem;
+}
+
+.chart-container { background: linear-gradient(180deg, #ffffff, #f9fbff); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); border: 1px solid #edf2f7; }
+
+.chart-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.chart-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 400px;
+}
+
+.analytics-chart {
+  max-height: 400px;
+}
+
+.combined-charts-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.pie-chart-section, .bar-chart-section { background: linear-gradient(180deg, #ffffff, #fbfdff); padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 10px rgba(2, 6, 23, 0.06); border: 1px solid #eef2f7; }
+
+.pie-chart-section h3,
+.bar-chart-section h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.pie-chart-section .chart-wrapper {
+  height: 350px;
+}
+
+.bar-chart-section .chart-wrapper {
+  height: 400px;
+}
+
+
+
+
+
+@media (max-width: 1024px) {
+  .stats-dashboard {
+    padding: 1rem;
+  }
+  
+  .stats-header {
+    padding: 1.5rem;
+  }
+  
+  .stats-title h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .range-inputs {
+    flex-direction: row;
+  }
+  
+  .filter-card {
+    min-height: auto;
+  }
+  
+  .stats-title h1 {
+    font-size: 1.75rem;
+  }
+  
+  .combined-charts-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .pie-chart-section .chart-wrapper,
+  .bar-chart-section .chart-wrapper {
+    height: 300px;
+  }
+}
+</style>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<!-- Embed data as JSON to avoid inline parsing issues -->
+<script id="team1Data" type="application/json">{{ team1_issue_nature | tojson | safe }}</script>
+<script id="team2Data" type="application/json">{{ team2_issue_nature | tojson | safe }}</script>
+<script id="team3Data" type="application/json">{{ team3_issue_nature | tojson | safe }}</script>
+<script id="selectedNature" type="application/json">{{ selected_nature | tojson | safe }}</script>
+<script id="selectedDate" type="application/json">{{ selected_date | tojson | safe }}</script>
+<script id="startDate" type="application/json">{{ start_date | tojson | safe }}</script>
+<script id="endDate" type="application/json">{{ end_date | tojson | safe }}</script>
+<script id="isMD" type="application/json">{{ is_md | tojson | safe }}</script>
+<script id="userTeamId" type="application/json">{{ current_user.team_id | tojson | safe }}</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Parse server-provided JSON safely
+    const team1Data = JSON.parse(document.getElementById('team1Data').textContent);
+    const team2Data = JSON.parse(document.getElementById('team2Data').textContent);
+    const team3Data = JSON.parse(document.getElementById('team3Data').textContent);
+    const selectedNature = JSON.parse(document.getElementById('selectedNature').textContent);
+    const selectedDate = JSON.parse(document.getElementById('selectedDate').textContent || 'null');
+    const startDate = JSON.parse(document.getElementById('startDate').textContent || '""');
+    const endDate = JSON.parse(document.getElementById('endDate').textContent || '""');
+    const isMD = JSON.parse(document.getElementById('isMD').textContent);
+    const userTeamId = JSON.parse(document.getElementById('userTeamId').textContent || 'null');
+
+    const COLORS = {
+        allWell: '#10b981',
+        manageable: '#f59e0b',
+        critical: '#ef4444'
+    };
+
+    // Calculate global maximum for unified scale
+    function calculateGlobalMax(data1, data2, data3) {
+        const allValues = [];
+        
+        // Collect all values from team1Data
+        Object.values(data1).forEach(section => {
+            if (section.all_well !== undefined) {
+                allValues.push(section.all_well, section.manageable, section.critical);
+            }
+        });
+        
+        // Collect all values from team2Data
+        Object.values(data2).forEach(section => {
+            if (section.all_well !== undefined) {
+                allValues.push(section.all_well, section.manageable, section.critical);
+            }
+        });
+        
+        // Collect all values from team3Data
+        Object.values(data3).forEach(section => {
+            if (section.all_well !== undefined) {
+                allValues.push(section.all_well, section.manageable, section.critical);
+            }
+        });
+        
+        const max = Math.max(...allValues);
+        return Math.ceil(max * 1.1); // Add 10% padding
+    }
+
+    const globalMaxValue = calculateGlobalMax(team1Data, team2Data, team3Data);
+
+    // Helper to build a grouped bar chart with autoscaled Y based on its own data
+    function buildGroupedBar(ctx, labels, datasets, options = {}) {
+        // Build subtle gradient background for bars
+        function gradient(color) {
+            const g = ctx.createLinearGradient(0, 0, 0, 400);
+            g.addColorStop(0, color);
+            g.addColorStop(1, '#ffffff');
+            return g;
+        }
+
+        const styledDatasets = datasets.map(ds => ({
+            ...ds,
+            backgroundColor: gradient(ds.backgroundColor),
+            borderColor: ds.backgroundColor,
+            borderWidth: 1,
+            borderRadius: 8,
+            barThickness: 'flex',
+            maxBarThickness: 44
+        }));
+
+        // Compute max for this specific chart datasets
+        let localMax = 0;
+        datasets.forEach(ds => {
+            if (Array.isArray(ds.data)) {
+                ds.data.forEach(v => { if (typeof v === 'number') localMax = Math.max(localMax, v); });
+            }
+        });
+        const suggestedMax = localMax > 0 ? Math.ceil(localMax * 1.15) : undefined;
+
+        return new Chart(ctx, {
+            type: 'bar',
+            data: { labels, datasets: styledDatasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: 10 },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: suggestedMax,
+                        grid: { color: 'rgba(0,0,0,0.06)' }
+                    },
+                    x: {
+                        ticks: { maxRotation: 45, minRotation: 0 },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, padding: 16 }
+                    },
+                    tooltip: {
+                        mode: 'index', intersect: false,
+                        backgroundColor: 'rgba(17,24,39,0.9)'
+                    },
+                    datalabels: {
+                        anchor: 'end', align: 'end',
+                        color: '#111827',
+                        formatter: (value) => value > 0 ? value : ''
+                    }
+                },
+                ...options
+            }
+        });
+    }
+
+    function navigateToDashboard(teamKey, sectionSlug) {
+        const params = new URLSearchParams();
+        if (teamKey) params.set('team', teamKey);
+        if (selectedDate) params.set('date', selectedDate);
+        const hash = sectionSlug ? '#' + sectionSlug : '';
+        window.location.href = `/md/dashboard?${params.toString()}${hash}`;
+    }
+
+    // Calculate overall totals across all teams
+    const overallTotals = {
+        allWell: team1Data.overall.all_well + team2Data.overall.all_well + team3Data.overall.all_well,
+        manageable: team1Data.overall.manageable + team2Data.overall.manageable + team3Data.overall.manageable,
+        critical: team1Data.overall.critical + team2Data.overall.critical + team3Data.overall.critical
+    };
+
+    // Update KPI values
+    const kpiAllWell = document.getElementById('kpiAllWell');
+    const kpiManageable = document.getElementById('kpiManageable');
+    const kpiCritical = document.getElementById('kpiCritical');
+    if (kpiAllWell) kpiAllWell.textContent = overallTotals.allWell;
+    if (kpiManageable) kpiManageable.textContent = overallTotals.manageable;
+    if (kpiCritical) kpiCritical.textContent = overallTotals.critical;
+
+    // Set active nature pill
+    const activeNature = document.getElementById('activeNature');
+    const natureLabelMap = { all: 'All', all_well: 'All Well', manageable: 'Manageable', critical: 'Critical' };
+    if (activeNature) activeNature.textContent = natureLabelMap[selectedNature] || 'All';
+
+    // Tabs behavior
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const tab = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const activeContent = document.querySelector(`.tab-content[data-tab="${tab}"]`);
+            if (activeContent) activeContent.classList.add('active');
+        });
+    });
+
+    // Theme toggle (light/dark)
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
+    }
+
+    // Export charts (simple image download)
+    function downloadCanvas(canvas, filename) {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+    const exportAll = document.getElementById('exportAll');
+    if (exportAll) {
+        exportAll.addEventListener('click', () => {
+            document.querySelectorAll('canvas').forEach((cv, idx) => downloadCanvas(cv, `chart_${idx+1}.png`));
+        });
+    }
+
+    // Combined Teams Pie Chart (only if present)
+    const combinedPieEl = document.getElementById('combinedPieChart');
+    if (combinedPieEl) new Chart(combinedPieEl.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: ['All Well', 'Manageable', 'Critical'],
+            datasets: [{
+                data: [overallTotals.allWell, overallTotals.manageable, overallTotals.critical],
+                backgroundColor: [COLORS.allWell, COLORS.manageable, COLORS.critical],
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = overallTotals.allWell + overallTotals.manageable + overallTotals.critical;
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#fff',
+                    formatter: (value, ctx) => {
+                        const total = overallTotals.allWell + overallTotals.manageable + overallTotals.critical;
+                        const pct = total > 0 ? (value / total) * 100 : 0;
+                        return pct >= 5 ? value : '';
+                    }
+                }
+            },
+            // Custom plugin to display percentages inside segments
+            onHover: (event, activeElements) => {
+                event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+            }
+        },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                const total = overallTotals.allWell + overallTotals.manageable + overallTotals.critical;
+                
+                chart.data.datasets.forEach((dataset, datasetIndex) => {
+                    const meta = chart.getDatasetMeta(datasetIndex);
+                    
+                    meta.data.forEach((element, index) => {
+                        const data = dataset.data[index];
+                        const percentage = total > 0 ? ((data / total) * 100).toFixed(1) : 0;
+                        
+                        // Only show percentage if it's greater than 5% to avoid cluttering
+                        if (percentage > 5) {
+                            const position = element.tooltipPosition();
+                            
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 14px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(percentage + '%', position.x, position.y);
+                        }
+                    });
+                });
+            }
+        }]
+    });
+    if (combinedPieEl) {
+        const el = document.getElementById('legend-combined-pie');
+        if (el) {
+            el.innerHTML = `
+                <span class="legend-item"><span class="dot green"></span> All Well: <strong>${overallTotals.allWell}</strong></span>
+                <span class="legend-item"><span class="dot amber"></span> Manageable: <strong>${overallTotals.manageable}</strong></span>
+                <span class="legend-item"><span class="dot red"></span> Critical: <strong>${overallTotals.critical}</strong></span>
+            `;
+        }
+    }
+
+    // Role-Aware Bar Chart: Teams Comparison (MD) vs Team Status Distribution (Team Lead)
+    const combinedBarEl = document.getElementById('combinedBarChart');
+    if (combinedBarEl) {
+        if (isMD) {
+            // MD View: Organization-wide comparison across Academics, Admin, and Audit
+            buildGroupedBar(
+                combinedBarEl.getContext('2d'),
+                ['Academics', 'Admin', 'Audit'],
+                [
+                    { 
+                        label: 'All Well (' + (team1Data.overall.all_well + team2Data.overall.all_well + team3Data.overall.all_well) + ')', 
+                        backgroundColor: COLORS.allWell, 
+                        data: [team1Data.overall.all_well, team2Data.overall.all_well, team3Data.overall.all_well] 
+                    },
+                    { 
+                        label: 'Manageable (' + (team1Data.overall.manageable + team2Data.overall.manageable + team3Data.overall.manageable) + ')', 
+                        backgroundColor: COLORS.manageable, 
+                        data: [team1Data.overall.manageable, team2Data.overall.manageable, team3Data.overall.manageable] 
+                    },
+                    { 
+                        label: 'Critical (' + (team1Data.overall.critical + team2Data.overall.critical + team3Data.overall.critical) + ')', 
+                        backgroundColor: COLORS.critical, 
+                        data: [team1Data.overall.critical, team2Data.overall.critical, team3Data.overall.critical] 
+                    }
+                ],
+                {
+                    onClick: (evt, activeEls) => {
+                        if (!activeEls || !activeEls.length) return;
+                        const dataIndex = activeEls[0].index;
+                        const teamMap = { 0: 'team1', 1: 'team2', 2: 'team3' };
+                        const teamKey = teamMap[dataIndex];
+                        if (teamKey) navigateToDashboard(teamKey);
+                    }
+                }
+            );
+
+            const el = document.getElementById('legend-combined-bar');
+            if (el) {
+                el.innerHTML = `
+                    <span class="legend-item"><span class="dot green"></span> Academics: <strong>${team1Data.overall.all_well}</strong> · Admin: <strong>${team2Data.overall.all_well}</strong> · Audit: <strong>${team3Data.overall.all_well}</strong></span>
+                    <span class="legend-item"><span class="dot amber"></span> Academics: <strong>${team1Data.overall.manageable}</strong> · Admin: <strong>${team2Data.overall.manageable}</strong> · Audit: <strong>${team3Data.overall.manageable}</strong></span>
+                    <span class="legend-item"><span class="dot red"></span> Academics: <strong>${team1Data.overall.critical}</strong> · Admin: <strong>${team2Data.overall.critical}</strong> · Audit: <strong>${team3Data.overall.critical}</strong></span>
+                `;
+            }
+        } else {
+            // Team Lead View: Status distribution for their own team only
+            let myTeamData = team1Data;
+            let myTeamName = 'Academics';
+            let myTeamKey = 'team1';
+            if (userTeamId === 2) {
+                myTeamData = team2Data;
+                myTeamName = 'Admin';
+                myTeamKey = 'team2';
+            } else if (userTeamId === 3) {
+                myTeamData = team3Data;
+                myTeamName = 'Audit';
+                myTeamKey = 'team3';
+            }
+
+            const teamValues = [
+                myTeamData.overall.all_well,
+                myTeamData.overall.manageable,
+                myTeamData.overall.critical
+            ];
+            const maxVal = Math.max(...teamValues);
+            const suggestedMax = maxVal > 0 ? Math.ceil(maxVal * 1.25) : 5;
+
+            const ctx = combinedBarEl.getContext('2d');
+            function makeGradient(color) {
+                const g = ctx.createLinearGradient(0, 0, 0, 380);
+                g.addColorStop(0, color);
+                g.addColorStop(1, '#ffffff');
+                return g;
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['All Well', 'Manageable', 'Critical'],
+                    datasets: [{
+                        label: myTeamName + ' Status',
+                        data: teamValues,
+                        backgroundColor: [
+                            makeGradient(COLORS.allWell),
+                            makeGradient(COLORS.manageable),
+                            makeGradient(COLORS.critical)
+                        ],
+                        borderColor: [
+                            COLORS.allWell,
+                            COLORS.manageable,
+                            COLORS.critical
+                        ],
+                        borderWidth: 1.5,
+                        borderRadius: 10,
+                        barThickness: 56,
+                        maxBarThickness: 64
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 15, bottom: 5, left: 15, right: 15 } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: suggestedMax,
+                            grid: { color: 'rgba(0,0,0,0.06)' },
+                            ticks: {
+                                precision: 0,
+                                font: { size: 11 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: ['#059669', '#d97706', '#dc2626']
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17,24,39,0.92)',
+                            padding: 10,
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            callbacks: {
+                                title: (items) => `${myTeamName} — ${items[0].label}`,
+                                label: (item) => `Count: ${item.raw}`
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            color: '#1e293b',
+                            font: { weight: 'bold', size: 12 },
+                            formatter: (value) => value > 0 ? value : (value === 0 ? '0' : '')
+                        }
+                    },
+                    onClick: () => {
+                        navigateToDashboard(myTeamKey);
+                    }
+                }
+            });
+
+            // Update bottom legend for Team Lead: show only their own team
+            const el = document.getElementById('legend-combined-bar');
+            if (el) {
+                el.innerHTML = `
+                    <span class="legend-item"><span class="dot green"></span> All Well: <strong>${myTeamData.overall.all_well}</strong></span>
+                    <span class="legend-item"><span class="dot amber"></span> Manageable: <strong>${myTeamData.overall.manageable}</strong></span>
+                    <span class="legend-item"><span class="dot red"></span> Critical: <strong>${myTeamData.overall.critical}</strong></span>
+                `;
+            }
+        }
+    }
+
+    // Team 1 Chart - Complete fields
+    const team1Labels = ['Jr. School', 'Sr. School', 'KG Attendance', 'Grade 1-5 Attendance', 'Grade 6-10 Attendance', 'Grade 11-12 Attendance', 'Overall Attendance', 'Grooming', 'Late Coming', 'Admission Status', 'Transfer Certificate', 'Parent Activity', 'Parent Visiting', 'Exams G1-5', 'Exams G6-8', 'Exams G9-10', 'Exams G11', 'Exams G12', 'External CIS', 'External CBSE', 'External State', 'External EMIS', 'Helth Center', 'Home School Comm', 'Disciplinary', 'Logistics', 'Competition Cert', 'Staff Concern', 'Student Concern', 'Parent Concern Summary', 'Parent Concern Detail', 'Special Education', 'School Counsellor'];
+    
+    const team1El = document.getElementById('team1Chart');
+    if (team1El) buildGroupedBar(
+        team1El.getContext('2d'),
+        team1Labels,
+        [
+            { 
+                label: 'All Well', 
+                backgroundColor: COLORS.allWell, 
+                data: [
+                    team1Data.jr_school.all_well, team1Data.sr_school.all_well, 
+                    team1Data.student_attendance_kindergarten.all_well, team1Data.student_attendance_grade_1_5.all_well, 
+                    team1Data.student_attendance_grade_6_10.all_well, team1Data.student_attendance_grade_11_12.all_well, 
+                    team1Data.student_attendance_overall.all_well, team1Data.groom_issue_nature.all_well, 
+                    team1Data.late_coming_issue_nature.all_well, team1Data.admission_status_issue_nature.all_well, 
+                    team1Data.tc_issue_nature.all_well, team1Data.parent_activity_issue_nature.all_well, 
+                    team1Data.parent_visiting_issue_nature.all_well, team1Data.exam_issue_nature_g15.all_well, 
+                    team1Data.exam_issue_nature_g68.all_well, team1Data.exam_issue_nature_g910.all_well, 
+                    team1Data.exam_issue_nature_g11.all_well, team1Data.exam_issue_nature_g12.all_well, 
+                    team1Data.ext_issue_nature_cis.all_well, team1Data.ext_issue_nature_cbse.all_well, 
+                    team1Data.ext_issue_nature_state.all_well, team1Data.ext_issue_nature_emis.all_well, 
+                    team1Data.sick_issue_nature.all_well, team1Data.home_school_comm_issue_nature.all_well, 
+                    team1Data.disciplinary_issue_nature.all_well, team1Data.logistics_issue_nature.all_well, 
+                    team1Data.cert_issue_nature.all_well, team1Data.staff_concern_issue_nature.all_well, 
+                    team1Data.student_concern_issue_nature.all_well, team1Data.pc_summary_issue_nature.all_well, 
+                    team1Data.pc_detail_issue_nature.all_well, 
+                    team1Data.special_education_issue_nature.all_well, team1Data.school_counsellor_issue_nature.all_well
+                ]
+            },
+            { 
+                label: 'Manageable', 
+                backgroundColor: COLORS.manageable, 
+                data: [
+                    team1Data.jr_school.manageable, team1Data.sr_school.manageable, 
+                    team1Data.student_attendance_kindergarten.manageable, team1Data.student_attendance_grade_1_5.manageable, 
+                    team1Data.student_attendance_grade_6_10.manageable, team1Data.student_attendance_grade_11_12.manageable, 
+                    team1Data.student_attendance_overall.manageable, team1Data.groom_issue_nature.manageable, 
+                    team1Data.late_coming_issue_nature.manageable, team1Data.admission_status_issue_nature.manageable, 
+                    team1Data.tc_issue_nature.manageable, team1Data.parent_activity_issue_nature.manageable, 
+                    team1Data.parent_visiting_issue_nature.manageable, team1Data.exam_issue_nature_g15.manageable, 
+                    team1Data.exam_issue_nature_g68.manageable, team1Data.exam_issue_nature_g910.manageable, 
+                    team1Data.exam_issue_nature_g11.manageable, team1Data.exam_issue_nature_g12.manageable, 
+                    team1Data.ext_issue_nature_cis.manageable, team1Data.ext_issue_nature_cbse.manageable, 
+                    team1Data.ext_issue_nature_state.manageable, team1Data.ext_issue_nature_emis.manageable, 
+                    team1Data.sick_issue_nature.manageable, team1Data.home_school_comm_issue_nature.manageable, 
+                    team1Data.disciplinary_issue_nature.manageable, team1Data.logistics_issue_nature.manageable, 
+                    team1Data.cert_issue_nature.manageable, team1Data.staff_concern_issue_nature.manageable, 
+                    team1Data.student_concern_issue_nature.manageable, team1Data.pc_summary_issue_nature.manageable, 
+                    team1Data.pc_detail_issue_nature.manageable, 
+                    team1Data.special_education_issue_nature.manageable, team1Data.school_counsellor_issue_nature.manageable
+                ]
+            },
+            { 
+                label: 'Critical', 
+                backgroundColor: COLORS.critical, 
+                data: [
+                    team1Data.jr_school.critical, team1Data.sr_school.critical, 
+                    team1Data.student_attendance_kindergarten.critical, team1Data.student_attendance_grade_1_5.critical, 
+                    team1Data.student_attendance_grade_6_10.critical, team1Data.student_attendance_grade_11_12.critical, 
+                    team1Data.student_attendance_overall.critical, team1Data.groom_issue_nature.critical, 
+                    team1Data.late_coming_issue_nature.critical, team1Data.admission_status_issue_nature.critical, 
+                    team1Data.tc_issue_nature.critical, team1Data.parent_activity_issue_nature.critical, 
+                    team1Data.parent_visiting_issue_nature.critical, team1Data.exam_issue_nature_g15.critical, 
+                    team1Data.exam_issue_nature_g68.critical, team1Data.exam_issue_nature_g910.critical, 
+                    team1Data.exam_issue_nature_g11.critical, team1Data.exam_issue_nature_g12.critical, 
+                    team1Data.ext_issue_nature_cis.critical, team1Data.ext_issue_nature_cbse.critical, 
+                    team1Data.ext_issue_nature_state.critical, team1Data.ext_issue_nature_emis.critical, 
+                    team1Data.sick_issue_nature.critical, team1Data.home_school_comm_issue_nature.critical, 
+                    team1Data.disciplinary_issue_nature.critical, team1Data.logistics_issue_nature.critical, 
+                    team1Data.cert_issue_nature.critical, team1Data.staff_concern_issue_nature.critical, 
+                    team1Data.student_concern_issue_nature.critical, team1Data.pc_summary_issue_nature.critical, 
+                    team1Data.pc_detail_issue_nature.critical, 
+                    team1Data.special_education_issue_nature.critical, team1Data.school_counsellor_issue_nature.critical
+                ]
+            }
+        ],
+        {
+            onClick: (evt, activeEls) => {
+                if (!activeEls || !activeEls.length) return;
+                const idx = activeEls[0].index;
+                let section = null;
+                if (idx <= 1) section = 'calendar-schedule';
+                else if (idx >= 2 && idx <= 6) section = 'students-attendance';
+                else if (idx === 7) section = 'students-grooming';
+                else if (idx === 8) section = 'students-late-coming';
+                else if (idx === 9) section = 'admission-status';
+                else if (idx === 10) section = 'transfer-certificate';
+                else if (idx === 11) section = 'parent-activity';
+                else if (idx === 12) section = 'parent-visit';
+                else if (idx >= 13 && idx <= 17) section = 'exam-schedule';
+                else if (idx >= 18 && idx <= 21) section = 'external-info';
+                else if (idx === 22) section = 'sick-bay';
+                else if (idx === 23) section = 'home-school-comm';
+                else if (idx === 24) section = 'disciplinary-measures';
+                else if (idx === 25) section = 'logistics';
+                else if (idx === 26) section = 'competition-certificate';
+                else if (idx === 27) section = 'staff-concern';
+                else if (idx === 28) section = 'student-concern';
+                else if (idx === 29 || idx === 30) section = 'parent-concerns';
+                else if (idx === 31) section = 'special-education';
+                else if (idx === 32) section = 'school-counsellor';
+                navigateToDashboard('team1', section);
+            }
+        }
+    );
+    if (team1El) {
+        const el = document.getElementById('legend-team1');
+        if (el) {
+            el.innerHTML = `
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team1Data.overall.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team1Data.overall.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team1Data.overall.critical}</strong></span>
+            `;
+        }
+    }
+
+    // Team 2 Chart 1 - HR & Staffing
+    const team2Chart1El = document.getElementById('team2Chart1');
+    if (team2Chart1El) buildGroupedBar(
+        team2Chart1El.getContext('2d'),
+        ['Jr School', 'Sr School', 'ECA', 'Admin Staff', 'Drivers', 'Security', 'Housekeeping', 'Conductors', 'Overall HR Attendance', 'Recruitment Academic', 'Recruitment Admin', 'Pending Academic', 'Pending Admin', 'Interview Schedule', 'Exit Information', 'Issues/Staff Concerns', 'Kural Recitation', 'Health Check Up', 'Calendar Admin', 'Calendar Housekeeping', 'Calendar Security', 'Calendar Transport', 'Training Academics Jr', 'Training Academics Sr', 'Training Admin', 'Training Drivers', 'Training Securities', 'Training Drivers Sub', 'Training Conductors', 'Training Details'],
+        [
+            { 
+                label: 'All Well', 
+                backgroundColor: COLORS.allWell, 
+                data: [
+                    team2Data.jr_school.all_well, team2Data.sr_school.all_well, team2Data.eca.all_well, 
+                    team2Data.admin_staff.all_well, team2Data.drivers.all_well, team2Data.security.all_well, 
+                    team2Data.housekeeping.all_well, team2Data.conductors.all_well, team2Data.hr_overall.all_well, team2Data.recruitment_academic.all_well, 
+                    team2Data.recruitment_admin.all_well, team2Data.pending_academic.all_well, team2Data.pending_admin.all_well, 
+                    team2Data.interview_schedule.all_well, 
+                    team2Data.exit_information.all_well, team2Data.issues_staff_concerns.all_well, 
+                    team2Data.kural_recitation.all_well, team2Data.health_check_up.all_well, team2Data.calendar_schedule_admin.all_well, 
+                    team2Data.calendar_schedule_house_keeping.all_well, team2Data.calendar_schedule_security.all_well, 
+                    team2Data.calendar_schedule_transport.all_well, team2Data.training_attendance_academics_jr.all_well, 
+                    team2Data.training_attendance_academics_sr.all_well, team2Data.training_attendance_admin.all_well, 
+                    team2Data.training_attendance_drivers.all_well, team2Data.training_attendance_securities.all_well, 
+                    team2Data.training_attendance_drivers_sub.all_well, team2Data.training_attendance_conductors.all_well, 
+                    team2Data.training_details_cbse_cis_external.all_well
+                ]
+            },
+            { 
+                label: 'Manageable', 
+                backgroundColor: COLORS.manageable, 
+                data: [
+                    team2Data.jr_school.manageable, team2Data.sr_school.manageable, team2Data.eca.manageable, 
+                    team2Data.admin_staff.manageable, team2Data.drivers.manageable, team2Data.security.manageable, 
+                    team2Data.housekeeping.manageable, team2Data.conductors.manageable, team2Data.hr_overall.manageable, team2Data.recruitment_academic.manageable, 
+                    team2Data.recruitment_admin.manageable, team2Data.pending_academic.manageable, team2Data.pending_admin.manageable, 
+                    team2Data.interview_schedule.manageable, 
+                    team2Data.exit_information.manageable, team2Data.issues_staff_concerns.manageable, 
+                    team2Data.kural_recitation.manageable, team2Data.health_check_up.manageable, team2Data.calendar_schedule_admin.manageable, 
+                    team2Data.calendar_schedule_house_keeping.manageable, team2Data.calendar_schedule_security.manageable, 
+                    team2Data.calendar_schedule_transport.manageable, team2Data.training_attendance_academics_jr.manageable, 
+                    team2Data.training_attendance_academics_sr.manageable, team2Data.training_attendance_admin.manageable, 
+                    team2Data.training_attendance_drivers.manageable, team2Data.training_attendance_securities.manageable, 
+                    team2Data.training_attendance_drivers_sub.manageable, team2Data.training_attendance_conductors.manageable, 
+                    team2Data.training_details_cbse_cis_external.manageable
+                ]
+            },
+            { 
+                label: 'Critical', 
+                backgroundColor: COLORS.critical, 
+                data: [
+                    team2Data.jr_school.critical, team2Data.sr_school.critical, team2Data.eca.critical, 
+                    team2Data.admin_staff.critical, team2Data.drivers.critical, team2Data.security.critical, 
+                    team2Data.housekeeping.critical, team2Data.conductors.critical, team2Data.hr_overall.critical, team2Data.recruitment_academic.critical, 
+                    team2Data.recruitment_admin.critical, team2Data.pending_academic.critical, team2Data.pending_admin.critical, 
+                    team2Data.interview_schedule.critical, 
+                    team2Data.exit_information.critical, team2Data.issues_staff_concerns.critical, 
+                    team2Data.kural_recitation.critical, team2Data.health_check_up.critical, team2Data.calendar_schedule_admin.critical, 
+                    team2Data.calendar_schedule_house_keeping.critical, team2Data.calendar_schedule_security.critical, 
+                    team2Data.calendar_schedule_transport.critical, team2Data.training_attendance_academics_jr.critical, 
+                    team2Data.training_attendance_academics_sr.critical, team2Data.training_attendance_admin.critical, 
+                    team2Data.training_attendance_drivers.critical, team2Data.training_attendance_securities.critical, 
+                    team2Data.training_attendance_drivers_sub.critical, team2Data.training_attendance_conductors.critical, 
+                    team2Data.training_details_cbse_cis_external.critical
+                ]
+            }
+        ],
+        {
+            onClick: (evt, activeEls) => {
+                if (!activeEls || !activeEls.length) return;
+                const idx = activeEls[0].index;
+                const sections = [
+                    'hr-attendance','hr-attendance','hr-attendance',
+                    'admin-attendance','admin-attendance','admin-attendance','admin-attendance','admin-attendance','hr-attendance',
+                    'recruitment-activity','recruitment-activity',
+                    'pending-recruitment','pending-recruitment',
+                    'interview-schedule','exit-information','concerns-kural','concerns-kural','health-checkup',
+                    'calendar-schedule','calendar-schedule','calendar-schedule','calendar-schedule',
+                    'training-attendance','training-attendance','training-attendance','training-attendance','training-attendance','training-attendance','training-attendance',
+                    'training-details'
+                ];
+                navigateToDashboard('team2', sections[idx] || null);
+            }
+        }
+    );
+    if (team2Chart1El) {
+        const el = document.getElementById('legend-team2-1');
+        if (el) {
+            el.innerHTML = `
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team2Data.overall.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team2Data.overall.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team2Data.overall.critical}</strong></span>
+            `;
+        }
+    }
+
+    // Team 2 Chart 2 - Operations & Facilities
+    const team2Chart2El = document.getElementById('team2Chart2');
+    if (team2Chart2El) buildGroupedBar(
+        team2Chart2El.getContext('2d'),
+        ['Phone Academics', 'Phone Admin', 'Phone General', 'Visitor Log', 'BSNL Phone', 'Materials Inward', 'Materials Outward', 'Materials Movement', 'Returnable Material', 'Returnable Goods', 'Water TDS', 'Testing Cleaning', 'Pool Testing', 'Transport Attendance', 'Transport AC', 'Late Reporting', 'Maintenance Service', 'Car Maintenance', 'Vehicle Renewals', 'Delayed Halt', 'FC Renewal', 'Road Tax', 'Permit', 'Insurance', 'Special Trip', 'AC 1st Floor', 'AC 2nd Floor', 'AC 3rd Floor', 'AC Ground Floor', 'Maintenance Labor', 'Motor', 'Pest Control', 'AC Temp Deviation', 'Electricity', 'EB Details', 'Solar Details', 'Genset Details', 'Water Level Check', 'Washroom Cleanliness'],
+        [
+            { 
+                label: 'All Well', 
+                backgroundColor: COLORS.allWell, 
+                data: [
+                    team2Data.front_office_phone_calls_academics.all_well, team2Data.front_office_phone_calls_admin.all_well, 
+                    team2Data.front_office_phone_calls_general.all_well, team2Data.visitor_log.all_well, 
+                    team2Data.bsnl_phone_status.all_well, team2Data.materials_inward.all_well, 
+                    team2Data.materials_outward.all_well, team2Data.materials_movement.all_well, 
+                    team2Data.returnable_material_tracking.all_well, team2Data.returnable_goods_report.all_well, 
+                    team2Data.water_tds_deviation.all_well, team2Data.testing_cleaning_general.all_well, 
+                    team2Data.testing_cleaning_pool.all_well, team2Data.transport_attendance.all_well, 
+                    team2Data.transport_ac_status.all_well, team2Data.late_reporting.all_well, 
+                    team2Data.maintenance_service_issues.all_well, team2Data.car_maintenance_cleaning.all_well, 
+                    team2Data.vehicle_renewals_delays.all_well, team2Data.delayed_halt.all_well, 
+                    team2Data.fc_renewal.all_well, team2Data.road_tax.all_well, team2Data.permit.all_well, 
+                    team2Data.insurance.all_well, team2Data.special_trip.all_well, team2Data.ac_temp_first_floor.all_well, 
+                    team2Data.ac_temp_second_floor.all_well, team2Data.ac_temp_third_floor.all_well, 
+                    team2Data.ac_temp_ground_floor.all_well, team2Data.maintenance_labor.all_well, 
+                    team2Data.motor.all_well, team2Data.pest_control.all_well, team2Data.ac_temp_deviation.all_well, 
+                    team2Data.electricity_consumption.all_well, team2Data.eb_details.all_well, 
+                    team2Data.solar_details.all_well, team2Data.genset_details.all_well, team2Data.water_level_checking.all_well, team2Data.washroom_cleanliness.all_well
+                ]
+            },
+            { 
+                label: 'Manageable', 
+                backgroundColor: COLORS.manageable, 
+                data: [
+                    team2Data.front_office_phone_calls_academics.manageable, team2Data.front_office_phone_calls_admin.manageable, 
+                    team2Data.front_office_phone_calls_general.manageable, team2Data.visitor_log.manageable, 
+                    team2Data.bsnl_phone_status.manageable, team2Data.materials_inward.manageable, 
+                    team2Data.materials_outward.manageable, team2Data.materials_movement.manageable, 
+                    team2Data.returnable_material_tracking.manageable, team2Data.returnable_goods_report.manageable, 
+                    team2Data.water_tds_deviation.manageable, team2Data.testing_cleaning_general.manageable, 
+                    team2Data.testing_cleaning_pool.manageable, team2Data.transport_attendance.manageable, 
+                    team2Data.transport_ac_status.manageable, team2Data.late_reporting.manageable, 
+                    team2Data.maintenance_service_issues.manageable, team2Data.car_maintenance_cleaning.manageable, 
+                    team2Data.vehicle_renewals_delays.manageable, team2Data.delayed_halt.manageable, 
+                    team2Data.fc_renewal.manageable, team2Data.road_tax.manageable, team2Data.permit.manageable, 
+                    team2Data.insurance.manageable, team2Data.special_trip.manageable, team2Data.ac_temp_first_floor.manageable, 
+                    team2Data.ac_temp_second_floor.manageable, team2Data.ac_temp_third_floor.manageable, 
+                    team2Data.ac_temp_ground_floor.manageable, team2Data.maintenance_labor.manageable, 
+                    team2Data.motor.manageable, team2Data.pest_control.manageable, team2Data.ac_temp_deviation.manageable, 
+                    team2Data.electricity_consumption.manageable, team2Data.eb_details.manageable, 
+                    team2Data.solar_details.manageable, team2Data.genset_details.manageable, team2Data.water_level_checking.manageable, team2Data.washroom_cleanliness.manageable
+                ]
+            },
+            { 
+                label: 'Critical', 
+                backgroundColor: COLORS.critical, 
+                data: [
+                    team2Data.front_office_phone_calls_academics.critical, team2Data.front_office_phone_calls_admin.critical, 
+                    team2Data.front_office_phone_calls_general.critical, team2Data.visitor_log.critical, 
+                    team2Data.bsnl_phone_status.critical, team2Data.materials_inward.critical, 
+                    team2Data.materials_outward.critical, team2Data.materials_movement.critical, 
+                    team2Data.returnable_material_tracking.critical, team2Data.returnable_goods_report.critical, 
+                    team2Data.water_tds_deviation.critical, team2Data.testing_cleaning_general.critical, 
+                    team2Data.testing_cleaning_pool.critical, team2Data.transport_attendance.critical, 
+                    team2Data.transport_ac_status.critical, team2Data.late_reporting.critical, 
+                    team2Data.maintenance_service_issues.critical, team2Data.car_maintenance_cleaning.critical, 
+                    team2Data.vehicle_renewals_delays.critical, team2Data.delayed_halt.critical, 
+                    team2Data.fc_renewal.critical, team2Data.road_tax.critical, team2Data.permit.critical, 
+                    team2Data.insurance.critical, team2Data.special_trip.critical, team2Data.ac_temp_first_floor.critical, 
+                    team2Data.ac_temp_second_floor.critical, team2Data.ac_temp_third_floor.critical, 
+                    team2Data.ac_temp_ground_floor.critical, team2Data.maintenance_labor.critical, 
+                    team2Data.motor.critical, team2Data.pest_control.critical, team2Data.ac_temp_deviation.critical, 
+                    team2Data.electricity_consumption.critical, team2Data.eb_details.critical, 
+                    team2Data.solar_details.critical, team2Data.genset_details.critical, team2Data.water_level_checking.critical, team2Data.washroom_cleanliness.critical
+                ]
+            }
+        ],
+        {
+            onClick: (evt, activeEls) => {
+                if (!activeEls || !activeEls.length) return;
+                const idx = activeEls[0].index;
+                const sections = [
+                    'visitors','visitors','visitors','visitors','intercom-maintenance',
+                    'stores-materials','stores-materials','stores-materials','stores-materials','stores-materials',
+                    'water-tds','testing-cleaning','testing-cleaning','transport-maintenance','transport-maintenance','transport-maintenance',
+                    'transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance','transport-maintenance',
+                    'ac-temperature','ac-temperature','ac-temperature','ac-temperature',
+                    'labor-eb-solar','labor-eb-solar','labor-eb-solar','ac-temperature','labor-eb-solar','labor-eb-solar','labor-eb-solar','labor-eb-solar',
+                    'testing-cleaning','testing-cleaning'
+                ];
+                navigateToDashboard('team2', sections[idx] || null);
+            }
+        }
+    );
+    if (team2Chart2El) {
+        const el = document.getElementById('legend-team2-2');
+        if (el) {
+            el.innerHTML = `
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team2Data.overall.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team2Data.overall.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team2Data.overall.critical}</strong></span>
+            `;
+        }
+    }
+
+    // Team 2 Chart 3 - Security, IT & Digital Marketing  
+    const team2Chart3El = document.getElementById('team2Chart3');
+    if (team2Chart3El) buildGroupedBar(
+        team2Chart3El.getContext('2d'),
+        ['Campus Camera', 'Vehicle Camera', 'Bus AC Camera', 'GPS Monitoring', 'Issues Monitoring', 'Teachers Late', 'Biometrics', 'Security Count', 'Security Attendance', 'Security Info', 'Govt Officials', 'Security Materials In', 'Security Materials Out', 'Transport Verification', 'Documents Movement', 'Govt Documents', 'Digital Thoorigai Social', 'Digital Thoorigai Website', 'Digital MD Social', 'Intercom Maintenance', 'Net Connectivity', 'General Maintenance IT Products'],
+        [
+            { 
+                label: 'All Well', 
+                backgroundColor: COLORS.allWell, 
+                data: [
+                    team2Data.campus_camera_status.all_well, team2Data.vehicle_camera_status.all_well, 
+                    team2Data.bus_ac_camera_status.all_well, team2Data.gps_monitoring.all_well, 
+                    team2Data.issues_identified_monitoring.all_well, team2Data.teachers_late_reporting.all_well, 
+                    team2Data.biometrics_access_card_punching.all_well, team2Data.security_count_verification.all_well, 
+                    team2Data.security_attendance_replacement.all_well, team2Data.security_info_note.all_well, 
+                    team2Data.govt_officials_inout.all_well, team2Data.security_materials_inward.all_well, 
+                    team2Data.security_materials_outward.all_well, team2Data.security_transport_verification.all_well, 
+                    team2Data.digital_marketing_thoorigai_social_media.all_well, team2Data.digital_marketing_thoorigai_website_updates.all_well, 
+                    team2Data.digital_marketing_md_social_media.all_well, team2Data.intercom_maintenance.all_well, 
+                    team2Data.net_connectivity_print_details.all_well, team2Data.general_maintenance_it_products.all_well, 
+                    team2Data.documents_movement.all_well, team2Data.govt_official_documents.all_well
+                ]
+            },
+            { 
+                label: 'Manageable', 
+                backgroundColor: COLORS.manageable, 
+                data: [
+                    team2Data.campus_camera_status.manageable, team2Data.vehicle_camera_status.manageable, 
+                    team2Data.bus_ac_camera_status.manageable, team2Data.gps_monitoring.manageable, 
+                    team2Data.issues_identified_monitoring.manageable, team2Data.teachers_late_reporting.manageable, 
+                    team2Data.biometrics_access_card_punching.manageable, team2Data.security_count_verification.manageable, 
+                    team2Data.security_attendance_replacement.manageable, team2Data.security_info_note.manageable, 
+                    team2Data.govt_officials_inout.manageable, team2Data.security_materials_inward.manageable, 
+                    team2Data.security_materials_outward.manageable, team2Data.security_transport_verification.manageable, 
+                    team2Data.digital_marketing_thoorigai_social_media.manageable, team2Data.digital_marketing_thoorigai_website_updates.manageable, 
+                    team2Data.digital_marketing_md_social_media.manageable, team2Data.intercom_maintenance.manageable, 
+                    team2Data.net_connectivity_print_details.manageable, team2Data.general_maintenance_it_products.manageable, 
+                    team2Data.documents_movement.manageable, team2Data.govt_official_documents.manageable
+                ]
+            },
+            { 
+                label: 'Critical', 
+                backgroundColor: COLORS.critical, 
+                data: [
+                    team2Data.campus_camera_status.critical, team2Data.vehicle_camera_status.critical, 
+                    team2Data.bus_ac_camera_status.critical, team2Data.gps_monitoring.critical, 
+                    team2Data.issues_identified_monitoring.critical, team2Data.teachers_late_reporting.critical, 
+                    team2Data.biometrics_access_card_punching.critical, team2Data.security_count_verification.critical, 
+                    team2Data.security_attendance_replacement.critical, team2Data.security_info_note.critical, 
+                    team2Data.govt_officials_inout.critical, team2Data.security_materials_inward.critical, 
+                    team2Data.security_materials_outward.critical, team2Data.security_transport_verification.critical, 
+                    team2Data.digital_marketing_thoorigai_social_media.critical, team2Data.digital_marketing_thoorigai_website_updates.critical, 
+                    team2Data.digital_marketing_md_social_media.critical, team2Data.intercom_maintenance.critical, 
+                    team2Data.net_connectivity_print_details.critical, team2Data.general_maintenance_it_products.critical, 
+                    team2Data.documents_movement.critical, team2Data.govt_official_documents.critical
+                ]
+            }
+        ],
+        {
+            onClick: (evt, activeEls) => {
+                if (!activeEls || !activeEls.length) return;
+                const idx = activeEls[0].index;
+                const sections = [
+                    'camera-monitoring','camera-monitoring','camera-monitoring','camera-monitoring','camera-monitoring','camera-monitoring','biometrics-access',
+                    'security','security','security','security','security','security','security',
+                    'documents-movement','govt-documents','digital-marketing','digital-marketing','digital-marketing','intercom-maintenance','net-connectivity','net-connectivity'
+                ];
+                navigateToDashboard('team2', sections[idx] || null);
+            }
+        }
+    );
+    if (team2Chart3El) {
+        const el = document.getElementById('legend-team2-3');
+        if (el) {
+            el.innerHTML = `
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team2Data.overall.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team2Data.overall.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team2Data.overall.critical}</strong></span>
+            `;
+        }
+    }
+
+    // Team 3 Chart with custom bar width
+    const team3El = document.getElementById('team3Chart');
+    if (team3El) buildGroupedBar(
+        team3El.getContext('2d'),
+        ['Legacy Audit', 'New Audit'],
+        [
+            { label: 'All Well', backgroundColor: COLORS.allWell, data: [team3Data.audit_issue_nature.all_well, team3Data.new_audit_issue_nature.all_well] },
+            { label: 'Manageable', backgroundColor: COLORS.manageable, data: [team3Data.audit_issue_nature.manageable, team3Data.new_audit_issue_nature.manageable] },
+            { label: 'Critical', backgroundColor: COLORS.critical, data: [team3Data.audit_issue_nature.critical, team3Data.new_audit_issue_nature.critical] }
+        ],
+        {
+            scales: { 
+                y: { beginAtZero: true },
+                x: { 
+                    ticks: { 
+                        maxRotation: 45,
+                        minRotation: 0
+                    }
+                }
+            },
+            plugins: { 
+                legend: { position: 'top' },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            // Consistent bar width settings
+            datasets: {
+                bar: {
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6
+                }
+            },
+            onClick: (evt, activeEls) => {
+                if (!activeEls || !activeEls.length) return;
+                navigateToDashboard('team3', 'audit-card');
+            }
+        }
+    );
+    if (team3El) {
+        const el = document.getElementById('legend-team3');
+        if (el) {
+            el.innerHTML = `
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team3Data.audit_issue_nature.all_well + team3Data.new_audit_issue_nature.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team3Data.audit_issue_nature.manageable + team3Data.new_audit_issue_nature.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team3Data.audit_issue_nature.critical + team3Data.new_audit_issue_nature.critical}</strong></span>
+            `;
+        }
+    }
+
+
+    // Filter Panel Toggle logic
+    const filterToggleBtn = document.getElementById('statsFilterToggleBtn');
+    const filtersContainer = document.getElementById('statsFiltersContainer');
+    const closeFilterPanelBtn = document.getElementById('closeFilterPanelBtn');
+
+    if (filterToggleBtn && filtersContainer) {
+        filterToggleBtn.addEventListener('click', function() {
+            const isOpen = filtersContainer.classList.contains('show');
+            if (isOpen) {
+                filtersContainer.classList.remove('show');
+                filterToggleBtn.classList.remove('active');
+                filterToggleBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                filtersContainer.classList.add('show');
+                filterToggleBtn.classList.add('active');
+                filterToggleBtn.setAttribute('aria-expanded', 'true');
+            }
+        });
+
+        if (closeFilterPanelBtn) {
+            closeFilterPanelBtn.addEventListener('click', function() {
+                filtersContainer.classList.remove('show');
+                filterToggleBtn.classList.remove('active');
+                filterToggleBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+    }
+
+});
+</script>
+{% endblock %}

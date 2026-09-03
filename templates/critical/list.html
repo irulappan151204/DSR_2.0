@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Critical / CAPA - QMIS DSR{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='critical/critical.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="capa-page-head">
+    <div>
+        <h1><i class="fas fa-triangle-exclamation text-danger me-2"></i>Critical / CAPA</h1>
+        <div class="capa-sub">
+            {% if is_auditor %}
+                Audit findings raised by the audit team, with recipient responses and closure.
+            {% elif current_user.role == 'Team Lead' %}
+                Critical audit findings for your team members, with recipient responses and closure status.
+            {% else %}
+                CAPA findings assigned to you for response.
+            {% endif %}
+        </div>
+    </div>
+    {% if is_auditor %}
+    <a href="{{ url_for('critical.new_finding') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> New Audit Finding
+    </a>
+    {% endif %}
+</div>
+
+<!-- KPI Summary Cards -->
+<div class="capa-kpi-grid">
+    <a href="{{ url_for('critical.critical_home') }}"
+       class="capa-kpi-card kpi-total {% if not status_filter %}active{% endif %}"
+       title="Show all visible critical findings">
+        <div class="capa-kpi-title">Total Critical</div>
+        <div class="capa-kpi-value">{{ total }}</div>
+        <div class="capa-kpi-desc">All visible findings</div>
+    </a>
+    <a href="{{ url_for('critical.critical_home', status='OPEN') }}"
+       class="capa-kpi-card kpi-open {% if status_filter == 'OPEN' %}active{% endif %}"
+       title="Show open findings">
+        <div class="capa-kpi-title">Open</div>
+        <div class="capa-kpi-value">{{ counts.get('OPEN', 0) }}</div>
+        <div class="capa-kpi-desc">Draft / newly logged</div>
+    </a>
+    <a href="{{ url_for('critical.critical_home', status='PENDING_RECIPIENT_RESPONSE') }}"
+       class="capa-kpi-card kpi-pending-r {% if status_filter == 'PENDING_RECIPIENT_RESPONSE' %}active{% endif %}"
+       title="Show findings awaiting recipient response">
+        <div class="capa-kpi-title">Pending Response</div>
+        <div class="capa-kpi-value">{{ counts.get('PENDING_RECIPIENT_RESPONSE', 0) }}</div>
+        <div class="capa-kpi-desc">Awaiting recipient action</div>
+    </a>
+    <a href="{{ url_for('critical.critical_home', status='PENDING_AUDIT_REVIEW') }}"
+       class="capa-kpi-card kpi-pending-a {% if status_filter == 'PENDING_AUDIT_REVIEW' %}active{% endif %}"
+       title="Show findings awaiting audit review">
+        <div class="capa-kpi-title">Pending Review</div>
+        <div class="capa-kpi-value">{{ counts.get('PENDING_AUDIT_REVIEW', 0) }}</div>
+        <div class="capa-kpi-desc">Awaiting audit review</div>
+    </a>
+    <a href="{{ url_for('critical.critical_home', status='CAPA_REVISION_REQUIRED') }}"
+       class="capa-kpi-card kpi-revision {% if status_filter == 'CAPA_REVISION_REQUIRED' %}active{% endif %}"
+       title="Show findings requiring CAPA revision">
+        <div class="capa-kpi-title">Revision Required</div>
+        <div class="capa-kpi-value">{{ counts.get('CAPA_REVISION_REQUIRED', 0) }}</div>
+        <div class="capa-kpi-desc">Sent back for revision</div>
+    </a>
+    <a href="{{ url_for('critical.critical_home', status='CLOSED') }}"
+       class="capa-kpi-card kpi-closed {% if status_filter == 'CLOSED' %}active{% endif %}"
+       title="Show closed findings">
+        <div class="capa-kpi-title">Closed</div>
+        <div class="capa-kpi-value">{{ counts.get('CLOSED', 0) }}</div>
+        <div class="capa-kpi-desc">Accepted &amp; closed</div>
+    </a>
+</div>
+
+<div class="capa-filters">
+    <a href="{{ url_for('critical.critical_home') }}"
+       class="{% if not status_filter %}active{% endif %}">
+        All <span class="count">{{ total }}</span>
+    </a>
+    {% for status in statuses %}
+    <a href="{{ url_for('critical.critical_home', status=status) }}"
+       class="{% if status_filter == status %}active{% endif %}">
+        {{ status_labels[status] }} <span class="count">{{ counts[status] }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+<div class="capa-card">
+    {% if findings %}
+    <div class="table-wrap">
+        <table class="capa-table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Audit Date</th>
+                    <th>Priority</th>
+                    <th>Nature of Issue</th>
+                    <th>Recipient</th>
+                    <th>Raised By</th>
+                    <th>Status</th>
+                    <th>Rev.</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in findings %}
+                <tr>
+                    <td>
+                        <a class="ref-link" href="{{ url_for('critical.finding_detail', finding_id=f.form_id) }}">
+                            {{ f.audit_reference }}
+                        </a>
+                        <span class="row-title">{{ f.title }}</span>
+                        {% if f.component or f.staff_name %}
+                        <span class="text-muted d-block" style="font-size: 0.78rem; margin-top: 2px;">
+                            {% if f.component %}<strong>{{ f.component }}</strong>{% endif %}
+                            {% if f.staff_name %}&middot; Staff: {{ f.staff_name }}{% endif %}
+                            {% if f.grade and f.grade != 'N/A' %}&middot; {{ f.grade }}{% if f.section and f.section != 'N/A' %} ({{ f.section }}){% endif %}{% endif %}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ f.audit_date.strftime('%d-%m-%Y') if f.audit_date else '-' }}</td>
+                    <td><span class="priority-badge p-{{ f.priority|lower }}">{{ f.priority }}</span></td>
+                    <td>{{ f.nature_of_issue }}</td>
+                    <td>
+                        {% if f.recipient %}
+                            {{ f.recipient.username }}
+                            <span class="row-title">{{ team_display(f.recipient) }} &middot; {{ f.recipient.role }}</span>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>{{ f.creator.username if f.creator else '-' }}</td>
+                    <td><span class="status-badge {{ f.status_css }}">{{ f.status_label }}</span></td>
+                    <td>{{ f.revision_count }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{{ url_for('critical.finding_detail', finding_id=f.form_id) }}">
+                            {% if f.recipient_id == current_user.user_id and f.awaiting_recipient %}
+                                Respond
+                            {% elif is_auditor and f.awaiting_audit_review and f.recipient_id != current_user.user_id %}
+                                Review
+                            {% else %}
+                                View
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="capa-empty">
+        <i class="fas fa-clipboard-check"></i>
+        {% if status_filter %}
+            No findings with status &ldquo;{{ status_labels[status_filter] }}&rdquo;.
+        {% elif is_auditor %}
+            No audit findings yet. Use <strong>New Audit Finding</strong> to raise one.
+        {% else %}
+            No CAPA findings are assigned to you.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

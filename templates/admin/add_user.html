@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Add User - QMIS DSR{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+  --primary: #4361ee;
+  --secondary: #f72585;
+  --accent: #3ecf8e;
+  --card-radius: 1.2rem;
+  --card-shadow: 0 8px 32px rgba(67, 97, 238, 0.10);
+  --header-bg: #f5f7fa;
+  --form-bg: #fff;
+  --border-color: #e0e0e0;
+}
+.add-user-bg {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 0;
+}
+.card.add-user-card {
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  background: var(--form-bg);
+  border: 1px solid var(--border-color);
+}
+.card-header.add-user-header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--card-radius) var(--card-radius) 0 0;
+}
+.card-title {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.btn-primary {
+  background: var(--primary) !important;
+  border: none;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: var(--secondary) !important;
+  color: #fff;
+}
+.btn-secondary {
+  background: var(--accent) !important;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-secondary:hover {
+  background: #2e9e6f !important;
+  color: #fff;
+}
+.form-label {
+  color: var(--secondary);
+  font-weight: 500;
+}
+.form-control, .form-select {
+  border-radius: 0.7rem;
+  border-color: var(--border-color);
+  background: #f7faff;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.15rem rgba(67, 97, 238, 0.13);
+}
+.user-summary {
+  margin-top: 2.5rem;
+}
+.user-summary-title {
+  color: var(--secondary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.user-summary-list {
+  list-style: none;
+  padding: 0;
+}
+.user-summary-list li {
+  background: #f7faff;
+  border: 1px solid var(--border-color);
+  border-radius: 0.7rem;
+  padding: 0.75rem 1.2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.user-summary-role {
+  color: var(--primary);
+  font-weight: 600;
+}
+.user-summary-team {
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 0.98em;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-user-bg py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="card add-user-card mb-4">
+          <div class="card-header add-user-header">
+            <h3 class="card-title text-center mb-0">Add New User</h3>
+          </div>
+          <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <form method="POST" action="{{ url_for('add_user') }}">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role" required>
+                  <option value="">Select Role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Team Lead">Team Lead</option>
+                  <option value="Team Member">Team Member</option>
+                  <option value="MD">MD</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="team_id" class="form-label">Team</label>
+                <select class="form-select" id="team_id" name="team_id">
+                  <option value="">Select Team</option>
+                  {% for team in teams %}
+                  <option value="{{ team.team_id }}">{{ team.team_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add User</button>
+                <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- New Feature: User Summary -->
+        {% if users is defined and users|length > 0 %}
+        <div class="user-summary">
+          <div class="user-summary-title"><i class="fas fa-users me-2"></i>Current Users</div>
+          <ul class="user-summary-list">
+            {% for user in users %}
+            <li>
+              <span>{{ user.username }}</span>
+              <span class="user-summary-role">{{ user.role }}</span>
+              <span class="user-summary-team">{{ user.team.team_name if user.team else 'No Team' }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

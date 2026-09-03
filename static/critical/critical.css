@@ -1,0 +1,245 @@
+/* Critical / CAPA workflow -- builds on the Bootstrap + CSS variables in base.html */
+
+.capa-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.capa-page-head h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.capa-page-head .capa-sub {
+    color: var(--gray-color);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.capa-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.capa-card > h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gray-color);
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.6rem;
+    margin: 0 0 1rem;
+}
+
+/* --- status badges (extends the app's .status-badge convention) --- */
+.status-badge {
+    display: inline-block;
+    padding: 0.28rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.status-badge.capa-open            { background: #e2e3e5; color: #41464b; }
+.status-badge.capa-pending-recipient { background: #fff3cd; color: #664d03; }
+.status-badge.capa-pending-audit   { background: #cfe2ff; color: #084298; }
+.status-badge.capa-revision        { background: #f8d7da; color: #842029; }
+.status-badge.capa-closed          { background: #d1e7dd; color: #0f5132; }
+
+.priority-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.priority-badge.p-low      { background: #e7f5ff; color: #0b5aa2; }
+.priority-badge.p-medium   { background: #fff3cd; color: #664d03; }
+.priority-badge.p-high     { background: #ffe5d0; color: #8a3d00; }
+.priority-badge.p-critical { background: #f8d7da; color: #842029; }
+
+/* --- KPI summary cards --- */
+.capa-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (max-width: 1200px) {
+    .capa-kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .capa-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 400px) {
+    .capa-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.capa-kpi-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 0.9rem 1.1rem;
+    box-shadow: var(--box-shadow);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+    border-left: 4px solid #cbd5e1;
+    position: relative;
+}
+
+.capa-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    color: inherit;
+}
+
+.capa-kpi-card.active {
+    box-shadow: 0 0 0 2px var(--primary-color), 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color);
+}
+
+.capa-kpi-card.kpi-total      { border-left-color: #4f46e5; }
+.capa-kpi-card.kpi-open       { border-left-color: #64748b; }
+.capa-kpi-card.kpi-pending-r  { border-left-color: #f59e0b; }
+.capa-kpi-card.kpi-pending-a  { border-left-color: #3b82f6; }
+.capa-kpi-card.kpi-revision   { border-left-color: #ef4444; }
+.capa-kpi-card.kpi-closed     { border-left-color: #10b981; }
+
+.capa-kpi-title {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.capa-kpi-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.capa-kpi-desc {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- filter chips --- */
+.capa-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.capa-filters a {
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.82rem;
+    color: var(--dark-color);
+    background: #fff;
+    transition: var(--transition);
+}
+
+.capa-filters a:hover { border-color: var(--primary-color); color: var(--primary-color); }
+.capa-filters a.active { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+.capa-filters a .count { opacity: 0.75; margin-left: 0.3rem; }
+
+/* --- table --- */
+.capa-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.capa-table thead th {
+    background: #f8f9fa;
+    text-align: left;
+    padding: 0.7rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--gray-color);
+    border-bottom: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+.capa-table tbody td { padding: 0.7rem 0.75rem; border-bottom: 1px solid #f1f3f5; vertical-align: top; }
+.capa-table tbody tr:hover { background: #fbfcfe; }
+.capa-table a.ref-link { font-weight: 600; text-decoration: none; color: var(--primary-color); }
+.capa-table .row-title { display: block; color: var(--gray-color); font-size: 0.82rem; margin-top: 0.15rem; }
+
+/* --- read-only field grid --- */
+.capa-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem 1.5rem; }
+.capa-field label { display: block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--gray-color); margin-bottom: 0.2rem; }
+.capa-field .value { font-size: 0.92rem; color: var(--dark-color); word-break: break-word; }
+.capa-readonly-text { white-space: pre-wrap; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 0.75rem 0.9rem; font-size: 0.9rem; line-height: 1.55; }
+
+/* --- required marker --- */
+.req { color: var(--danger-color); }
+
+/* --- recipient picker --- */
+.recipient-results { max-height: 260px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; margin-top: 0.5rem; display: none; }
+.recipient-results.show { display: block; }
+.recipient-option { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid #f1f3f5; padding: 0.55rem 0.8rem; font-size: 0.87rem; cursor: pointer; }
+.recipient-option:hover, .recipient-option:focus { background: #eef2ff; }
+.recipient-option .who { font-weight: 600; }
+.recipient-option .meta { color: var(--gray-color); font-size: 0.8rem; }
+.recipient-chosen { display: none; align-items: center; gap: 0.6rem; margin-top: 0.6rem; padding: 0.55rem 0.8rem; border: 1px solid #b6d4fe; background: #eef5ff; border-radius: 8px; font-size: 0.88rem; }
+.recipient-chosen.show { display: flex; }
+
+/* --- audit trail --- */
+.capa-trail { list-style: none; margin: 0; padding: 0; }
+.capa-trail li { position: relative; padding: 0 0 1rem 1.4rem; border-left: 2px solid #e9ecef; }
+.capa-trail li:last-child { padding-bottom: 0; border-left-color: transparent; }
+.capa-trail li::before { content: ''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-color); }
+.capa-trail .trail-action { font-weight: 600; font-size: 0.86rem; }
+.capa-trail .trail-meta { color: var(--gray-color); font-size: 0.78rem; }
+.capa-trail .trail-comment { font-size: 0.85rem; margin-top: 0.2rem; white-space: pre-wrap; }
+
+/* --- attachments --- */
+.capa-files { list-style: none; margin: 0.4rem 0 0; padding: 0; }
+.capa-files li { margin-bottom: 0.3rem; font-size: 0.87rem; }
+.capa-files a { text-decoration: none; }
+.capa-files .size { color: var(--gray-color); font-size: 0.78rem; }
+
+.capa-empty { text-align: center; padding: 2.5rem 1rem; color: var(--gray-color); }
+.capa-empty i { font-size: 2rem; opacity: 0.4; display: block; margin-bottom: 0.6rem; }
+
+@media (max-width: 768px) {
+    .capa-card { padding: 1rem; }
+    .table-wrap { overflow-x: auto; }
+}

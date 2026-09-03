@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QMIS DSR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background: var(--light-color);
+        }
+
+        .split-screen {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .left-side {
+            flex: 1.2;
+            background: linear-gradient(135deg, #4361ee, #7209b7);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            color: white;
+        }
+
+        .left-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 L100 0 L100 100 L0 100 Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>');
+            opacity: 0.3;
+            animation: backgroundMove 30s linear infinite;
+        }
+
+        .left-side::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            animation: pulseEffect 15s ease-in-out infinite;
+        }
+
+        @keyframes backgroundMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 100%; }
+        }
+
+        @keyframes pulseEffect {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        .logo {
+            width: 160px;
+            height: 160px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.5s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .school-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.7rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-subtitle {
+            font-size: 1.15rem;
+            text-align: center;
+            opacity: 0.95;
+            max-width: 600px;
+            line-height: 1.7;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .right-side {
+            flex: 0.8;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .right-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 L200,200 M0,40 L160,200 M0,80 L120,200 M0,120 L80,200 M0,160 L40,200 M40,0 L200,160 M80,0 L200,120 M120,0 L200,80 M160,0 L200,40" stroke="rgba(67, 97, 238, 0.03)" stroke-width="2"/></svg>');
+            opacity: 0.5;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .login-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .login-subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1.1rem 1rem 1.1rem 3rem;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+            background-color: #fff;
+        }
+
+        .form-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus + .form-icon {
+            color: var(--primary-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.35);
+        }
+
+        .btn-login:hover::after {
+            left: 100%;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        .alert-dismissible .btn-close {
+            padding: 1.1rem;
+        }
+
+        @media (max-width: 992px) {
+            .school-name {
+                font-size: 2.2rem;
+            }
+            
+            .school-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .split-screen {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .left-side {
+                padding: 2rem 1rem;
+                min-height: 40vh;
+            }
+
+            .right-side {
+                padding: 2rem 1rem 3rem;
+            }
+
+            .logo {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 1.5rem;
+            }
+
+            .school-name {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            
+            .school-subtitle {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+
+            .login-container {
+                padding: 1.8rem;
+                border-radius: 20px;
+                margin-top: -50px;
+                background: rgba(255, 255, 255, 0.95);
+            }
+        }
+
+        /* Login Page Loader Styles */
+        #login-loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(255,255,255,0.92);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        #login-loader.hide { opacity: 0; pointer-events: none; }
+        .login-loader-anim {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 7px solid #f72585;
+            border-bottom: 7px solid #4361ee;
+            border-left: 7px solid #3ecf8e;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px #f7258533, 0 0 40px #4361ee33;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="split-screen">
+        <div class="left-side">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="QMIS Logo">
+            </div>
+            <h1 class="school-name">Queen Mira International School</h1>
+            <p class="school-subtitle">The first CBSE school to be accredited by The Council of International Schools (CIS)</p>
+        </div>
+        <div class="right-side">
+            <div class="login-container">
+                <h2 class="login-title">Welcome Back</h2>
+                <p class="login-subtitle">Login to access your QMIS DSR dashboard</p>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div id="login-loader" class="hide"><div class="login-loader-anim"></div></div>
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="User ID" required>
+                        <i class="fas fa-user form-icon"></i>
+                    </div>
+                    <div class="form-group position-relative">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <i class="fas fa-lock form-icon"></i>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                    </div>
+                    <button type="submit" class="btn btn-login">Sign In <i class="fas fa-arrow-right ms-2"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Show loader on login form submit
+        window.addEventListener('DOMContentLoaded', function() {
+            var loginForm = document.querySelector('form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    document.getElementById('login-loader').classList.remove('hide');
+                });
+            }
+        });
+
+        // Hide loader after page load
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => document.getElementById('login-loader').classList.add('hide'), 400);
+        });
+    </script>
+</body>
+</html> 

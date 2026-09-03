@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Academics DSR - Queen Mira International School</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='team_1_form/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+
+<body>
+  <div class="dsr-container">
+    <header class="dsr-header">
+      <div class="title-area">
+        <h1>Queen Mira International School</h1>
+        <h2>Academics DSR</h2>
+        <div class="date-field">
+          <label for="dsr-date">Date:</label>
+          <input 
+            type="text" 
+            id="dsr-date" 
+            name="dsr-date" 
+            readonly 
+            style="background:#f1f5f9; cursor:not-allowed;"
+          >
+        </div>
+      </div>
+      <div class="kural-area">
+        <p><strong>குறள் 738:</strong> பிணியின்மை செல்வம் விளைவின்பம் ஏமம் அணியென்ப நாட்டிவ் வைந்து.</p>
+        <p><strong>Couplet Explanation:</strong> A country's wealth are these five: Unfailing health, Fertility, joy, defense and health.</p>
+      </div>
+    </header>
+  
+    <nav class="quick-nav">
+      <label for="nav-select"><strong>Quick Navigation:</strong></label>
+      <select id="nav-select" name="quick-navigation">
+        <option value="">-- Jump to Section --</option>
+        <option value="#calendar-schedule">1. Calendar Schedule</option>
+        <option value="#asa-activities">2a. ASA / Activities Attendance</option>
+        <option value="#asa-sports">2b. ASA Sports Attendance</option>
+        <option value="#asa-general">2c. ASA General Attendance</option>
+        <option value="#student-attendance">3. Students Attendance</option>
+        <option value="#student-grooming">4. Students Grooming</option>
+        <option value="#student-latecoming">5. Students Late Coming</option>
+        <option value="#admission-status">6. Admission Status</option>
+        <option value="#transfer-certificate">7. Transfer Certificate</option>
+        <option value="#parent-activity">8. Parent Activity</option>
+        <option value="#parent-visit">9. Parent Visit</option>
+        <option value="#exam-schedule">10. Exam Schedule</option>
+        <option value="#external-info">11. External Information</option>
+        <option value="#sick-bay">12. Health Centre</option>
+        <option value="#home-school-comm">13. Home School Communication</option>
+        <option value="#disciplinary-measures">14. Disciplinary Measures</option>
+        <option value="#logistics">15. Logistics</option>
+        <option value="#competition-certificates">16. Competition Certificates</option>
+        <option value="#staff-concern">17. Staff Concern</option>
+        <option value="#parent-concern-summary-form">18. Parent Concern</option>
+        <option value="#aep-attendance">19. AEP Attendance</option>
+        <option value="#extended-attendance">20. Extended Attendance</option>
+        <option value="#training-session">21. Training Session</option>
+        <option value="#team-meeting">22. Team Meeting</option>
+        <option value="#special-education">23. Special Education</option>
+        <option value="#hostel-section">24. Hostel</option>
+        <option value="#sec-section">25. SEC</option>
+        <option value="#school-counsellor">26. School Counsellor</option>
+        <option value="#scholorius-section">27. Scholorius / Smart Tail</option>
+      </select>
+    </nav>
+  
+  <!-- Calendar Schedule -->
+  <form id="calendar-form" action="{{ url_for('submit_team1_calendar') }}" method="post">  
+    <section class="dsr-section" id="calendar-schedule">
+      <h3>1. Calendar Schedule</h3>
+      <div class="table-scroll-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">S.No</th>
+              <th rowspan="2">Work Activity</th>
+              <th rowspan="2">Department / Category</th>
+              <th rowspan="2">Session / Activity</th>
+              <th colspan="6">Indicators</th>
+              <th rowspan="2">Nature of Issue</th>
+              <th rowspan="2">Issue Description</th>
+              <th rowspan="2">Commentary</th>
+            </tr>
+            <tr>
+              <th>Department / Grade</th>
+              <th>Planned / Unplanned</th>
+              <th>Total</th>
+              <th>Present</th>
+              <th>Present %</th>
+              <th>Absent %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="2">1</td>
+              <td rowspan="2">Calendar Schedule</td>
+              <td>Jr. School</td>
+              <td><input type="text" name="cal_session_jr"></td>
+              <td><input type="text" name="cal_dept_jr"></td>
+              <td>
+                <select name="cal_plan_jr">
+                  <option value="">Select...</option>
+                  <option value="planned">Planned</option>
+                  <option value="unplanned">Unplanned</option>
+                </select>
+              </td>
+              <td><input type="number" name="cal_total_jr" step="1" class="wide-input"></td>
+              <td><input type="number" name="cal_expected_jr" step="1"></td>
+              <td><input type="number" name="cal_present_pct_jr" step="0.01" placeholder="%"></td>
+              <td><input type="number" name="cal_absent_pct_jr" step="0.01" placeholder="%"></td>
+              <td>
+                <select name="cal_issue_nature_jr">
+                  <option value="">Select Issue Type</option>
+                  <option value="critical">Critical</option>
+                  <option value="manageable">Manageable</option>
+                  <option value="all_well">All Well</option>
+                </select>
+              </td>
+              <td><textarea name="cal_issue_desc_jr" rows="1"></textarea></td>
+              <td><textarea name="cal_comment_jr" rows="1"></textarea></td>
+            </tr>
+            <tr>
+              <td>Sr. School</td>
+              <td><input type="text" name="cal_session_sr"></td>
+              <td><input type="text" name="cal_dept_sr"></td>
+              <td>
+                <select name="cal_plan_sr">
+                  <option value="">Select...</option>
+                  <option value="planned">Planned</option>
+                  <option value="unplanned">Unplanned</option>
+                </select>
+              </td>
+               <td><input type="number" name="cal_total_sr" step="1" class="wide-input"></td>
+              <td><input type="number" name="cal_expected_sr" step="1"></td>
+              <td><input type="number" name="cal_present_pct_sr" step="0.01" placeholder="%"></td>
+              <td><input type="number" name="cal_absent_pct_sr" step="0.01" placeholder="%"></td>
+              <td>
+                <select name="cal_issue_nature_sr">
+                  <option value="">Select Issue Type</option>
+                  <option value="critical">Critical</option>
+                  <option value="manageable">Manageable</option>
+                  <option value="all_well">All Well</option>
+                </select>
+              </td>
+              <td><textarea name="cal_issue_desc_sr" rows="1"></textarea></td>
+              <td><textarea name="cal_comment_sr" rows="1"></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="submit-area">
+        <button type="submit">Submit</button> 
+      </div>
+    </section>
+  </form>
+
+  <!-- ASA / Activities Attendance -->
+  <form id="asa-form" action="{{ url_for('submit_team1_asa') }}" method="post">
+    <section class="dsr-section" id="asa-activities">
+      <h3>2a. ASA / Activities Attendance</h3>
+       <div class="table-scroll-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Work Activity</th>
+              <th>School Strength</th>
+              <th>ASA Enrolled</th>
+              <th>% of Enrolment</th>
+              <th>Activities</th>
+              <th>Expected</th>
+              <th>Attended</th>
+              <th>% of Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="display: none;">
+              <td>2a.1</td>
+              <td>ASA - Paid</td>
+              <td><input type="number" name="asa_strength_paid" step="1"></td>
+              <td><input type="number" name="asa_enrolled_paid" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_paid" step="0.01" placeholder="%"></td>
+              <td><input type="text" name="asa_activities_paid"></td>
+              <td><input type="number" name="asa_expected_paid" step="1"></td>
+              <td><input type="number" name="asa_attended_paid" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_paid" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr style="display: none;">
+              <td>2a.2</td>
+              <td>ASA - Regular</td>
+              <td><input type="number" name="asa_strength_reg" step="1"></td>
+              <td><input type="number" name="asa_enrolled_reg" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_reg" step="0.01" placeholder="%"></td>
+              <td><input type="text" name="asa_activities_reg"></td>
+              <td><input type="number" name="asa_expected_reg" step="1"></td>
+              <td><input type="number" name="asa_attended_reg" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_reg" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2a.1</td>
+              <td>Rifle Shooting</td>
+              <td><input type="number" name="asa_strength_rifle" step="1"></td>
+              <td><input type="number" name="asa_enrolled_rifle" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_rifle" step="0.01" placeholder="%"></td>
+              <td><input type="text" name="asa_activities_rifle"></td>
+              <td><input type="number" name="asa_expected_rifle" step="1"></td>
+              <td><input type="number" name="asa_attended_rifle" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_rifle" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2a.2</td>
+              <td>NCC</td>
+              <td><input type="number" name="asa_strength_ncc" step="1"></td>
+              <td><input type="number" name="asa_enrolled_ncc" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_ncc" step="0.01" placeholder="%"></td>
+              <td><input type="text" name="asa_activities_ncc"></td>
+              <td><input type="number" name="asa_expected_ncc" step="1"></td>
+              <td><input type="number" name="asa_attended_ncc" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_ncc" step="0.01" placeholder="%"></td>
+            </tr>
+             </tbody>
+        </table>
+      </div>
+       <div class="submit-area">
+        <button type="submit">Submit</button>
+      </div>
+    </section>
+  </form>
+<!-- ASA Sports Attendance -->
+<form id="asa-sports-form" action="{{ url_for('submit_team1_asa_sports') }}" method="post">
+  <section class="dsr-section" id="asa-sports">
+    <h3>2b. ASA Sports Attendance</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Work Activity</th>
+            <th>School Strength</th>
+            <th>ASA Enrolled</th>
+            <th>% of Enrolment</th>
+            <th>Expected</th>
+            <th>Attended</th>
+            <th>% of Attendance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2b.1</td>
+            <td>Athletics</td>
+            <td><input type="number" name="asa_strength_athletics" step="1"></td>
+            <td><input type="number" name="asa_enrolled_athletics" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_athletics" step="0.01" placeholder="%"></td>
+            <td><input type="number" name="asa_expected_athletics" step="1"></td>
+            <td><input type="number" name="asa_attended_athletics" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_athletics" step="0.01" placeholder="%"></td>
+          </tr>
+          <tr>
+            <td>2b.2</td>
+            <td>Basketball</td>
+            <td><input type="number" name="asa_strength_basketball" step="1"></td>
+            <td><input type="number" name="asa_enrolled_basketball" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_basketball" step="0.01" placeholder="%"></td>
+            <td><input type="number" name="asa_expected_basketball" step="1"></td>
+            <td><input type="number" name="asa_attended_basketball" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_basketball" step="0.01" placeholder="%"></td>
+          </tr>
+          <tr>
+            <td>2b.3</td>
+            <td>Football</td>
+            <td><input type="number" name="asa_strength_football" step="1"></td>
+            <td><input type="number" name="asa_enrolled_football" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_football" step="0.01" placeholder="%"></td>
+            <td><input type="number" name="asa_expected_football" step="1"></td>
+            <td><input type="number" name="asa_attended_football" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_football" step="0.01" placeholder="%"></td>
+          </tr>
+          <tr>
+            <td>2b.4</td>
+            <td>Throwball</td>
+            <td><input type="number" name="asa_strength_throwball" step="1"></td>
+            <td><input type="number" name="asa_enrolled_throwball" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_throwball" step="0.01" placeholder="%"></td>
+            <td><input type="number" name="asa_expected_throwball" step="1"></td>
+            <td><input type="number" name="asa_attended_throwball" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_throwball" step="0.01" placeholder="%"></td>
+          </tr>
+          <!-- Additional Row for Total -->
+          <tr>
+            <td>2b.5</td>
+            <td><strong>Total</strong></td>
+            <td><input type="number" name="asa_strength_total" step="1"></td>
+            <td><input type="number" name="asa_enrolled_total" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_total" step="0.01" placeholder="%"></td>
+            <td><input type="number" name="asa_expected_total" step="1"></td>
+            <td><input type="number" name="asa_attended_total" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_total" step="0.01" placeholder="%"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="submit-area">
+      <button type="submit">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+  <!-- ASA General Attendance -->
+  <form id="asa-general-form" action="{{ url_for('submit_team1_asa_general') }}" method="post">
+    <section class="dsr-section" id="asa-general">
+      <h3>2c. ASA General Attendance</h3>
+       <div class="table-scroll-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Work Activity</th>
+              <th>School Strength</th>
+              <th>ASA Enrolled</th>
+              <th>% of Enrolment</th>
+              <th>Expected</th>
+              <th>Attended</th>
+              <th>% of Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2c.1</td>
+              <td>Taekwondo</td>
+              <td><input type="number" name="asa_strength_taekwondo" step="1"></td>
+              <td><input type="number" name="asa_enrolled_taekwondo" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_taekwondo" step="0.01" placeholder="%"></td>
+              <td><input type="number" name="asa_expected_taekwondo" step="1"></td>
+              <td><input type="number" name="asa_attended_taekwondo" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_taekwondo" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.2</td>
+              <td>Silambam</td>
+              <td><input type="number" name="asa_strength_silambam" step="1"></td>
+              <td><input type="number" name="asa_enrolled_silambam" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_silambam" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_silambam" step="1"></td>
+              <td><input type="number" name="asa_attended_silambam" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_silambam" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.3</td>
+              <td>Kungfu</td>
+              <td><input type="number" name="asa_strength_kungfu" step="1"></td>
+              <td><input type="number" name="asa_enrolled_kungfu" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_kungfu" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_kungfu" step="1"></td>
+              <td><input type="number" name="asa_attended_kungfu" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_kungfu" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.4</td>
+              <td>Yoga</td>
+              <td><input type="number" name="asa_strength_yoga" step="1"></td>
+              <td><input type="number" name="asa_enrolled_yoga" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_yoga" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_yoga" step="1"></td>
+              <td><input type="number" name="asa_attended_yoga" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_yoga" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.5</td>
+              <td>Table Tennis</td>
+              <td><input type="number" name="asa_strength_tabletennis" step="1"></td>
+              <td><input type="number" name="asa_enrolled_tabletennis" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_tabletennis" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_tabletennis" step="1"></td>
+              <td><input type="number" name="asa_attended_tabletennis" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_tabletennis" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.6</td>
+              <td>Skating</td>
+              <td><input type="number" name="asa_strength_skating" step="1"></td>
+              <td><input type="number" name="asa_enrolled_skating" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_skating" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_skating" step="1"></td>
+              <td><input type="number" name="asa_attended_skating" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_skating" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.7</td>
+              <td>Classical Dance</td>
+              <td><input type="number" name="asa_strength_classicaldance" step="1"></td>
+              <td><input type="number" name="asa_enrolled_classicaldance" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_classicaldance" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_classicaldance" step="1"></td>
+              <td><input type="number" name="asa_attended_classicaldance" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_classicaldance" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.8</td>
+              <td>Western Dance</td>
+              <td><input type="number" name="asa_strength_westerndance" step="1"></td>
+              <td><input type="number" name="asa_enrolled_westerndance" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_westerndance" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_westerndance" step="1"></td>
+              <td><input type="number" name="asa_attended_westerndance" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_westerndance" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.9</td>
+              <td>Keyboard</td>
+              <td><input type="number" name="asa_strength_keyboard" step="1"></td>
+              <td><input type="number" name="asa_enrolled_keyboard" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_keyboard" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_keyboard" step="1"></td>
+              <td><input type="number" name="asa_attended_keyboard" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_keyboard" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.10</td>
+              <td>Guitar</td>
+              <td><input type="number" name="asa_strength_guitar" step="1"></td>
+              <td><input type="number" name="asa_enrolled_guitar" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_guitar" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_guitar" step="1"></td>
+              <td><input type="number" name="asa_attended_guitar" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_guitar" step="0.01" placeholder="%"></td>
+            </tr>
+            <tr>
+              <td>2c.11</td>
+              <td>Drums</td>
+              <td><input type="number" name="asa_strength_drums" step="1"></td>
+              <td><input type="number" name="asa_enrolled_drums" step="1"></td>
+              <td><input type="number" name="asa_enrol_pct_drums" step="0.01" placeholder="%"></td>
+
+              <td><input type="number" name="asa_expected_drums" step="1"></td>
+              <td><input type="number" name="asa_attended_drums" step="1"></td>
+              <td><input type="number" name="asa_attend_pct_drums" step="0.01" placeholder="%"></td>
+            </tr>
+            <!-- Additional Row for Total -->
+          <tr>
+            <td>2c.12</td>
+            <td><strong>Total</strong></td>
+            <td><input type="number" name="asa_strength_total" step="1"></td>
+            <td><input type="number" name="asa_enrolled_total" step="1"></td>
+            <td><input type="number" name="asa_enrol_pct_total" step="0.01" placeholder="%"></td>
+            
+            <td><input type="number" name="asa_expected_total" step="1"></td>
+            <td><input type="number" name="asa_attended_total" step="1"></td>
+            <td><input type="number" name="asa_attend_pct_total" step="0.01" placeholder="%"></td>
+          </tr>
+             </tbody>
+        </table>
+      </div>
+       <div class="submit-area">
+        <button type="submit">Submit</button>
+      </div>
+    </section>
+  </form>
+
+
+<!-- S.No 3: Students Attendance -->
+<form id="student-attendance-form" class="dsr-form" action="{{ url_for('submit_student_attendance') }}" method="post">
+    <section class="dsr-section" id="student-attendance">
+        <h3>3. Students Attendance</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2">S.No</th>
+                    <th rowspan="2">Work Activity</th>
+                    <th rowspan="2">Department / Category</th>
+                    <th rowspan="2">Total Strength</th>
+                    <th colspan="4">Attendance</th>
+                    <th rowspan="2">Nature of Issue</th>
+                    <th rowspan="2">Issue Description</th>
+                    <th rowspan="2">Comments</th>
+                </tr>
+                <tr>
+                    <th>Present</th>
+                    <th>Leave</th>
+                    <th>Absent</th>
+                    <th>Present %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="5">3</td>
+                    <td rowspan="5">Students Attendance</td>
+                    <td>Kindergarten</td>
+                    <td><input type="number" name="att_str_kg" title="KG Total Strength"></td>
+                    <td><input type="number" name="att_present_kg" title="KG Present"></td>
+                    <td><input type="number" name="att_leave_kg" title="KG Leave"></td>
+                    <td><input type="number" name="att_absent_kg" title="KG Absent"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="att_present_pct_kg" title="KG Present %"></td>
+                    <td>
+                        <select name="att_issue_nature_kg" title="KG Nature of Issue">
+                            <option value="">Select Issue Type</option>
+                            <option value="critical">Critical</option>
+                            <option value="manageable">Manageable</option>
+                            <option value="all_well">All Well</option>
+                        </select>
+                    </td>
+                    <td><textarea rows="1" name="att_issue_desc_kg" title="KG Issue Description"></textarea></td>
+                    <td><textarea rows="1" name="att_comment_kg" title="KG Comments"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Gr 1 to 5</td>
+                    <td><input type="number" name="att_str_g15" title="Gr 1-5 Total Strength"></td>
+                    <td><input type="number" name="att_present_g15" title="Gr 1-5 Present"></td>
+                    <td><input type="number" name="att_leave_g15" title="Gr 1-5 Leave"></td>
+                    <td><input type="number" name="att_absent_g15" title="Gr 1-5 Absent"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="att_present_pct_g15" title="Gr 1-5 Present %"></td>
+                    <td><select name="att_issue_nature_g15" title="Gr 1-5 Nature of Issue">
+                        <option value="">Select...</option>
+                        <option value="critical">Critical</option>
+                        <option value="manageable">Manageable</option>
+                        <option value="all_well">All Well</option>
+                    </select></td>
+                    <td><textarea rows="1" name="att_issue_desc_g15" title="Gr 1-5 Issue Description"></textarea></td>
+                    <td><textarea rows="1" name="att_comment_g15" title="Gr 1-5 Comments"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Gr 6 to 10</td>
+                    <td><input type="number" name="att_str_g610" title="Gr 6-10 Total Strength"></td>
+                    <td><input type="number" name="att_present_g610" title="Gr 6-10 Present"></td>
+                    <td><input type="number" name="att_leave_g610" title="Gr 6-10 Leave"></td>
+                    <td><input type="number" name="att_absent_g610" title="Gr 6-10 Absent"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="att_present_pct_g610" title="Gr 6-10 Present %"></td>
+                    <td><select name="att_issue_nature_g610" title="Gr 6-10 Nature of Issue">
+                        <option value="">Select...</option>
+                        <option value="critical">Critical</option>
+                        <option value="manageable">Manageable</option>
+                        <option value="all_well">All Well</option>
+                    </select></td>
+                    <td><textarea rows="1" name="att_issue_desc_g610" title="Gr 6-10 Issue Description"></textarea></td>
+                    <td><textarea rows="1" name="att_comment_g610" title="Gr 6-10 Comments"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Gr 11 to 12</td>
+                    <td><input type="number" name="att_str_g1112" title="Gr 11-12 Total Strength"></td>
+                    <td><input type="number" name="att_present_g1112" title="Gr 11-12 Present"></td>
+                    <td><input type="number" name="att_leave_g1112" title="Gr 11-12 Leave"></td>
+                    <td><input type="number" name="att_absent_g1112" title="Gr 11-12 Absent"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="att_present_pct_g1112" title="Gr 11-12 Present %"></td>
+                    <td><select name="att_issue_nature_g1112" title="Gr 11-12 Nature of Issue">
+                        <option value="">Select...</option>
+                        <option value="critical">Critical</option>
+                        <option value="manageable">Manageable</option>
+                        <option value="all_well">All Well</option>
+                    </select></td>
+                    <td><textarea rows="1" name="att_issue_desc_g1112" title="Gr 11-12 Issue Description"></textarea></td>
+                    <td><textarea rows="1" name="att_comment_g1112" title="Gr 11-12 Comments"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Overall</td>
+                    <td><input type="number" name="att_str_overall" title="Overall Total Strength"></td>
+                    <td><input type="number" name="att_present_overall" title="Overall Present"></td>
+                    <td><input type="number" name="att_leave_overall" title="Overall Leave"></td>
+                    <td><input type="number" name="att_absent_overall" title="Overall Absent"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="att_present_pct_overall" title="Overall Present %"></td>
+                    <td><select name="att_issue_nature_overall" title="Overall Nature of Issue">
+                        <option value="">Select...</option>
+                        <option value="critical">Critical</option>
+                        <option value="manageable">Manageable</option>
+                        <option value="all_well">All Well</option>
+                    </select></td>
+                    <td><textarea rows="1" name="att_issue_desc_overall" title="Overall Issue Description"></textarea></td>
+                    <td><textarea rows="1" name="att_comment_overall" title="Overall Comments"></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+        
+         <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+        
+    </section>
+</form>
+
+<!-- S.No 4: Students Grooming -->
+<form id="grooming-form" class="dsr-form" action="{{ url_for('submit_grooming') }}" method="post">
+    <section class="dsr-section" id="student-grooming">
+        <h3>4. Students Grooming</h3>
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2">S.No</th>
+                        <th rowspan="2">Work Activity</th>
+                        <th rowspan="2">Department / Category</th>
+                        <th rowspan="2">Total Strength</th>
+                        <th rowspan="2">Regular Students</th>
+                        <th colspan="2">Defaulters</th>
+                        <th rowspan="2">Nature of Issue</th>
+                        <th rowspan="2">Issue Description</th>
+                        <th rowspan="2">Comments</th>
+                    </tr>
+                    <tr>
+                        <th>Count</th>
+                        <th>Overall %</th>
+                    </tr>
+                </thead>
+                <tbody id="grooming-tbody">
+                    <tr>
+                        <td>4</td>
+                        <td>Students Grooming</td>
+                        <td>PE</td>
+                        <td><input type="number" name="groom_str[]" title="Grooming Total Strength"></td>
+                        <td><input type="number" name="groom_reg[]" title="Grooming Regular Students"></td>
+                        <td><input type="number" name="groom_def_count[]" title="Grooming Defaulters Count"></td>
+                        <td><input type="number" step="0.01" placeholder="%" name="groom_def_pct[]" title="Grooming Defaulters Overall %"></td>
+                        <td>
+                            <select name="groom_issue_nature[]" title="Grooming Nature of Issue">
+                                <option value="">Select Issue Type</option>
+                                <option value="critical">Critical</option>
+                                <option value="manageable">Manageable</option>
+                                <option value="all_well">All Well</option>
+                            </select>
+                        </td>
+                        <td><textarea rows="1" name="groom_issue_desc[]" title="Grooming Issue Description"></textarea></td>
+                        <td><textarea rows="1" name="groom_comment[]" title="Grooming Comments"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addRow('grooming-tbody')" title="Add Grooming Row">+</button>
+        <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </section>
+</form>
+
+<!-- S.No 5: Students Late Coming -->
+<form id="latecoming-form" class="dsr-form" action="{{ url_for('submit_latecoming') }}" method="post">
+    <section class="dsr-section" id="student-latecoming">
+        <h3>5. Students Late Coming</h3>
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2">S.No</th>
+                        <th rowspan="2">Work Activity</th>
+                        <th rowspan="2">Department / Category</th>
+                        <th rowspan="2">Total Strength</th>
+                        <th rowspan="2">Regular Students</th>
+                        <th colspan="2">Defaulters</th>
+                        <th rowspan="2">Nature of Issue</th>
+                        <th rowspan="2">Issue Description</th>
+                        <th rowspan="2">Comments</th>
+                    </tr>
+                    <tr>
+                        <th>Count</th>
+                        <th>Overall %</th>
+                    </tr>
+                </thead>
+                <tbody id="latecoming-tbody">
+                    <tr>
+                        <td>5</td>
+                        <td>Students Late Coming</td>
+                        <td>PE</td>
+                        <td><input type="number" name="late_str[]" title="Late Coming Total Strength"></td>
+                        <td><input type="number" name="late_reg[]" title="Late Coming Regular Students"></td>
+                        <td><input type="number" name="late_def_count[]" title="Late Coming Defaulters Count"></td>
+                        <td><input type="number" step="0.01" placeholder="%" name="late_def_pct[]" title="Late Coming Defaulters Overall %"></td>
+                        <td>
+                            <select name="late_issue_nature[]" title="Late Coming Nature of Issue">
+                                <option value="">Select Issue Type</option>
+                                <option value="critical">Critical</option>
+                                <option value="manageable">Manageable</option>
+                                <option value="all_well">All Well</option>
+                            </select>
+                        </td>
+                        <td><textarea rows="1" name="late_issue_desc[]" title="Late Coming Issue Description"></textarea></td>
+                        <td><textarea rows="1" name="late_comment[]" title="Late Coming Comments"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addRow('latecoming-tbody')" title="Add Late Coming Row">+</button>
+        <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </section>
+</form>
+
+<!-- S.No 6: Admission Status -->
+<form id="admission-status-form" action="{{ url_for('submit_admission_status') }}" method="post" class="dsr-form">
+  <section class="dsr-section" id="admission-status">
+    <h3>6. Admission Status</h3>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">S.No</th>
+          <th rowspan="2">Work Activity / Category</th>
+          <th colspan="5">Details</th>
+          <th rowspan="2">Admissions Status</th>
+          <th rowspan="2">Nature of Issue</th>
+          <th rowspan="2">Issue Description</th>
+          <th rowspan="2">Comments</th>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>Walkin</th>
+          <th>Appln</th>
+          <th>ELA</th>
+          <th>Recommended</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3">6</td>
+          <td>Adm Status - School</td>
+          <td><input type="number" name="adm_total_school" title="School Adm Total"></td>
+          <td><input type="number" name="adm_walkin_school" title="School Adm Walkin"></td>
+          <td><input type="number" name="adm_appln_school" title="School Adm Appln"></td>
+          <td><input type="number" name="adm_ela_school" title="School Adm ELA"></td>
+          <td><input type="number" name="adm_recomm_school" title="School Adm Recommended"></td>
+          <td><input type="text" name="adm_status_school" title="School Adm Status"></td>
+          <td>
+            <select name="adm_issue_nature_school" title="School Adm Nature of Issue">
+              <option value="">Select...</option>
+              <option value="critical">Critical</option>
+              <option value="manageable">Manageable</option>
+              <option value="all_well">All Well</option>
+            </select>
+          </td>
+          <td><textarea rows="1" name="adm_issue_desc_school" title="School Adm Issue Description"></textarea></td>
+          <td><textarea rows="1" name="adm_comment_school" title="School Adm Comments"></textarea></td>
+        </tr>
+        <tr>
+          <td>Adm. S - Bumble Bee</td>
+          <td><input type="number" name="adm_total_bb" title="Bumble Bee Adm Total"></td>
+          <td><input type="number" name="adm_walkin_bb" title="Bumble Bee Adm Walkin"></td>
+          <td><input type="number" name="adm_appln_bb" title="Bumble Bee Adm Appln"></td>
+          <td><input type="number" name="adm_ela_bb" title="Bumble Bee Adm ELA"></td>
+          <td><input type="number" name="adm_recomm_bb" title="Bumble Bee Adm Recommended"></td>
+          <td><input type="text" name="adm_status_bb" title="Bumble Bee Adm Status"></td>
+          <td>
+            <select name="adm_issue_nature_bb" title="Bumble Bee Adm Nature of Issue">
+              <option value="">Select...</option>
+              <option value="critical">Critical</option>
+              <option value="manageable">Manageable</option>
+              <option value="all_well">All Well</option>
+            </select>
+          </td>
+          <td><textarea rows="1" name="adm_issue_desc_bb" title="Bumble Bee Adm Issue Description"></textarea></td>
+          <td><textarea rows="1" name="adm_comment_bb" title="Bumble Bee Adm Comments"></textarea></td>
+        </tr>
+        <tr>
+          <td>Bumble B Leeds Excel</td>
+          <td><input type="number" name="adm_total_leeds" title="Leeds Excel Adm Total"></td>
+          <td><input type="number" name="adm_walkin_leeds" title="Leeds Excel Adm Walkin"></td>
+          <td><input type="number" name="adm_appln_leeds" title="Leeds Excel Adm Appln"></td>
+          <td><input type="number" name="adm_ela_leeds" title="Leeds Excel Adm ELA"></td>
+          <td><input type="number" name="adm_recomm_leeds" title="Leeds Excel Adm Recommended"></td>
+          <td><input type="text" name="adm_status_leeds" title="Leeds Excel Adm Status"></td>
+          <td>
+            <select name="adm_issue_nature_leeds" title="Leeds Excel Adm Nature of Issue">
+              <option value="">Select...</option>
+              <option value="critical">Critical</option>
+              <option value="manageable">Manageable</option>
+              <option value="all_well">All Well</option>
+            </select>
+          </td>
+          <td><textarea rows="1" name="adm_issue_desc_leeds" title="Leeds Excel Adm Issue Description"></textarea></td>
+          <td><textarea rows="1" name="adm_comment_leeds" title="Leeds Excel Adm Comments"></textarea></td>
+        </tr>
+      </tbody>
+    </table>
+    
+     <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+        
+  </section>
+</form>
+
+<!-- S.No 7: Transfer Certificate -->
+<!-- Transfer Certificate Form -->
+<form id="tc-form" action="{{ url_for('submit_transfer_certificate') }}" method="post" class="dsr-form">
+  <section class="dsr-section" id="transfer-certificate">
+    <h3>7. Transfer Certificate (MLM)</h3>
+    
+    <div class="table-scroll-wrapper">
+      <table id="tc-table">
+        <thead>
+          <tr>
+            <th>Grade</th>
+            <th>Student Name</th>
+            <th>Year @QMIS</th>
+            <th>Reason</th>
+            <th>Staff In-Charge</th>
+            <th>Sibling</th>
+            <th>Issue Nature</th>
+            <th>Issue Description</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody id="tc-rows">
+          <tr>
+            <td><input type="text" name="tc_grade[]" required></td>
+            <td><input type="text" name="tc_name[]" required></td>
+            <td><input type="text" name="tc_year[]"></td>
+            <td><input type="text" name="tc_reason[]"></td>
+            <td><input type="text" name="tc_staff[]"></td>
+            <td><input type="text" name="tc_sibling[]"></td>
+            <td>
+              <select name="tc_issue_nature[]">
+                <option value="">Select</option>
+                <option value="critical">Critical</option>
+                <option value="manageable">Manageable</option>
+                <option value="all_well">All Well</option>
+              </select>
+            </td>
+            <td><textarea name="tc_issue_desc[]" rows="1"></textarea></td>
+            <td><textarea name="tc_comment[]" rows="1"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addTcRow()" title="Add Transfer Certificate Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+<script>
+function addTcRow() {
+  const row = document.querySelector('#tc-rows tr');
+  const clone = row.cloneNode(true);
+  // Clear input values in the clone
+  clone.querySelectorAll('input, select, textarea').forEach(el => el.value = '');
+  document.getElementById('tc-rows').appendChild(clone);
+}
+</script>
+
+
+<!-- S.No 8: Parent Activity -->
+<form id="parent-activity-form" action="{{ url_for('submit_parent_activity') }}" method="post" class="dsr-form">
+  <section class="dsr-section" id="parent-activity">
+    <h3>8. Parent Activity</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">S.No</th>
+            <th rowspan="2">Work Activity</th>
+            <th rowspan="2">Dept/Cat</th>
+            <th rowspan="2">Session/Activity</th>
+            <th rowspan="2">Reported</th>
+            <th rowspan="2">Not Reported</th>
+            <th colspan="4">Indicators</th>
+            <th rowspan="2">Nature of Issue</th>
+            <th rowspan="2">Issue Desc</th>
+            <th rowspan="2">Comments</th>
+          </tr>
+          <tr>
+            <th>Dept</th>
+            <th>Expected</th>
+            <th>Present %</th>
+            <th>Absent %</th>
+          </tr>
+        </thead>
+        <tbody id="parent-activity-tbody">
+          <tr>
+            <td>8</td>
+            <td>Parent Activity</td>
+            <td><input type="text" name="pa_cat[]" title="Parent Activity Dept/Cat"></td>
+            <td><input type="text" name="pa_session[]" title="Parent Activity Session/Activity"></td>
+            <td><input type="number" name="pa_reported[]" title="Parent Activity Reported"></td>
+            <td><input type="number" name="pa_not_reported[]" title="Parent Activity Not Reported"></td>
+            <td><input type="text" name="pa_dept[]" title="Parent Activity Dept"></td>
+            <td><input type="number" name="pa_expected[]" title="Parent Activity Expected"></td>
+            <td><input type="number" step="0.01" name="pa_present_pct[]" placeholder="%" title="Parent Activity Present %"></td>
+            <td><input type="number" step="0.01" name="pa_absent_pct[]" placeholder="%" title="Parent Activity Absent %"></td>
+            <td>
+              <select name="pa_issue_nature[]" title="Parent Activity Nature of Issue">
+                <option value="">Select...</option>
+                <option value="critical">Critical</option>
+                <option value="manageable">Manageable</option>
+                <option value="all_well">All Well</option>
+              </select>
+            </td>
+            <td><textarea rows="1" name="pa_issue_desc[]" title="Parent Activity Issue Description"></textarea></td>
+            <td><textarea rows="1" name="pa_comment[]" title="Parent Activity Comments"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('parent-activity-tbody')" title="Add Parent Activity Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+<!-- S.No 9: Parent Visit -->
+<form id="parent-visit-form" class="dsr-form" action="{{ url_for('submit_team1_parent_visit') }}" method="post">
+    <section class="dsr-section" id="parent-visit">
+        <h3>9. Parent Visit</h3>
+        <div class="table-scroll-wrapper"> 
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2">S.No</th>
+                        <th rowspan="2">Work Activity</th>
+                        <th rowspan="2">Dept/Cat</th>
+                        <th rowspan="2">Grade</th>
+                        <th rowspan="2">Student Name</th>
+                        <th rowspan="2">Year@QMIS</th>
+                        <th rowspan="2">Parent's Profession</th>
+                        <th rowspan="2">Concern/Appreciation</th>
+                        <th rowspan="2">Staff In-charge</th>
+                        <th rowspan="2">Nature of Issue</th>
+                        <th rowspan="2">Issue Desc</th>
+                        <th rowspan="2">Comments</th>
+                    </tr>
+                </thead>
+                <tbody id="parent-visit-tbody"> 
+                    <tr>
+                        <td>9</td>
+                        <td>Parent Visit</td>
+                        <td><input type="text" name="pv_cat[]" title="Parent Visit Dept/Cat"></td>
+                        <td><input type="text" size="5" name="pv_grade[]" title="Parent Visit Grade"></td>
+                        <td><input type="text" name="pv_name[]" title="Parent Visit Student Name"></td>
+                        <td><input type="text" size="8" name="pv_year[]" title="Parent Visit Year@QMIS"></td>
+                        <td><input type="text" name="pv_profession[]" title="Parent Visit Parent's Profession"></td>
+                        <td><textarea rows="1" name="pv_concern[]" title="Parent Visit Concern/Appreciation"></textarea></td>
+                        <td><input type="text" name="pv_staff[]" title="Parent Visit Staff In-charge"></td>
+                        <td>
+                            <select name="pv_issue_nature[]" title="Parent Visit Nature of Issue">
+                                <option value="">Select...</option>
+                                <option value="critical">Critical</option>
+                                <option value="manageable">Manageable</option>
+                                <option value="all_well">All Well</option>
+                            </select>
+                        </td>
+                        <td><textarea rows="1" name="pv_issue_desc[]" title="Parent Visit Issue Description"></textarea></td>
+                        <td><textarea rows="1" name="pv_comment[]" title="Parent Visit Comments"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> 
+        <button type="button" class="add-row-btn" onclick="addRow('parent-visit-tbody')" title="Add Parent Visit Row">+</button>
+             <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </section>
+</form>
+
+<!-- S.No 10: Exam Schedule -->
+<form id="exam-schedule-form" class="dsr-form" action="{{ url_for('submit_team1_exam_schedule') }}" method="post">
+  <section class="dsr-section" id="exam-schedule">
+      <h3>10. Exam Schedule</h3>
+      <table>
+          <thead>
+              <tr>
+                  <th rowspan="2">S.No</th>
+                  <th rowspan="2">Work Activity</th>
+                  <th rowspan="2">Dept/Cat</th>
+                  <th rowspan="2">Schedule</th>
+                  <th rowspan="2">Total Strength</th>
+                  <th rowspan="2">Attended</th>
+                  <th rowspan="2">Not Attended</th>
+                  <th rowspan="2">Nature of Issue</th>
+                  <th rowspan="2">Issue Desc</th>
+                  <th rowspan="2">Comments</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td rowspan="5">10</td>
+                  <td rowspan="5">Exam Schedule</td>
+
+                  <!-- Gr 1 to 5 -->
+                  <td>Gr 1 to 5</td>
+                  <td><input type="text" name="exam_sched_g15" title="Exam Schedule Gr 1-5 Schedule"></td>
+                  <td><input type="number" name="exam_str_g15" title="Exam Schedule Gr 1-5 Total Strength"></td>
+                  <td><input type="number" name="exam_att_g15" title="Exam Schedule Gr 1-5 Attended"></td>
+                  <td><input type="number" name="exam_notatt_g15" title="Exam Schedule Gr 1-5 Not Attended"></td>
+                  <td>
+                      <select name="exam_issue_nature_g15" title="Exam Schedule Gr 1-5 Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="exam_issue_desc_g15" title="Exam Schedule Gr 1-5 Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="exam_comment_g15" title="Exam Schedule Gr 1-5 Comments"></textarea></td>
+              </tr>
+
+              <!-- Gr 6 to 8 -->
+              <tr>
+                  <td>Gr 6 to 8</td>
+                  <td><input type="text" name="exam_sched_g68" title="Exam Schedule Gr 6-8 Schedule"></td>
+                  <td><input type="number" name="exam_str_g68" title="Exam Schedule Gr 6-8 Total Strength"></td>
+                  <td><input type="number" name="exam_att_g68" title="Exam Schedule Gr 6-8 Attended"></td>
+                  <td><input type="number" name="exam_notatt_g68" title="Exam Schedule Gr 6-8 Not Attended"></td>
+                  <td>
+                      <select name="exam_issue_nature_g68" title="Exam Schedule Gr 6-8 Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="exam_issue_desc_g68" title="Exam Schedule Gr 6-8 Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="exam_comment_g68" title="Exam Schedule Gr 6-8 Comments"></textarea></td>
+              </tr>
+
+              <!-- Gr 9 and 10 -->
+              <tr>
+                  <td>Gr 9 and 10</td>
+                  <td><input type="text" name="exam_sched_g910" title="Exam Schedule Gr 9-10 Schedule"></td>
+                  <td><input type="number" name="exam_str_g910" title="Exam Schedule Gr 9-10 Total Strength"></td>
+                  <td><input type="number" name="exam_att_g910" title="Exam Schedule Gr 9-10 Attended"></td>
+                  <td><input type="number" name="exam_notatt_g910" title="Exam Schedule Gr 9-10 Not Attended"></td>
+                  <td>
+                      <select name="exam_issue_nature_g910" title="Exam Schedule Gr 9-10 Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="exam_issue_desc_g910" title="Exam Schedule Gr 9-10 Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="exam_comment_g910" title="Exam Schedule Gr 9-10 Comments"></textarea></td>
+              </tr>
+
+              <!-- Gr 11 -->
+              <tr>
+                  <td>Gr 11</td>
+                  <td><input type="text" name="exam_sched_g11" title="Exam Schedule Gr 11 Schedule"></td>
+                  <td><input type="number" name="exam_str_g11" title="Exam Schedule Gr 11 Total Strength"></td>
+                  <td><input type="number" name="exam_att_g11" title="Exam Schedule Gr 11 Attended"></td>
+                  <td><input type="number" name="exam_notatt_g11" title="Exam Schedule Gr 11 Not Attended"></td>
+                  <td>
+                      <select name="exam_issue_nature_g11" title="Exam Schedule Gr 11 Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="exam_issue_desc_g11" title="Exam Schedule Gr 11 Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="exam_comment_g11" title="Exam Schedule Gr 11 Comments"></textarea></td>
+              </tr>
+
+              <!-- Gr 12 -->
+              <tr>
+                  <td>Gr 12</td>
+                  <td><input type="text" name="exam_sched_g12" title="Exam Schedule Gr 12 Schedule"></td>
+                  <td><input type="number" name="exam_str_g12" title="Exam Schedule Gr 12 Total Strength"></td>
+                  <td><input type="number" name="exam_att_g12" title="Exam Schedule Gr 12 Attended"></td>
+                  <td><input type="number" name="exam_notatt_g12" title="Exam Schedule Gr 12 Not Attended"></td>
+                  <td>
+                      <select name="exam_issue_nature_g12" title="Exam Schedule Gr 12 Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="exam_issue_desc_g12" title="Exam Schedule Gr 12 Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="exam_comment_g12" title="Exam Schedule Gr 12 Comments"></textarea></td>
+              </tr>
+          </tbody>
+      </table>
+
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+<!-- S.No 11: External Agency Info -->
+<form id="external-info-form" class="dsr-form" action="{{ url_for('submit_team1_external_info') }}" method="post">
+  <section class="dsr-section" id="external-info">
+      <h3>11. Information from External Agencies</h3>
+      <table>
+          <thead>
+              <tr>
+                  <th rowspan="2">S.No</th>
+                  <th rowspan="2">Work Activity</th>
+                  <th rowspan="2">Dept/Cat</th>
+                  <th>Mode Receiving</th> 
+                  <th>Mode Sending</th>   
+                  <th rowspan="2">Subject</th>
+                  <th rowspan="2">From</th>
+                  <th rowspan="2">To</th>
+                  <th rowspan="2">Nature of Issue</th>
+                  <th rowspan="2">Issue Desc</th>
+                  <th rowspan="2">Comments</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- CIS -->
+              <tr>
+                  <td rowspan="4">11</td>
+                  <td rowspan="4">External Info</td>
+                  <td>CIS</td>
+                  <td>
+                      <select name="ext_mode_receiving_cis" title="CIS Mode Receiving">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td>
+                      <select name="ext_mode_sending_cis" title="CIS Mode Sending">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td><input type="text" name="ext_subj_cis" title="CIS Subject"></td>
+                  <td><input type="text" name="ext_from_cis" title="CIS From"></td>
+                  <td><input type="text" name="ext_to_cis" title="CIS To"></td>
+                  <td>
+                      <select name="ext_issue_nature_cis" title="CIS Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="ext_issue_desc_cis" title="CIS Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="ext_comment_cis" title="CIS Comments"></textarea></td>
+              </tr>
+
+              <!-- CBSE -->
+              <tr>
+                  <td>CBSE</td>
+                  <td>
+                      <select name="ext_mode_receiving_cbse" title="CBSE Mode Receiving">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td>
+                      <select name="ext_mode_sending_cbse" title="CBSE Mode Sending">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td><input type="text" name="ext_subj_cbse" title="CBSE Subject"></td>
+                  <td><input type="text" name="ext_from_cbse" title="CBSE From"></td>
+                  <td><input type="text" name="ext_to_cbse" title="CBSE To"></td>
+                  <td>
+                      <select name="ext_issue_nature_cbse" title="CBSE Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="ext_issue_desc_cbse" title="CBSE Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="ext_comment_cbse" title="CBSE Comments"></textarea></td>
+              </tr>
+
+              <!-- CEO/State Government -->
+              <tr>
+                  <td>CEO/State Government</td>
+                  <td>
+                      <select name="ext_mode_receiving_state" title="State Gov Mode Receiving">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td>
+                      <select name="ext_mode_sending_state" title="State Gov Mode Sending">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td><input type="text" name="ext_subj_state" title="State Gov Subject"></td>
+                  <td><input type="text" name="ext_from_state" title="State Gov From"></td>
+                  <td><input type="text" name="ext_to_state" title="State Gov To"></td>
+                  <td>
+                      <select name="ext_issue_nature_state" title="State Gov Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="ext_issue_desc_state" title="State Gov Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="ext_comment_state" title="State Gov Comments"></textarea></td>
+              </tr>
+
+              <!-- EMIS -->
+              <tr>
+                  <td>EMIS</td>
+                  <td>
+                      <select name="ext_mode_receiving_emis" title="EMIS Mode Receiving">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td>
+                      <select name="ext_mode_sending_emis" title="EMIS Mode Sending">
+                          <option value="">Select...</option>
+                          <option value="mail">Mail</option>
+                          <option value="post">Post</option>
+                          <option value="both">Both</option>
+                          <option value="none">None</option>
+                      </select>
+                  </td>
+                  <td><input type="text" name="ext_subj_emis" title="EMIS Subject"></td>
+                  <td><input type="text" name="ext_from_emis" title="EMIS From"></td>
+                  <td><input type="text" name="ext_to_emis" title="EMIS To"></td>
+                  <td>
+                      <select name="ext_issue_nature_emis" title="EMIS Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="ext_issue_desc_emis" title="EMIS Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="ext_comment_emis" title="EMIS Comments"></textarea></td>
+              </tr>
+          </tbody>
+      </table>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+<!-- S.No 12: Sick Bay -->
+<form id="sick-bay-form" class="dsr-form" action="{{ url_for('submit_team1_sick_bay') }}" method="post">
+  <section class="dsr-section" id="sick-bay">
+      <h3>12. Health Centre</h3>
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th rowspan="2">S.No</th>
+                      <th rowspan="2">Work Activity</th>
+                      <th rowspan="2">Dept/Cat</th>
+                      <th rowspan="2">Grade</th>
+                      <th rowspan="2">Student Name</th>
+                      <th rowspan="2">Illness</th>
+                      <th rowspan="2">Informed By</th>
+                      <th rowspan="2">Informed to PRM</th>
+                      <th rowspan="2">Nature of Issue</th>
+                      <th rowspan="2">Issue Desc</th>
+                      <th rowspan="2">Comments</th>
+                  </tr>
+              </thead>
+              <tbody id="sick-bay-tbody">
+                  <tr>
+                      <td>12</td>
+                      <td>Health Centre</td>
+                      <td>Students</td>
+                      <td><input type="text" size="5" name="sick_grade[]" title="Sick Bay Grade"></td>
+                      <td><input type="text" name="sick_name[]" title="Sick Bay Student Name"></td>
+                      <td><input type="text" name="sick_illness[]" title="Sick Bay Illness"></td>
+                      <td><input type="text" name="sick_inf_by[]" title="Sick Bay Informed By"></td>
+                      <td><input type="text" name="sick_inf_to[]" title="Sick Bay Informed to PRM"></td>
+                      <td>
+                          <select name="sick_issue_nature[]" title="Sick Bay Nature of Issue">
+                              <option value="">Select...</option>
+                              <option value="all_well">All Well</option>
+                              <option value="manageable">Manageable</option>
+                              <option value="critical">Critical</option>
+                          </select>
+                      </td>
+                      <td><textarea rows="1" name="sick_issue_desc[]" title="Sick Bay Issue Description"></textarea></td>
+                      <td><textarea rows="1" name="sick_comment[]" title="Sick Bay Comments"></textarea></td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <button type="button" class="add-row-btn" onclick="addRow('sick-bay-tbody')" title="Add Sick Bay Row">+</button>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+<!-- S.No 13: Home School Communications -->
+<form id="home-school-form" class="dsr-form" action="{{ url_for('submit_team1_home_school_comm') }}" method="post">
+  <section class="dsr-section" id="home-school-comm">
+      <h3>13. Home School Communications (MLM)</h3>
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th rowspan="2">S.No</th>
+                      <th rowspan="2">Work Activity</th>
+                      <th rowspan="2">Dept/Cat</th>
+                      <th rowspan="2">Grade</th>
+                      <th rowspan="2">Planned/Unplanned</th>
+                      <th rowspan="2">Printed Date</th>
+                      <th rowspan="2">Distributed Date</th>
+                      <th rowspan="2">Activity/Event</th>
+                      <th rowspan="2">Status</th>
+                      <th rowspan="2">Nature of Issue</th>
+                      <th rowspan="2">Issue Desc</th>
+                      <th rowspan="2">Comments</th>
+                  </tr>
+              </thead>
+              <tbody id="home-school-tbody">
+                  <tr>
+                      <td>13</td><td>Home School Comm</td><td>MLM</td>
+                      <td><input type="text" size="5" name="hsc_grade[]" title="HSC Grade"></td>
+                      <td>
+                          <select name="hsc_plan[]" title="HSC Planned/Unplanned">
+                              <option value="">Select...</option>
+                              <option value="planned">Planned</option>
+                              <option value="unplanned">Unplanned</option>
+                          </select>
+                      </td>
+                      <td><input type="date" name="hsc_print_date[]" title="HSC Printed Date"></td>
+                      <td><input type="date" name="hsc_dist_date[]" title="HSC Distributed Date"></td>
+                      <td><input type="text" name="hsc_activity[]" title="HSC Activity/Event"></td>
+                      <td><input type="text" size="8" name="hsc_status[]" title="HSC Status"></td>
+                      <td>
+                          <select name="hsc_issue_nature[]" title="HSC Nature of Issue">
+                              <option value="">Select...</option>
+                              <option value="all_well">All Well</option>
+                              <option value="manageable">Manageable</option>
+                              <option value="critical">Critical</option>
+                          </select>
+                      </td>
+                      <td><textarea rows="1" name="hsc_issue_desc[]" title="HSC Issue Description"></textarea></td>
+                      <td><textarea rows="1" name="hsc_comment[]" title="HSC Comments"></textarea></td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <button type="button" class="add-row-btn" onclick="addRow('home-school-tbody')" title="Add Home School Communication Row">+</button>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+<!-- S.No 14: Disciplinary Measures -->
+<form id="disciplinary-form" class="dsr-form" action="{{ url_for('submit_team1_disciplinary') }}" method="post">
+  <section class="dsr-section" id="disciplinary-measures">
+      <h3>14. Disciplinary Measures (MLM)</h3>
+      <table>
+          <thead>
+              <tr>
+                  <th rowspan="2">S.No</th> <th rowspan="2">Work Activity</th> <th rowspan="2">Dept/Cat</th>
+                  <th rowspan="2">Grade</th> <th rowspan="2">Student Name</th> <th rowspan="2">Issue</th>
+                  <th rowspan="2">Action Taken</th> <th rowspan="2">Nature of Issue</th>
+                  <th rowspan="2">Issue Desc</th> <th rowspan="2">Comments</th>
+              </tr>
+          </thead>
+          <tbody id="disciplinary-tbody">
+              <tr>
+                  <td>14</td> <td>Disciplinary</td> <td>MLM</td>
+                  <td><input type="text" size="5" name="disc_grade[]" title="Disciplinary Grade"></td>
+                  <td><input type="text" name="disc_name[]" title="Disciplinary Student Name"></td>
+                  <td><textarea rows="1" name="disc_issue[]" title="Disciplinary Issue"></textarea></td>
+                  <td><textarea rows="1" name="disc_action[]" title="Disciplinary Action Taken"></textarea></td>
+                  <td>
+                      <select name="disc_issue_nature[]" title="Disciplinary Nature of Issue">
+                          <option value="">Select...</option>
+                          <option value="all_well">All Well</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="critical">Critical</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="disc_issue_desc[]" title="Disciplinary Issue Description"></textarea></td>
+                  <td><textarea rows="1" name="disc_comment[]" title="Disciplinary Comments"></textarea></td>
+              </tr>
+          </tbody>
+      </table>
+      <button type="button" class="add-row-btn" onclick="addRow('disciplinary-tbody')" title="Add Disciplinary Row">+</button>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+<!-- S.No 15: Logistics -->
+<form id="logistics-form" class="dsr-form" action="{{ url_for('submit_team1_logistics') }}" method="post">
+  <section class="dsr-section" id="logistics">
+      <h3>15. Logistics (Logistics Team)</h3>
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th rowspan="2">S.No</th> <th rowspan="2">Work Activity</th> <th rowspan="2">Dept/Cat</th>
+                      <th colspan="2">Materials Inward</th> <th colspan="2">Materials Outward</th>
+                      <th colspan="2">Additional Sales</th> <th rowspan="2">Nature of Issue</th>
+                      <th rowspan="2">Issue Desc</th> <th rowspan="2">Comments</th>
+                  </tr>
+                  <tr>
+                      <th>Material</th> <th>Qty</th> <th>Material</th> <th>Qty</th>
+                      <th>Qty</th> <th>Material</th>
+                  </tr>
+              </thead>
+              <tbody id="logistics-tbody">
+                  <tr>
+                      <td>15</td> <td>Logistics</td> <td>Logistics Team</td>
+                      <td><input type="text" name="log_in_mat[]" title="Logistics Inward Material"></td>
+                      <td><input type="number" name="log_in_qty[]" title="Logistics Inward Qty"></td>
+                      <td><input type="text" name="log_out_mat[]" title="Logistics Outward Material"></td>
+                      <td><input type="number" name="log_out_qty[]" title="Logistics Outward Qty"></td>
+                      <td><input type="number" name="log_sale_qty[]" title="Logistics Additional Sales Qty"></td>
+                      <td><input type="text" name="log_sale_mat[]" title="Logistics Additional Sales Material"></td>
+                      <td>
+                          <select name="log_issue_nature[]" title="Logistics Nature of Issue">
+                              <option value="">Select...</option>
+                              <option value="all_well">All Well</option>
+                              <option value="manageable">Manageable</option>
+                              <option value="critical">Critical</option>
+                          </select>
+                      </td>
+                      <td><textarea rows="1" name="log_issue_desc[]" title="Logistics Issue Description"></textarea></td>
+                      <td><textarea rows="1" name="log_comment[]" title="Logistics Comments"></textarea></td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <button type="button" class="add-row-btn" onclick="addRow('logistics-tbody')" title="Add Logistics Row">+</button>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+<!-- S.No 16: Intra Grade Competition Certificate -->
+<form id="competition-cert-form" class="dsr-form" action="{{ url_for('submit_competition_cert') }}" method="post">
+  <section class="dsr-section" id="competition-certificates">
+    <h3>16. Intra Grade Competition Certificate (Certificates Team)</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">S.No</th> <th rowspan="2">Work Activity</th> <th rowspan="2">Dept/Cat</th>
+            <th rowspan="2">Grade</th> <th rowspan="2">Activity</th> <th rowspan="2">Activity Date</th>
+            <th rowspan="2">No. of Certs</th> <th rowspan="2">Dist. Status</th> <th rowspan="2">Nature of Issue</th>
+            <th rowspan="2">Issue Desc</th> <th rowspan="2">Comments</th>
+          </tr>
+        </thead>
+        <tbody id="competition-cert-tbody">
+          <tr>
+            <td>16</td> <td>Competition Cert</td> <td>Certificates Team</td>
+            <td><input type="text" size="5" name="cert_grade[]" title="Competition Cert Grade"></td>
+            <td><input type="text" name="cert_activity[]" title="Competition Cert Activity"></td>
+            <td><input type="date" name="cert_date[]" title="Competition Cert Activity Date"></td>
+            <td><input type="number" name="cert_no[]" title="Competition Cert No. of Certs"></td>
+            <td><input type="text" name="cert_status[]" title="Competition Cert Dist. Status"></td>
+            <td>
+              <select name="cert_issue_nature[]" title="Competition Cert Nature of Issue">
+                <option value="">Select...</option>
+                <option value="all_well">All Well</option>
+                <option value="manageable">Manageable</option>
+                <option value="critical">Critical</option>
+              </select>
+            </td>
+            <td><textarea rows="1" name="cert_issue_desc[]" title="Competition Cert Issue Description"></textarea></td>
+            <td><textarea rows="1" name="cert_comment[]" title="Competition Cert Comments"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('competition-cert-tbody')" title="Add Competition Certificate Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- S.No 17: Staff Concern -->
+<form id="staff-concern-form" class="dsr-form" action="{{ url_for('submit_staff_concern') }}" method="post">
+  <section class="dsr-section" id="staff-concern">
+    <h3>17. Staff Concern</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">S.No</th>
+            <th rowspan="2">Work Activity</th>
+            <th rowspan="2">Dept/Cat</th>
+            <th rowspan="2">Name</th>
+            <th rowspan="2">Dept</th>
+            <th rowspan="2">Incharges Handled</th>
+            <th rowspan="2">Nature of Issue</th>
+            <th rowspan="2">Issue Desc</th>
+            <th rowspan="2">Comments</th>
+          </tr>
+        </thead>
+        <tbody id="staff-concern-tbody">
+          <tr>
+            <td>17</td>
+            <td>Staff Concern</td>
+            <td><input type="text" name="sc_cat[]" title="Staff Concern Dept/Cat"></td>
+            <td><input type="text" name="sc_name[]" title="Staff Concern Name"></td>
+            <td><input type="text" name="sc_dept[]" title="Staff Concern Dept"></td>
+            <td><input type="text" name="sc_incharge[]" title="Staff Concern Incharges Handled"></td>
+            <td>
+              <select name="sc_issue_nature[]" title="Staff Concern Nature of Issue">
+                <option value="">Select...</option>
+                <option value="all_well">All Well</option>
+                <option value="manageable">Manageable</option>
+                <option value="critical">Critical</option>
+              </select>
+            </td>
+            <td><textarea rows="1" name="sc_issue_desc[]" title="Staff Concern Issue Description"></textarea></td>
+            <td><textarea rows="1" name="sc_comment[]" title="Staff Concern Comments"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('staff-concern-tbody')" title="Add Staff Concern Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+<!-- S.No 17:b Student Concern -->
+<form id="student-concern-form" class="dsr-form" action="{{ url_for('submit_student_concern') }}" method="post">
+  <section class="dsr-section" id="student-concern">
+    <h3>17b. Student Concern</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">S.No</th>
+            <th rowspan="2">Work Activity</th>
+            <th rowspan="2">Dept/Cat</th>
+            <th rowspan="2">Student Name</th>
+            <th rowspan="2">Class/Section</th>
+            <th rowspan="2">Incharges Handled</th>
+            <th rowspan="2">Nature of Issue</th>
+            <th rowspan="2">Issue Desc</th>
+            <th rowspan="2">Comments</th>
+          </tr>
+        </thead>
+        <tbody id="student-concern-tbody">
+          <tr>
+            <td>17b</td>
+            <td>Student Concern</td>
+            <td><input type="text" name="st_cat[]" title="Student Concern Dept/Cat"></td>
+            <td><input type="text" name="st_name[]" title="Student Concern Student Name"></td>
+            <td><input type="text" name="st_class[]" title="Student Concern Class/Section"></td>
+            <td><input type="text" name="st_incharge[]" title="Student Concern Incharges Handled"></td>
+            <td>
+              <select name="st_issue_nature[]" title="Student Concern Nature of Issue">
+                <option value="">Select...</option>
+                <option value="all_well">All Well</option>
+                <option value="manageable">Manageable</option>
+                <option value="critical">Critical</option>
+              </select>
+            </td>
+            <td><textarea rows="1" name="st_issue_desc[]" title="Student Concern Issue Description"></textarea></td>
+            <td><textarea rows="1" name="st_comment[]" title="Student Concern Comments"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('student-concern-tbody')" title="Add Student Concern Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- S.No 18: Parent Concern -->
+<!-- 18a. Parent Concern Summary -->
+<form id="parent-concern-summary-form" class="dsr-form" action="{{ url_for('submit_parent_concern_summary') }}" method="post">
+  <section class="dsr-section" id="parent-concern-summary">
+    <h3>18a. Parent Concern Summary</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">S.No</th>
+            <th rowspan="2">Work Activity</th>
+            <th rowspan="2">Dept/Cat</th>
+            <th rowspan="2">No. of concerns</th>
+            <th rowspan="2">Closed</th>
+            <th colspan="2">Still in loop</th>
+            <th rowspan="2">Nature of Issue</th>
+            <th rowspan="2">Issue Desc</th>
+            <th rowspan="2">Comments</th>
+          </tr>
+          <tr>
+            <th>[1-3 days]</th>
+            <th>> 3 days</th>
+          </tr>
+        </thead>
+        <tbody id="parent-concern-summary-tbody">
+          <tr>
+            <td>18</td>
+            <td>Parent Concern</td>
+            <td><input type="text" name="pc_summary_cat[]" title="Parent Concern Summary Dept/Cat"></td>
+            <td><input type="number" name="pc_summary_no[]" title="Parent Concern Summary No. of concerns"></td>
+            <td><input type="number" name="pc_summary_closed[]" title="Parent Concern Summary Closed"></td>
+            <td><input type="number" name="pc_summary_loop13[]" title="Still in loop [1-3 days]"></td>
+            <td><input type="number" name="pc_summary_loop3plus[]" title="Still in loop > 3 days"></td>
+            <td>
+              <select name="pc_summary_issue_nature[]" title="Nature of Issue">
+                <option value="">Select...</option>
+                <option value="all_well">All Well</option>
+                <option value="manageable">Manageable</option>
+                <option value="critical">Critical</option>
+              </select>
+            </td>
+            <td><textarea rows="1" name="pc_summary_issue_desc[]" title="Issue Description"></textarea></td>
+            <td><textarea rows="1" name="pc_summary_comment[]" title="Comments"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('parent-concern-summary-tbody')" title="Add Parent Concern Summary Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- 18b. Parent Concern Details -->
+<form id="parent-concern-detail-form" class="dsr-form" action="{{ url_for('submit_parent_concern_detail') }}" method="post">
+  <section class="dsr-section" id="parent-concern-detail">
+    <h3>18b. Parent Concern Details</h3>
+    <div class="table-scroll-wrapper">
+      <table>
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Grade</th>
+          <th>Concern Expressed</th>
+          <th>Incharges Handled</th>
+          <th>Nature of Issue</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody id="parent-concern-details-tbody">
+        <tr>
+          <td><input type="text" name="pc_detail_name[]" title="Student Name"></td>
+          <td><input type="text" name="pc_detail_grade[]" title="Grade" size="5"></td>
+          <td><textarea rows="1" name="pc_detail_concern[]" title="Concern Expressed"></textarea></td>
+          <td><input type="text" name="pc_detail_incharge[]" title="Incharges Handled"></td>
+          <td>
+            <select name="pc_detail_issue_nature[]" title="Nature of Issue">
+              <option value="">Select...</option>
+              <option value="all_well">All Well</option>
+              <option value="manageable">Manageable</option>
+              <option value="critical">Critical</option>
+            </select>
+          </td>
+          <td><textarea rows="1" name="pc_detail_comment[]" title="Comments"></textarea></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addRow('parent-concern-details-tbody')" title="Add Row">+</button>
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- S.No 19: AEP Attendance -->
+<form id="aep-form" class="dsr-form" action="{{ url_for('submit_aep') }}" method="post">
+  <section class="dsr-section" id="aep-attendance">
+    <h3>19. AEP Attendance</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Activity</th>
+          <th>Grade/Group</th>
+          <th>Strength</th>
+          <th>Enrolled</th>
+          <th>% Enrol.</th>
+          <th>Programmes/Subjects</th>
+          <th>Expected</th>
+          <th>Attended</th>
+          <th>% Attend.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="2">19</td>
+          <td rowspan="2">AEP</td>
+          <td>Grade 11</td>
+          <td><input type="number" name="aep_str_g11" title="AEP Grade 11 Strength"></td>
+          <td><input type="number" name="aep_enr_g11" title="AEP Grade 11 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="aep_enrpct_g11" title="AEP Grade 11 % Enrol."></td>
+          <td><input type="text" name="aep_prog_g11" title="AEP Grade 11 Programmes/Subjects"></td>
+          <td><input type="number" name="aep_exp_g11" title="AEP Grade 11 Expected"></td>
+          <td><input type="number" name="aep_att_g11" title="AEP Grade 11 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="aep_attpct_g11" title="AEP Grade 11 % Attend."></td>
+        </tr>
+        <tr>
+          <td>Grade 12</td>
+          <td><input type="number" name="aep_str_g12" title="AEP Grade 12 Strength"></td>
+          <td><input type="number" name="aep_enr_g12" title="AEP Grade 12 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="aep_enrpct_g12" title="AEP Grade 12 % Enrol."></td>
+          <td><input type="text" name="aep_prog_g12" title="AEP Grade 12 Programmes/Subjects"></td>
+          <td><input type="number" name="aep_exp_g12" title="AEP Grade 12 Expected"></td>
+          <td><input type="number" name="aep_att_g12" title="AEP Grade 12 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="aep_attpct_g12" title="AEP Grade 12 % Attend."></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- S.No 20: Extended Class Attendance -->
+<form id="extended-class-form" class="dsr-form" action="{{ url_for('submit_extended_class') }}" method="post">
+  <section class="dsr-section" id="extended-attendance">
+    <h3>20. Extended Class Attendance</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Activity</th>
+          <th>Grade/Group</th>
+          <th>Strength</th>
+          <th>Enrolled</th>
+          <th>% Enrol.</th>
+          <th>Programmes/Subjects</th>
+          <th>Expected</th>
+          <th>Attended</th>
+          <th>% Attend.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="4">20</td>
+          <td rowspan="4">Extended Class</td>
+          <td>3 to 5</td>
+          <td><input type="number" name="ec_str_g35" title="EC 3-5 Strength"></td>
+          <td><input type="number" name="ec_enr_g35" title="EC 3-5 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_enrpct_g35" title="EC 3-5 % Enrol."></td>
+          <td><input type="text" name="ec_subj_g35" title="EC 3-5 Programmes/Subjects"></td>
+          <td><input type="number" name="ec_exp_g35" title="EC 3-5 Expected"></td>
+          <td><input type="number" name="ec_att_g35" title="EC 3-5 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_attpct_g35" title="EC 3-5 % Attend."></td>
+        </tr>
+        <tr>
+          <td>6 to 8</td>
+          <td><input type="number" name="ec_str_g68" title="EC 6-8 Strength"></td>
+          <td><input type="number" name="ec_enr_g68" title="EC 6-8 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_enrpct_g68" title="EC 6-8 % Enrol."></td>
+          <td><input type="text" name="ec_subj_g68" title="EC 6-8 Programmes/Subjects"></td>
+          <td><input type="number" name="ec_exp_g68" title="EC 6-8 Expected"></td>
+          <td><input type="number" name="ec_att_g68" title="EC 6-8 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_attpct_g68" title="EC 6-8 % Attend."></td>
+        </tr>
+        <tr>
+          <td>9 and 10</td>
+          <td><input type="number" name="ec_str_g910" title="EC 9-10 Strength"></td>
+          <td><input type="number" name="ec_enr_g910" title="EC 9-10 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_enrpct_g910" title="EC 9-10 % Enrol."></td>
+          <td><input type="text" name="ec_subj_g910" title="EC 9-10 Programmes/Subjects"></td>
+          <td><input type="number" name="ec_exp_g910" title="EC 9-10 Expected"></td>
+          <td><input type="number" name="ec_att_g910" title="EC 9-10 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_attpct_g910" title="EC 9-10 % Attend."></td>
+        </tr>
+        <tr>
+          <td>11 and 12</td>
+          <td><input type="number" name="ec_str_g1112" title="EC 11-12 Strength"></td>
+          <td><input type="number" name="ec_enr_g1112" title="EC 11-12 Enrolled"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_enrpct_g1112" title="EC 11-12 % Enrol."></td>
+          <td><input type="text" name="ec_subj_g1112" title="EC 11-12 Programmes/Subjects"></td>
+          <td><input type="number" name="ec_exp_g1112" title="EC 11-12 Expected"></td>
+          <td><input type="number" name="ec_att_g1112" title="EC 11-12 Attended"></td>
+          <td><input type="number" step="0.01" placeholder="%" name="ec_attpct_g1112" title="EC 11-12 % Attend."></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Submit</button>
+    </div>
+  </section>
+</form>
+
+
+<!-- S.No 21: Training Session -->
+<form id="training-form" class="dsr-form" action="{{ url_for('submit_training_session') }}" method="post">
+    <section class="dsr-section" id="training-session">
+        <h3>21. Training Session</h3>
+
+        <div class="table-scroll-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th><th>Activity</th><th>Teacher Name</th><th>Topic</th>
+                        <th>Conducted by</th><th>In Person/Online</th><th>Duration</th>
+                        <th>Report Shared</th><th>No. Participants</th>
+                    </tr>
+                </thead>
+                <tbody id="training-tbody">
+                    <tr>
+                        <td>21</td><td>Training</td>
+                        <td><input type="text" name="train_teacher[]" title="Training Teacher Name"></td>
+                        <td><input type="text" name="train_topic[]" title="Training Topic"></td>
+                        <td><input type="text" name="train_by[]" title="Training Conducted by"></td>
+                        <td>
+                            <select name="train_mode[]" title="Training In Person/Online">
+                                <option value="">Select Mode...</option>
+                                <option value="in_person">In Person</option>
+                                <option value="online">Online</option>
+                            </select>
+                        </td>
+                        <td><input type="text" name="train_duration[]" title="Training Duration"></td>
+                        <td><input type="text" name="train_report[]" title="Training Report Shared"></td>
+                        <td><input type="number" name="train_participants[]" title="Training No. Participants"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addRow('training-tbody')" title="Add Training Session Row">+</button>
+        <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </section>
+</form>
+
+<!-- S.No 22: Team Weekly Meeting -->
+
+<form id="weekly-meeting-form" class="dsr-form" action="{{ url_for('submit_team_meeting') }}" method="post">
+    <section class="dsr-section" id="team-meeting">
+        <h3>22. Team Weekly Meeting</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>S.No</th><th>Activity</th><th>Grades</th><th>Headed by</th>
+                    <th>Agenda</th><th>Actual Strength</th><th>Attended</th><th>% Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="6">22</td>
+                    <td rowspan="6">Weekly Meeting</td>
+
+                    <td>KG</td>
+                    <td><input type="text" name="meet_head_kg" title="Weekly Meeting KG Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_kg" title="Weekly Meeting KG Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_kg" title="Weekly Meeting KG Actual Strength"></td>
+                    <td><input type="number" name="meet_att_kg" title="Weekly Meeting KG Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_kg" title="Weekly Meeting KG % Attendance"></td>
+                </tr>
+
+                <tr>
+                    <td>1 and 2</td>
+                    <td><input type="text" name="meet_head_12" title="Weekly Meeting 1 and 2 Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_12" title="Weekly Meeting 1 and 2 Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_12" title="Weekly Meeting 1 and 2 Actual Strength"></td>
+                    <td><input type="number" name="meet_att_12" title="Weekly Meeting 1 and 2 Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_12" title="Weekly Meeting 1 and 2 % Attendance"></td>
+                </tr>
+
+                <tr>
+                    <td>3 to 5</td>
+                    <td><input type="text" name="meet_head_35" title="Weekly Meeting 3 to 5 Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_35" title="Weekly Meeting 3 to 5 Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_35" title="Weekly Meeting 3 to 5 Actual Strength"></td>
+                    <td><input type="number" name="meet_att_35" title="Weekly Meeting 3 to 5 Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_35" title="Weekly Meeting 3 to 5 % Attendance"></td>
+                </tr>
+
+                <tr>
+                    <td>6 to 8</td>
+                    <td><input type="text" name="meet_head_68" title="Weekly Meeting 6 to 8 Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_68" title="Weekly Meeting 6 to 8 Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_68" title="Weekly Meeting 6 to 8 Actual Strength"></td>
+                    <td><input type="number" name="meet_att_68" title="Weekly Meeting 6 to 8 Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_68" title="Weekly Meeting 6 to 8 % Attendance"></td>
+                </tr>
+
+                <tr>
+                    <td>9 and 10</td>
+                    <td><input type="text" name="meet_head_910" title="Weekly Meeting 9 and 10 Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_910" title="Weekly Meeting 9 and 10 Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_910" title="Weekly Meeting 9 and 10 Actual Strength"></td>
+                    <td><input type="number" name="meet_att_910" title="Weekly Meeting 9 and 10 Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_910" title="Weekly Meeting 9 and 10 % Attendance"></td>
+                </tr>
+
+                <tr>
+                    <td>11 and 12</td>
+                    <td><input type="text" name="meet_head_1112" title="Weekly Meeting 11 and 12 Headed by"></td>
+                    <td><textarea rows="1" name="meet_agenda_1112" title="Weekly Meeting 11 and 12 Agenda"></textarea></td>
+                    <td><input type="number" name="meet_str_1112" title="Weekly Meeting 11 and 12 Actual Strength"></td>
+                    <td><input type="number" name="meet_att_1112" title="Weekly Meeting 11 and 12 Attended"></td>
+                    <td><input type="number" step="0.01" placeholder="%" name="meet_attpct_1112" title="Weekly Meeting 11 and 12 % Attendance"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="submit-area">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </section>
+</form>
+
+
+<!-- DSR - Special Education Form -->
+<form id="special-education-form" class="dsr-form" action="{{ url_for('submit_special_education') }}" method="post">
+  <section class="dsr-section" id="special-education">
+      <h3>23.Special Education</h3>
+      <table>
+          <thead>
+              <tr>
+                  <th>S.No</th>
+                  <th>Classes</th>
+                  <th>Total No. Students</th>
+                  <th>As on Date</th>
+                  <th>Attended</th>
+                  <th>Not Attended</th>
+                  <th>Nature of Issue</th>
+                  <th>New Joinee / Assessment / Observation</th>
+                  <th>General Concern</th>
+                  <th>Comments</th>
+                  <th>Schedule</th>
+              </tr>
+          </thead>
+          <tbody id="special-education-tbody">
+              {% set class_data = [
+                  {'name': 'Children with special needs', 'schedule': '1 - 4 periods per day'},
+                  {'name': 'Foundation course', 'schedule': '4 periods per day'},
+                  {'name': 'SIP', 'schedule': '3 periods per week'},
+                  {'name': 'Reading', 'schedule': '3 periods per week'}
+              ] %}
+              {% for item in class_data %}
+              <tr>
+                  <td>{{ loop.index }}</td> <!-- Jinja's 1-based index -->
+                  <td>{{ item.name }}</td>
+                  <input type="hidden" name="class_name[]" value="{{ item.name }}">
+                  <input type="hidden" name="schedule[]" value="{{ item.schedule }}">
+                  <td><input type="number" name="total_students[]" min="0"></td>
+                  <td><input type="date" name="as_on_date[]"></td>
+                  <td><input type="number" name="attended[]" min="0"></td>
+                  <td><input type="number" name="not_attended[]" min="0"></td>
+                  <td>
+                      <select name="nature_of_issue[]">
+                          <option value="">Select...</option>
+                          <option value="critical">Critical</option>
+                          <option value="manageable">Manageable</option>
+                          <option value="all_well">All Well</option>
+                      </select>
+                  </td>
+                  <td><textarea rows="1" name="observations[]"></textarea></td>
+                  <td><textarea rows="1" name="issue_description[]"></textarea></td>
+                  <td><textarea rows="1" name="comments[]"></textarea></td>
+                  <td>{{ item.schedule }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+<!-- S.No 24: Hostel -->
+<form id="hostel-form" class="dsr-form" action="{{ url_for('submit_hostel') }}" method="post">
+  <section class="dsr-section" id="hostel-section">
+      <h3>24. Hostel</h3>
+
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th>No. of Students</th>
+                      <th>Payment Status</th>
+                      <th>Food Concern (If any)</th>
+                      <th>General Concern (If any)</th>
+                  </tr>
+              </thead>
+              <tbody id="hostel-tbody">
+                  <tr>
+                      <td>
+                          <input type="text" name="hostel_students[]" title="Number of Students" placeholder="Enter name or count">
+                      </td>
+                      <td>
+                          <select name="hostel_payment[]" title="Payment Status">
+                              <option value="">Select...</option>
+                              <option value="paid">Paid</option>
+                              <option value="pending">Pending</option>
+                              <option value="partial">Partial</option>
+                          </select>
+                      </td>
+                      <td>
+                          <select name="hostel_food_concern[]" title="Food Concern">
+                              <option value="">Select Concern...</option>
+                              <option value="issue_with_breakfast">Issue with Breakfast</option>
+                              <option value="issue_with_lunch">Issue with Lunch</option>
+                              <option value="issue_with_dinner">Issue with Dinner</option>
+                              <option value="others">Others</option>
+                          </select>
+                      </td>
+                      <td>
+                          <input type="text" name="hostel_general_concern[]" title="General Concern" placeholder="Enter general concern">
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <button type="button" class="add-row-btn" onclick="addRow('hostel-tbody')" title="Add Hostel Row">+</button>
+
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+ <!-- S.No 25: SEC -->
+<form id="sec-form" class="dsr-form" action="{{ url_for('submit_sec') }}" method="post">
+  <section class="dsr-section" id="sec-section">
+      <h3>25. SEC</h3>
+
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Committee</th>
+                      <th>Schedule</th>
+                      <th>Meeting Status</th>
+                      <th>MD MOM Review</th>
+                      <th>Next Meeting</th>
+                      <th>ATR Completion Status</th>
+                  </tr>
+              </thead>
+              <tbody id="sec-tbody">
+                  <tr>
+                      <td>
+                          <input type="text" name="sec_committee[]" title="Committee Name" placeholder="Enter committee name">
+                      </td>
+                      <td>
+                          <input type="date" name="sec_schedule[]" title="Schedule Date">
+                      </td>
+                      <td>
+                          <select name="sec_meeting_status[]" title="Meeting Status">
+                              <option value="">Select Status...</option>
+                              <option value="completed">Completed</option>
+                              <option value="yet_to_complete">Yet to Complete</option>
+                              <option value="postponed">Postponed</option>
+                          </select>
+                      </td>
+                      <td>
+                          <input type="text" name="sec_md_mom_review[]" title="MD MOM Review" placeholder="Enter review">
+                      </td>
+                      <td>
+                          <input type="date" name="sec_next_meeting[]" title="Next Meeting Date">
+                      </td>
+                      <td>
+                        <input type="text" name="sec_atr_completion_status[]" title="ATR Completion Status" placeholder="Enter status">
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <button type="button" class="add-row-btn" onclick="addRow('sec-tbody')" title="Add SEC Row">+</button>
+
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+
+<!-- S.No 26: School Counsellor Tracking -->
+<form id="school-counsellor-form" class="dsr-form" action="{{ url_for('submit_school_counsellor') }}" method="post">
+  <section class="dsr-section" id="school-counsellor">
+      <h3>26. School Counsellor</h3>
+
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Category</th>
+                      <th>Subtopic</th>
+                      <th>Total No. of Issues</th>
+                      <th>Met So Far</th>
+                      <th>Pending</th>
+                      <th>Follow Up</th>
+                      <th>Issue Closed (Date)</th>
+                      <th>Critical</th>
+                      <th>Manageable</th>
+                      <th>Issue Categories</th>
+                      <th>Nature of Issues</th>
+                      <th>Count</th>
+                      <th>Duration</th>
+                      <th>Comments</th>
+                  </tr>
+              </thead>
+              <tbody id="school-counsellor-tbody">
+                  {% for i in range(1) %}
+                  <tr>
+                      <!-- Category -->
+                      <td>
+                          <select name="rapid_category[]" class="rapid-category-select" required>
+                              <option value="">Select...</option>
+                              <option value="kk">KK</option>
+                              <option value="others">Others</option>
+                          </select>
+                      </td>
+
+                      <!-- Subtopic -->
+                      <td>
+                          <select name="rapid_subtopic[]" class="rapid-subtopic-select" required>
+                              <option value="">Select...</option>
+                          </select>
+                      </td>
+
+                      <!-- Total No. of Issues -->
+                      <td><input type="text" name="rapid_total_issues[]" placeholder="Enter total issues"></td>
+                      <!-- Met So Far -->
+                      <td><input type="text" name="rapid_met_so_far[]" placeholder="Enter met so far"></td>
+                      <!-- Pending -->
+                      <td><input type="text" name="rapid_pending[]" placeholder="Enter pending"></td>
+                      <!-- Follow Up -->
+                      <td><input type="text" name="rapid_follow_up[]" placeholder="Enter follow up"></td>
+                      <!-- Issue Closed -->
+                      <td><input type="date" name="rapid_issue_closed[]"></td>
+                      <!-- Critical -->
+                      <td><input type="text" name="rapid_critical[]" placeholder="Enter count"></td>
+                      <!-- Manageable -->
+                      <td><input type="text" name="rapid_manageable[]" placeholder="Enter count"></td>
+                      <!-- Issue Categories -->
+                      <td><input type="text" name="rapid_issue_categories[]" placeholder="Enter issue categories"></td>
+                      <!-- Nature of Issues -->
+                      <td>
+                          <select name="rapid_nature_of_issues[]">
+                              <option value="">Select Nature...</option>
+                              <option value="all_well">All Well</option>
+                              <option value="manageable">Manageable</option>
+                              <option value="critical">Critical</option>
+                          </select>
+                      </td>
+                      <!-- Count -->
+                      <td><input type="text" name="rapid_count[]" placeholder="Enter count"></td>
+                      <!-- Duration -->
+                      <td><input type="text" name="rapid_duration[]" placeholder="Enter duration"></td>
+                      <!-- Comments -->
+                      <td><input type="text" name="rapid_comments[]" placeholder="Enter name, grade, or issues"></td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+
+      <button type="button" class="add-row-btn" onclick="addRow('school-counsellor-tbody')" title="Add additional School Counsellor row">+</button>
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+<!-- Scholorius / Smart Tail Form -->
+<form id="scholorius-form" class="dsr-form" action="{{ url_for('submit_scholorius') }}" method="post">
+  <section class="dsr-section" id="scholorius-section">
+      <h3>27. Scholorius / Smart Tail</h3>
+
+      <div class="table-scroll-wrapper">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Program</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Remark</th>
+                  </tr>
+              </thead>
+              <tbody id="scholorius-tbody">
+                  <tr>
+                      <td>
+                          <input type="text" name="scholorius_program[]" title="Program Name" placeholder="Enter program name">
+                      </td>
+                      <td>
+                          <input type="date" name="scholorius_date[]" title="Program Date">
+                      </td>
+                      <td>
+                          <select name="scholorius_status[]" title="Status">
+                              <option value="">Select Status...</option>
+                              <option value="completed">Completed</option>
+                              <option value="pending">Pending</option>
+                              <option value="rescheduled">Rescheduled</option>
+                          </select>
+                      </td>
+                      <td>
+                          <input type="text" name="scholorius_remark[]" title="Remarks" placeholder="Enter remarks">
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <button type="button" class="add-row-btn" onclick="addRow('scholorius-tbody')" title="Add Scholorius Row">+</button>
+
+      <div class="submit-area">
+          <button type="submit" class="submit-btn">Submit</button>
+      </div>
+  </section>
+</form>
+
+
+
+  <script src="{{ url_for('static', filename='team_1_form/script.js') }}"></script> <!-- Optional: for future dynamic behavior -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // ... existing code ...
+      // Set today's date in Indian format (DD-MM-YYYY) and make readonly
+      const dateInput = document.getElementById('dsr-date');
+      if (dateInput) {
+          const today = new Date();
+          const day = String(today.getDate()).padStart(2, '0');
+          const month = String(today.getMonth() + 1).padStart(2, '0');
+          const year = today.getFullYear();
+          dateInput.value = `${day}-${month}-${year}`;
+          dateInput.readOnly = true;
+          dateInput.style.background = '#f1f5f9';
+          dateInput.style.cursor = 'not-allowed';
+      }
+      // ... existing code ...
+  });
+  // ... existing code ...
+  </script>
+</body>
+</html>

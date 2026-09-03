@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Add Team - QMIS DSR{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+  --primary: #4361ee;
+  --secondary: #f72585;
+  --accent: #3ecf8e;
+  --card-radius: 1.2rem;
+  --card-shadow: 0 8px 32px rgba(67, 97, 238, 0.10);
+  --header-bg: #f5f7fa;
+  --form-bg: #fff;
+  --border-color: #e0e0e0;
+}
+.add-team-bg {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 0;
+}
+.card.add-team-card {
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  background: var(--form-bg);
+  border: 1px solid var(--border-color);
+}
+.card-header.add-team-header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--card-radius) var(--card-radius) 0 0;
+}
+.card-title {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.btn-primary {
+  background: var(--primary) !important;
+  border: none;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: var(--secondary) !important;
+  color: #fff;
+}
+.btn-secondary {
+  background: var(--accent) !important;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-secondary:hover {
+  background: #2e9e6f !important;
+  color: #fff;
+}
+.form-label {
+  color: var(--secondary);
+  font-weight: 500;
+}
+.form-control, .form-select {
+  border-radius: 0.7rem;
+  border-color: var(--border-color);
+  background: #f7faff;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.15rem rgba(67, 97, 238, 0.13);
+}
+.team-summary {
+  margin-top: 2.5rem;
+}
+.team-summary-title {
+  color: var(--secondary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.team-summary-list {
+  list-style: none;
+  padding: 0;
+}
+.team-summary-list li {
+  background: #f7faff;
+  border: 1px solid var(--border-color);
+  border-radius: 0.7rem;
+  padding: 0.75rem 1.2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.team-summary-lead {
+  color: var(--primary);
+  font-weight: 600;
+}
+.team-summary-lead.none {
+  color: #aaa;
+  font-style: italic;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-team-bg py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="card add-team-card mb-4">
+          <div class="card-header add-team-header">
+            <h3 class="card-title text-center mb-0">Add New Team</h3>
+          </div>
+          <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <form method="POST">
+              <div class="mb-3">
+                <label for="team_name" class="form-label">Team Name</label>
+                <input type="text" class="form-control" id="team_name" name="team_name" required>
+              </div>
+              <div class="mb-3">
+                <label for="lead_id" class="form-label">Team Lead</label>
+                <select class="form-select" id="lead_id" name="lead_id">
+                  <option value="">Select a Team Lead</option>
+                  {% for lead in team_leads %}
+                  <option value="{{ lead.user_id }}">{{ lead.username }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Add Team</button>
+                <a href="{{ url_for('manage_teams') }}" class="btn btn-secondary">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- New Feature: Team Summary -->
+        {% if teams is defined and teams|length > 0 %}
+        <div class="team-summary">
+          <div class="team-summary-title"><i class="fas fa-layer-group me-2"></i>Current Teams & Leads</div>
+          <ul class="team-summary-list">
+            {% for team in teams %}
+            <li>
+              <span>{{ team.team_name }}</span>
+              <span class="team-summary-lead {% if not team.team_lead %}none{% endif %}">
+                {% if team.team_lead %}
+                  <i class="fas fa-user-tie me-1"></i> {{ team.team_lead.username }}
+                {% else %}
+                  <i class="fas fa-user-slash me-1"></i> No lead
+                {% endif %}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

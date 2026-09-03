@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - QMIS DSR{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        min-height: 100vh;
+        padding-bottom: 3rem;
+    }
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding-top: 2.5rem;
+    }
+    .profile-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 1.5rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        transition: transform 0.3s;
+        position: relative;
+    }
+    .profile-card:hover {
+        transform: translateY(-5px);
+    }
+    .profile-header {
+        background: linear-gradient(120deg, #43cea2 0%, #185a9d 100%);
+        padding: 2.5rem 0;
+        position: relative;
+        text-align: center;
+    }
+    .profile-header::after {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: inherit;
+        transform: skewY(-2deg);
+        transform-origin: 100%;
+        z-index: -1;
+    }
+    .profile-image-wrapper {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        padding: 5px;
+        background: linear-gradient(45deg, #f6d365, #fda085, #a18cd1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: #fff;
+        border: 4px solid white;
+    }
+    .profile-name {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .profile-role {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        font-weight: 400;
+        letter-spacing: 1px;
+    }
+    .profile-body {
+        padding: 2.5rem 2.5rem 2rem;
+    }
+    .info-section {
+        margin-bottom: 2rem;
+    }
+    .section-title {
+        color: #185a9d;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+    .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #43cea2, #185a9d);
+        border-radius: 3px;
+    }
+    .info-item {
+        display: flex;
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .info-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+    .info-label {
+        width: 120px;
+        color: #43cea2;
+        font-weight: 600;
+    }
+    .info-value {
+        flex: 1;
+        color: #333;
+    }
+    .badge-success {
+        background-color: #43cea2 !important;
+        color: white;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        border-radius: 0.25rem;
+        display: inline-block;
+    }
+    .badge-secondary {
+        background-color: #a18cd1 !important;
+        color: white;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        border-radius: 0.25rem;
+        display: inline-block;
+    }
+    .action-btn {
+        background: linear-gradient(to right, #fda085, #f6d365);
+        border: none;
+        border-radius: 50px;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(253, 160, 133, 0.3);
+    }
+    .action-btn:hover {
+        background: linear-gradient(to right, #f6d365, #fda085);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(253, 160, 133, 0.4);
+        color: white;
+    }
+    .action-btn i {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-image-wrapper">
+                <img src="{{ user.profile_image_url or url_for('static', filename='images/logo.png') }}" alt="Profile Image" class="profile-image">
+            </div>
+            <h2 class="profile-name">{{ user.username }}</h2>
+            <p class="profile-role">{{ user.role }}</p>
+        </div>
+        
+        <div class="profile-body">
+            <div class="info-section">
+                <h3 class="section-title">Account Information</h3>
+                
+                <div class="info-item">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Role</div>
+                    <div class="info-value">{{ user.role }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Team</div>
+                    <div class="info-value">
+                        {% if user.team_id %}
+                            {% set team = user.team %}
+                            {{ team.team_name if team else 'Unknown' }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">Team Lead</div>
+                    <div class="info-value">
+                        {% if user.is_team_lead %}
+                            <span class="badge-success">Yes</span>
+                        {% else %}
+                            <span class="badge-secondary">No</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('dashboard') }}" class="action-btn">
+                    <i class="fas fa-arrow-left"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- No extra JS needed -->
+{% endblock %} 

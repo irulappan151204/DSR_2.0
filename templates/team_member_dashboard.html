@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Team Member Dashboard - Issue Tracking System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 mb-0">Team Member Dashboard</h1>
+            <p class="text-muted">Welcome back, {{ current_user.username }}</p>
+        </div>
+    </div>
+
+ 
+    <!-- Team Form Section -->
+                    {% if current_user.team.team_name == 'Team 1' %}
+                        {% include 'team_1_form/team_1_form.html' %}
+                    {% elif current_user.team.team_name == 'Team 2' %}
+                        {% include 'team_2_form/team_2_form.html' %}
+                    {% elif current_user.team.team_name == 'Team 3' %}
+                        {% include 'team_3_form/team_3_form.html' ignore missing %}
+                    {% endif %}
+
+    
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(46, 204, 113, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-weight: 500;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function editIssue(issueId) {
+        // Set the issue ID in the form
+        document.getElementById('issue_id').value = issueId;
+        
+        // Get the current issue data from the table row
+        const row = document.querySelector(`tr[data-issue-id="${issueId}"]`);
+        if (row) {
+            const description = row.querySelector('td:nth-child(2)').textContent;
+            const priority = row.querySelector('td:nth-child(3) .badge').textContent.trim();
+            const status = row.querySelector('td:nth-child(4) .badge').textContent.trim();
+            
+            // Set the form values
+            document.getElementById('description').value = description;
+            document.getElementById('priority').value = priority;
+            document.getElementById('status').value = status;
+        }
+        
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('updateIssueModal'));
+        modal.show();
+    }
+
+    // Real-time updates using Socket.IO
+    if (typeof socket === 'undefined') {
+        var socket = io();
+    }
+    socket.on('issue_update', function(data) {
+        // Refresh the page when an issue is updated
+        location.reload();
+    });
+    
+    socket.on('new_issue', function(data) {
+        // Refresh the page when a new issue is created
+        location.reload();
+    });
+</script>
+{% endblock %}
+{% endblock %} 

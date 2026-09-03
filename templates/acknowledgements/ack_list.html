@@ -1,0 +1,747 @@
+{% extends "base.html" %}
+
+{% block title %}Acknowledgements - QMIS DSR{% endblock %}
+
+{% block content %}
+<style>
+    .ack-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        border-bottom: 2px solid #eaeaea;
+        padding-bottom: 1rem;
+    }
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222b45;
+        margin: 0;
+        position: relative;
+    }
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: #4361ee;
+        border-radius: 2px;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+        background: #fff;
+        border-radius: 0.8rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+    .filter-section.collapsed {
+        padding: 0.8rem 1.5rem;
+    }
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+    .filter-header h3 {
+        font-size: 1.2rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #222b45;
+    }
+    .filter-header i {
+        color: #4361ee;
+        transition: transform 0.3s ease;
+    }
+    .filter-header.collapsed i {
+        transform: rotate(-90deg);
+    }
+    .filter-body {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        overflow: hidden;
+        max-height: 500px;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+    }
+    .filter-body.collapsed {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .filter-group label {
+        font-weight: 600;
+        color: #222b45;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    .filter-group select,
+    .filter-group input {
+        padding: 0.6rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus {
+        border-color: #4361ee;
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        outline: none;
+    }
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        align-items: flex-end;
+    }
+    .filter-btn {
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .apply-btn {
+        background: #4361ee;
+        color: white;
+    }
+    .apply-btn:hover {
+        background: #3a56d4;
+        transform: translateY(-2px);
+    }
+    .reset-btn {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #e0e0e0;
+    }
+    .reset-btn:hover {
+        background: #e9ecef;
+    }
+    
+    /* Table Styles */
+    .ack-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 1rem 0 2rem;
+        background: #fff;
+        border-radius: 0.8rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .ack-table th, .ack-table td {
+        padding: 1rem 1.2rem;
+        text-align: center;
+    }
+    .ack-table th {
+        background: #222b45;
+        color: #fff;
+        font-size: 1.08rem;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+    }
+    .ack-table tbody tr {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ack-table tbody tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        z-index: 1;
+        position: relative;
+    }
+    .ack-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .user-row-md { background: #e3eaff; }
+    .user-row-team1 { background: #e3eaff; }
+    .user-row-team2 { background: #ffe3ed; }
+    .user-row-team3 { background: #e3ffe9; }
+    .pending-count-badge {
+        background: #f72585;
+        color: #fff;
+        font-weight: 700;
+        border-radius: 1.5rem;
+        padding: 0.3em 1.2em;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(247,37,133,0.10);
+    }
+    .pending-date-badge {
+        background: #ffeaea;
+        color: #d32f2f;
+        font-weight: 600;
+        border-radius: 0.6rem;
+        padding: 0.3em 1em;
+        margin: 0.2em 0.2em;
+        display: inline-block;
+        transition: all 0.2s;
+    }
+    .pending-date-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(211,47,47,0.15);
+    }
+    .ack-btn {
+        background: #222b45;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.5em 1.5em;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(34,43,69,0.10);
+    }
+    .ack-btn:disabled {
+        background: #e0e0e0;
+        color: #aaa;
+        cursor: not-allowed;
+    }
+    .ack-btn:hover:not(:disabled) {
+        background: #4361ee;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34,43,69,0.15);
+    }
+    .empty-state {
+        text-align: center;
+        color: #388e3c;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 2.5rem 0;
+        background: #e8f5e9;
+        border-radius: 0.8rem;
+        padding: 2.5rem;
+        box-shadow: 0 2px 8px rgba(16,185,129,0.08);
+        animation: fadeIn 0.5s ease-out;
+    }
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+        color: #10b981;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .filter-body {
+            grid-template-columns: 1fr;
+        }
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .ack-table {
+            display: block;
+            overflow-x: auto;
+        }
+        .ack-container {
+            padding: 1rem;
+        }
+        .team-summary-grid {
+            grid-template-columns: 1fr !important;
+        }
+        .team-summary-card {
+            padding: 1rem !important;
+        }
+        .team-stats {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+    }
+</style>
+
+<div class="ack-container">
+    <div class="page-header">
+        <h1 class="page-title">Daily Report Acknowledgements</h1>
+        <a href="{{ url_for('md_dashboard.md_dashboard') }}" class="btn btn-primary no-loader" style="background:#6366f1; color:#fff; font-weight:600; border-radius:0.6rem; box-shadow:0 2px 8px rgba(67,97,238,0.15); padding:0.6em 1.5em; text-decoration:none;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section" id="filterSection">
+        <div class="filter-header" id="filterHeader">
+            <h3><i class="fas fa-filter"></i> Filter Acknowledgements</h3>
+            <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
+        </div>
+        <div class="filter-body" id="filterBody">
+                         <div class="filter-group">
+                 <label for="teamFilter">Team</label>
+                 <select id="teamFilter" class="form-control">
+                     <option value="all">All Teams</option>
+                     <option value="Academic">Academic</option>
+                     <option value="Admin">Admin</option>
+                     <option value="Audit">Audit</option>
+                     <option value="MD">MD</option>
+                 </select>
+             </div>
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter" class="form-control">
+                    <option value="all">All Status</option>
+                    <option value="pending" selected>Pending</option>
+                    <option value="acknowledged">Acknowledged</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFilter">Date Range</label>
+                <select id="dateFilter" class="form-control">
+                    <option value="7">Last 7 days</option>
+                    <option value="14">Last 14 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+            </div>
+            <div class="filter-group" id="customDateContainer" style="display: none;">
+                <label for="startDate">From Date</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="filter-group" id="customDateEndContainer" style="display: none;">
+                <label for="endDate">To Date</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+            <div class="filter-actions">
+                <button class="filter-btn apply-btn" id="applyFilters">
+                    <i class="fas fa-check"></i> Apply Filters
+                </button>
+                <button class="filter-btn reset-btn" id="resetFilters">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Summary Section for MD -->
+    {% if is_md and team_summary %}
+        <div class="team-summary-section" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; color: #222b45; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-chart-bar" style="color: #4361ee;"></i>
+                Team Lead Status Summary
+            </h3>
+            <div class="team-summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                {% for team_name, counts in team_summary.items() %}
+                <div class="team-summary-card" style="background: #fff; border-radius: 0.8rem; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid #4361ee;">
+                    <div class="team-name" style="font-size: 1.2rem; font-weight: 700; color: #222b45; margin-bottom: 1rem;">
+                        <i class="fas fa-users" style="color: #4361ee; margin-right: 0.5rem;"></i>
+                        {{ team_name }}
+                    </div>
+                    <div class="team-stats" style="display: flex; gap: 1rem;">
+                        <div class="stat-item" style="flex: 1; text-align: center;">
+                            <div class="stat-value" style="font-size: 1.8rem; font-weight: 800; color: #10b981;">{{ counts.acknowledged }}</div>
+                            <div class="stat-label" style="font-size: 0.9rem; color: #6b7280; font-weight: 600;">Acknowledged</div>
+                        </div>
+                        <div class="stat-item" style="flex: 1; text-align: center;">
+                            <div class="stat-value" style="font-size: 1.8rem; font-weight: 800; color: #ef4444;">{{ counts.unacknowledged }}</div>
+                            <div class="stat-label" style="font-size: 0.9rem; color: #6b7280; font-weight: 600;">Unacknowledged</div>
+                        </div>
+                    </div>
+                    <div class="total-count" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; text-align: center;">
+                        <span style="font-size: 1rem; font-weight: 600; color: #374151;">
+                            Total: <span style="color: #4361ee;">{{ counts.acknowledged + counts.unacknowledged }}</span>
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Results Section -->
+    {% if is_md %}
+        <!-- MD view: keep summary table for all users -->
+        <div id="resultsContainer">
+            {% if ack_summary|length == 0 or (ack_summary|length == 1 and ack_summary[0].pending_count == 0) %}
+                <div class="empty-state">
+                    <i class="fas fa-check-circle"></i>
+                    All caught up—no pending acknowledgements!
+                </div>
+            {% else %}
+                <table class="ack-table" id="ackTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Team</th>
+                            <th>Pending Count</th>
+                            <th>Pending Dates</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in ack_summary %}
+                        {% set team_class = 'user-row-md' if row.role == 'MD' else 'user-row-team' ~ row.team[-1] if row.team != 'N/A' else '' %}
+                        <tr class="{{ team_class }}" data-team="{{ row.team }}" data-status="{{ 'pending' if row.pending_count > 0 else 'acknowledged' }}">
+                            <td><b>{{ row.username }}</b> {% if row.is_self %}<span style="color:#10b981;">(You)</span>{% endif %}</td>
+                            <td>{{ row.team }}</td>
+                            <td><span class="pending-count-badge">{{ row.pending_count }}</span></td>
+                            <td>
+                                {% if row.pending_count == 0 %}
+                                    <span style="color:#10b981; font-weight:600;">None</span>
+                                {% else %}
+                                    {% for i in range(row.pending_count) %}
+                                        <span class="pending-date-badge" data-date="{{ row.pending_date_strs[i] }}">{{ row.pending_dates[i] }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.is_self and row.pending_count > 0 %}
+                                    {% for i in range(row.pending_count) %}
+                                        <button class="ack-btn mb-1" onclick="acknowledgeDate(this, '{{ row.pending_date_strs[i] }}')">Acknowledge</button><br/>
+                                        <!-- Fallback form for direct submission -->
+                                        <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ row.pending_date_strs[i] }}">
+                                            <input type="hidden" name="date" value="{{ row.pending_date_strs[i] }}">
+                                        </form>
+                                    {% endfor %}
+                                {% elif row.pending_count > 0 %}
+                                    <span style="color:#aaa;">-</span>
+                                {% else %}
+                                    <span style="color:#10b981; font-weight:600;">All Acknowledged</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- Team Lead view: show a simple, clean date list -->
+        <div id="resultsContainer">
+            {% set self_row = ack_summary[0] %}
+            <div style="max-width:500px; margin:0 auto;">
+                <h2 style="font-size:1.3rem; font-weight:700; color:#222b45; margin-bottom:1.2rem; text-align:center;">Your Daily Report Acknowledgements</h2>
+                <table class="ack-table" id="ackTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(self_row.pending_dates|length) %}
+                        <tr>
+                            <td>{{ self_row.pending_dates[i] }}</td>
+                            <td><span class="status-pending">Pending</span></td>
+                            <td>
+                                <button class="ack-btn" onclick="acknowledgeDate(this, '{{ self_row.pending_date_strs[i] }}')">Acknowledge</button>
+                                <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ self_row.pending_date_strs[i] }}">
+                                    <input type="hidden" name="date" value="{{ self_row.pending_date_strs[i] }}">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length == 0 and i == 0 %}
+                            <tr><td colspan="3" style="color:#10b981; font-weight:600; text-align:center;">All caught up—no pending acknowledgements!</td></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(30 - self_row.pending_dates|length) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% for i in range(self_row.pending_dates|length, self_row.pending_dates|length + (30 - self_row.pending_dates|length)) %}
+                            {% if self_row.pending_dates|length > 0 %}
+                            <tr style="display:none;"></tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if self_row.pending_dates|length == 0 %}
+                <div class="empty-state" style="margin-top:2rem;">
+                    <i class="fas fa-check-circle"></i>
+                    All caught up—no pending acknowledgements!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const isMD = ("{{ 'true' if is_md else 'false' }}" === 'true');
+    const filterHeader = document.getElementById('filterHeader');
+    const filterBody = document.getElementById('filterBody');
+    const filterSection = document.getElementById('filterSection');
+    const filterToggleIcon = document.getElementById('filterToggleIcon');
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    const resetFiltersBtn = document.getElementById('resetFilters');
+    const dateFilter = document.getElementById('dateFilter');
+    const customDateContainer = document.getElementById('customDateContainer');
+    const customDateEndContainer = document.getElementById('customDateEndContainer');
+    const teamFilter = document.getElementById('teamFilter');
+    // Hide team filter for Team Lead view
+    if (!isMD && teamFilter) {
+        teamFilter.parentElement.style.display = 'none';
+    }
+    // Initialize date inputs with last 30 days
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    if (document.getElementById('endDate')) {
+        document.getElementById('endDate').valueAsDate = today;
+    }
+    if (document.getElementById('startDate')) {
+        document.getElementById('startDate').valueAsDate = thirtyDaysAgo;
+    }
+    // Toggle custom date inputs based on date filter selection
+    if (dateFilter) {
+        dateFilter.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customDateContainer.style.display = 'flex';
+                customDateEndContainer.style.display = 'flex';
+            } else {
+                customDateContainer.style.display = 'none';
+                customDateEndContainer.style.display = 'none';
+            }
+        });
+    }
+    // Toggle filter section
+    filterHeader.addEventListener('click', function() {
+        filterBody.classList.toggle('collapsed');
+        filterSection.classList.toggle('collapsed');
+        filterToggleIcon.classList.toggle('fa-chevron-down');
+        filterToggleIcon.classList.toggle('fa-chevron-right');
+    });
+    // Apply filters
+    applyFiltersBtn.addEventListener('click', function() {
+        applyFilters();
+    });
+    // Reset filters
+    resetFiltersBtn.addEventListener('click', function() {
+        if (teamFilter) teamFilter.value = 'all';
+        document.getElementById('statusFilter').value = isMD ? 'all' : 'pending';
+        document.getElementById('dateFilter').value = '30';
+        customDateContainer.style.display = 'none';
+        customDateEndContainer.style.display = 'none';
+        applyFilters();
+    });
+    function applyFilters() {
+        const statusFilter = document.getElementById('statusFilter').value;
+        const dateFilterValue = document.getElementById('dateFilter').value;
+        let startDate, endDate;
+        if (dateFilterValue === 'custom') {
+            startDate = document.getElementById('startDate').valueAsDate;
+            endDate = document.getElementById('endDate').valueAsDate;
+        } else {
+            endDate = new Date();
+            startDate = new Date();
+            startDate.setDate(endDate.getDate() - parseInt(dateFilterValue));
+        }
+        const rows = document.querySelectorAll('#ackTable tbody tr');
+        let visibleCount = 0;
+        if (isMD) {
+            // MD view: filter by team, status, and date range
+            const teamFilterVal = teamFilter ? teamFilter.value : 'all';
+            rows.forEach(row => {
+                let showRow = true;
+                // Filter by team
+                if (teamFilterVal !== 'all' && row.getAttribute('data-team') !== teamFilterVal) {
+                    showRow = false;
+                }
+                // Filter by status
+                if (statusFilter !== 'all' && row.getAttribute('data-status') !== statusFilter) {
+                    showRow = false;
+                }
+                // Filter by date range (pending dates)
+                if (startDate && endDate && showRow) {
+                    const dateBadges = row.querySelectorAll('.pending-date-badge');
+                    if (dateBadges.length > 0) {
+                        let hasDateInRange = false;
+                        dateBadges.forEach(badge => {
+                            const dateStr = badge.getAttribute('data-date');
+                            if (dateStr) {
+                                const dateParts = dateStr.split('-');
+                                const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1])-1, parseInt(dateParts[2]));
+                                if (date >= startDate && date <= endDate) {
+                                    hasDateInRange = true;
+                                }
+                            }
+                        });
+                        if (!hasDateInRange && statusFilter === 'pending') {
+                            showRow = false;
+                        }
+                    }
+                }
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+        } else {
+            // Team Lead view: filter by status and date range on single-user table
+            rows.forEach(row => {
+                let showRow = true;
+                // Filter by status
+                if (statusFilter !== 'all') {
+                    const statusCell = row.querySelector('td:nth-child(2) .status-pending, td:nth-child(2) .status-acknowledged');
+                    if (statusFilter === 'pending' && !statusCell) showRow = false;
+                    if (statusFilter === 'acknowledged' && statusCell) showRow = false;
+                }
+                // Filter by date range
+                if (startDate && endDate && showRow) {
+                    const dateCell = row.querySelector('td:first-child');
+                    if (dateCell) {
+                        const dateText = dateCell.textContent.trim();
+                        // Try to parse dateText (e.g., 'May 01, 2024')
+                        const parsedDate = new Date(dateText);
+                        if (!(parsedDate >= startDate && parsedDate <= endDate)) {
+                            showRow = false;
+                        }
+                    }
+                }
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+        }
+        // Show empty state if no results
+        const resultsContainer = document.getElementById('resultsContainer');
+        const table = document.getElementById('ackTable');
+        const emptyState = document.querySelector('.empty-state');
+        if (visibleCount === 0 && table) {
+            if (!emptyState) {
+                const noResults = document.createElement('div');
+                noResults.className = 'empty-state';
+                noResults.innerHTML = '<i class="fas fa-filter"></i>No matching acknowledgements found with current filters.';
+                table.style.display = 'none';
+                resultsContainer.appendChild(noResults);
+            } else {
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        } else if (table) {
+            table.style.display = '';
+            const noResults = document.querySelector('.empty-state');
+            if (noResults) noResults.style.display = 'none';
+        }
+    }
+    // Default filter on load
+    applyFilters();
+});
+
+function acknowledgeDate(btn, date) {
+    btn.disabled = true;
+    console.log("Acknowledging date:", date);
+    
+    // Try fetch API first
+    fetch('/ack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: date }),
+        credentials: 'same-origin'
+    })
+    .then(resp => {
+        if (!resp.ok) {
+            throw new Error(`HTTP error! Status: ${resp.status}`);
+        }
+        return resp.json();
+    })
+    .then(data => {
+        console.log("Response:", data);
+        if (data.success) {
+            handleSuccessfulAcknowledgement(btn, date);
+        } else {
+            btn.disabled = false;
+            alert('Error: ' + (data.error || 'Could not acknowledge.'));
+        }
+    })
+    .catch((error) => {
+        console.error('Error with fetch API:', error);
+        // Try fallback form submission
+        const formId = `ack-form-${date}`;
+        const fallbackForm = document.getElementById(formId);
+        
+        if (fallbackForm) {
+            console.log("Using fallback form submission");
+            fallbackForm.submit();
+        } else {
+            btn.disabled = false;
+            alert('Network error. Please try again.');
+        }
+    });
+}
+
+function handleSuccessfulAcknowledgement(btn, date) {
+    // Add success animation
+    const successIcon = document.createElement('span');
+    successIcon.innerHTML = '<i class="fas fa-check-circle" style="color:#10b981;margin-left:8px;"></i>';
+    btn.parentNode.appendChild(successIcon);
+    
+    // Remove the acknowledged date badge and button with animation
+    const td = btn.closest('td');
+    const dateBadge = document.querySelector(`.pending-date-badge[data-date="${date}"]`);
+    
+    if (dateBadge) {
+        dateBadge.style.transition = 'all 0.3s';
+        dateBadge.style.transform = 'scale(0)';
+        dateBadge.style.opacity = '0';
+        setTimeout(() => dateBadge.remove(), 300);
+    }
+    
+    btn.style.transition = 'all 0.3s';
+    btn.style.transform = 'scale(0)';
+    btn.style.opacity = '0';
+    
+    setTimeout(() => {
+        btn.nextElementSibling?.remove(); // Remove <br/>
+        btn.remove();
+        
+        // If no more buttons, reload page to update counts
+        if (td.querySelectorAll('.ack-btn').length === 0) {
+            setTimeout(() => { location.reload(); }, 800);
+        }
+    }, 300);
+}
+</script>
+{% endblock %} 

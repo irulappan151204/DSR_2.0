@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}{{ finding.audit_reference }} - Critical / CAPA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='critical/critical.css') }}">
+{% endblock %}
+
+{% macro file_list(files) -%}
+    {% if files %}
+    <ul class="capa-files">
+        {% for a in files %}
+        <li>
+            <a href="{{ url_for('serve_file', file_id=a.file_id) }}" target="_blank" rel="noopener">
+                <i class="fas fa-paperclip me-1"></i>{{ a.file.original_filename if a.file else 'File ' ~ a.file_id }}
+            </a>
+            {% if a.file %}<span class="size">({{ (a.file.file_size / 1024)|round(1) }} KB)</span>{% endif %}
+            <span class="size">&middot; {{ a.uploader.username if a.uploader else '-' }},
+                {{ a.uploaded_at|ist_strftime('%d-%m-%Y %H:%M') }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="size text-muted">No attachments.</div>
+    {% endif %}
+{%- endmacro %}
+
+{% block content %}
+<div class="capa-page-head">
+    <div>
+        <h1>
+            <i class="fas fa-triangle-exclamation text-danger me-2"></i>{{ finding.audit_reference }}
+            <span class="status-badge {{ finding.status_css }} ms-2">{{ finding.status_label }}</span>
+        </h1>
+        <div class="capa-sub">{{ finding.title }}</div>
+    </div>
+    <div class="d-flex gap-2">
+        {% if can_edit %}
+        <a href="{{ url_for('critical.edit_finding', finding_id=finding.form_id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-edit me-1"></i> Edit Finding
+        </a>
+        {% endif %}
+        <a href="{{ url_for('critical.critical_home') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Critical
+        </a>
+    </div>
+</div>
+
+{% if is_recipient and finding.awaiting_recipient %}
+<div class="alert alert-warning">
+    <i class="fas fa-hourglass-half me-1"></i>
+    <strong>Awaiting Your Response</strong> &mdash;
+    {% if finding.status == 'CAPA_REVISION_REQUIRED' %}
+        the audit team requires a revision of your CAPA (revision {{ finding.revision_count }}).
+    {% else %}
+        submit your Action Taken Report, Root Cause Analysis and CAPA 1 below.
+    {% endif %}
+</div>
+{% elif is_recipient and finding.awaiting_audit_review %}
+<div class="alert alert-info">
+    <i class="fas fa-check me-1"></i> <strong>CAPA Response Submitted</strong> &mdash;
+    pending audit review. You cannot modify it unless the audit team sends it back for revision.
+</div>
+{% elif finding.is_closed %}
+<div class="alert alert-success">
+    <i class="fas fa-circle-check me-1"></i> <strong>Closed</strong> &mdash; CAPA accepted by
+    {{ finding.reviewer.username if finding.reviewer else 'audit' }} on
+    {{ finding.closed_at|ist_strftime('%d-%m-%Y %H:%M') }}.
+</div>
+{% endif %}
+
+<div class="capa-card">
+    <h2>Original Audit Finding</h2>
+    <div class="capa-fields mb-3">
+        <div class="capa-field">
+            <label>Audit Reference</label>
+            <div class="value">{{ finding.audit_reference }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Audit Date</label>
+            <div class="value">{{ finding.audit_date.strftime('%d-%m-%Y') if finding.audit_date else '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Frequency</label>
+            <div class="value">{{ finding.frequency or '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Component</label>
+            <div class="value"><strong>{{ finding.component or '-' }}</strong></div>
+        </div>
+        <div class="capa-field">
+            <label>Audited By</label>
+            <div class="value">{{ finding.audited_by or '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Staff Name</label>
+            <div class="value"><strong>{{ finding.staff_name or '-' }}</strong></div>
+        </div>
+        <div class="capa-field">
+            <label>Grade &amp; Section</label>
+            <div class="value">{{ finding.grade or '-' }} {% if finding.section %}&middot; Sec: {{ finding.section }}{% endif %}</div>
+        </div>
+        <div class="capa-field">
+            <label>Specification</label>
+            <div class="value">{{ finding.specification or '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Nature of Issue / Status</label>
+            <div class="value">{{ finding.nature_of_issue }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Priority</label>
+            <div class="value">
+                <span class="priority-badge p-{{ finding.priority|lower }}">{{ finding.priority }}</span>
+            </div>
+        </div>
+        <div class="capa-field">
+            <label>Assigned Recipient</label>
+            <div class="value">
+                {% if finding.recipient %}
+                    {{ finding.recipient.username }}
+                    <span class="size">&middot; {{ team_display(finding.recipient) }}
+                        &middot; {{ finding.recipient.role }}</span>
+                {% else %}-{% endif %}
+            </div>
+        </div>
+        <div class="capa-field">
+            <label>Raised By (Audit)</label>
+            <div class="value">
+                {% if finding.creator %}
+                    {{ finding.creator.username }}
+                    <span class="size">&middot; {{ team_display(finding.creator) }}</span>
+                {% else %}-{% endif %}
+            </div>
+        </div>
+        <div class="capa-field">
+            <label>Created</label>
+            <div class="value">{{ finding.created_at|ist_strftime('%d-%m-%Y %H:%M') }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Revisions</label>
+            <div class="value">{{ finding.revision_count }}</div>
+        </div>
+    </div>
+
+    <div class="capa-field mb-3">
+        <label>Audit Finding Title</label>
+        <div class="value">{{ finding.title }}</div>
+    </div>
+
+    <div class="capa-field mb-3">
+        <label>Issue Description</label>
+        <div class="capa-readonly-text">{{ finding.description }}</div>
+    </div>
+
+    {% if finding.remark %}
+    <div class="capa-field mb-3">
+        <label>Remark</label>
+        <div class="capa-readonly-text">{{ finding.remark }}</div>
+    </div>
+    {% endif %}
+
+    <div class="capa-field">
+        <label>Audit Attachments</label>
+        {{ file_list(finding_files) }}
+    </div>
+</div>
+
+{% if finding.status == 'CAPA_REVISION_REQUIRED' and finding.audit_justification %}
+<div class="capa-card">
+    <h2>Audit Rejection &mdash; Revision Required</h2>
+    <div class="capa-field mb-3">
+        <label>Justification</label>
+        <div class="capa-readonly-text">{{ finding.audit_justification }}</div>
+    </div>
+    <div class="capa-fields">
+        <div class="capa-field">
+            <label>Rejected By</label>
+            <div class="value">{{ finding.reviewer.username if finding.reviewer else '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Rejected At</label>
+            <div class="value">{{ finding.audit_reviewed_at|ist_strftime('%d-%m-%Y %H:%M') }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if can_respond %}
+<form method="post" action="{{ url_for('critical.submit_response', finding_id=finding.form_id) }}"
+      enctype="multipart/form-data" id="capa-response-form" novalidate>
+    <div class="capa-card">
+        <h2>
+            {% if finding.status == 'CAPA_REVISION_REQUIRED' %}Revise Your CAPA Response{% else %}Your CAPA Response{% endif %}
+        </h2>
+
+        <div class="mb-3">
+            <label for="action_taken_report" class="form-label">
+                Action Taken Report <span class="req">*</span>
+            </label>
+            <textarea class="form-control" id="action_taken_report" name="action_taken_report"
+                      rows="5" required
+                      placeholder="What action was taken to address this finding?">{{ finding.action_taken_report or '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="root_cause_analysis" class="form-label">
+                Root Cause Analysis <span class="req">*</span>
+            </label>
+            <textarea class="form-control" id="root_cause_analysis" name="root_cause_analysis"
+                      rows="5" required
+                      placeholder="Why did this happen?">{{ finding.root_cause_analysis or '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="capa_1" class="form-label">CAPA 1 <span class="req">*</span></label>
+            <textarea class="form-control" id="capa_1" name="capa_1" rows="5" required
+                      placeholder="Corrective / preventive action proposed or implemented">{{ finding.capa_1 or '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="response-attachments" class="form-label">Evidence / Attachments</label>
+            <input type="file" class="form-control" id="response-attachments" name="attachments" multiple>
+            <div class="form-text">Optional. Maximum 200MB per file. Previously uploaded evidence is kept.</div>
+        </div>
+
+        {% if response_files %}
+        <div class="capa-field mb-3">
+            <label>Evidence Already Uploaded</label>
+            {{ file_list(response_files) }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-1"></i>
+            {% if finding.status == 'CAPA_REVISION_REQUIRED' %}Resubmit CAPA Response{% else %}Submit CAPA Response{% endif %}
+        </button>
+    </div>
+</form>
+{% elif finding.capa_1 %}
+<div class="capa-card">
+    <h2>Recipient Response</h2>
+    <div class="capa-field mb-3">
+        <label>Action Taken Report</label>
+        <div class="capa-readonly-text">{{ finding.action_taken_report }}</div>
+    </div>
+    <div class="capa-field mb-3">
+        <label>Root Cause Analysis</label>
+        <div class="capa-readonly-text">{{ finding.root_cause_analysis }}</div>
+    </div>
+    <div class="capa-field mb-3">
+        <label>CAPA 1</label>
+        <div class="capa-readonly-text">{{ finding.capa_1 }}</div>
+    </div>
+    <div class="capa-fields mb-3">
+        <div class="capa-field">
+            <label>Submitted By</label>
+            <div class="value">
+                {{ finding.capa_1_author.username if finding.capa_1_author else '-' }}
+            </div>
+        </div>
+        <div class="capa-field">
+            <label>Submitted At</label>
+            <div class="value">{{ finding.capa_1_submitted_at|ist_strftime('%d-%m-%Y %H:%M') }}</div>
+        </div>
+    </div>
+    <div class="capa-field">
+        <label>Recipient Evidence</label>
+        {{ file_list(response_files) }}
+    </div>
+</div>
+{% else %}
+<div class="capa-card">
+    <h2>Recipient Response</h2>
+    <div class="capa-empty">
+        <i class="fas fa-hourglass-half"></i>
+        Awaiting the recipient&rsquo;s CAPA response.
+    </div>
+</div>
+{% endif %}
+
+{% if can_review %}
+<form method="post" action="{{ url_for('critical.submit_review', finding_id=finding.form_id) }}"
+      enctype="multipart/form-data" id="capa-review-form" novalidate>
+    <div class="capa-card">
+        <h2>Audit CAPA Review</h2>
+
+        <div class="mb-3">
+            <label for="capa_2" class="form-label">CAPA 2 <span class="req">*</span></label>
+            <textarea class="form-control" id="capa_2" name="capa_2" rows="5" required
+                      placeholder="Audit team's corrective / preventive action, recommendation or final response">{{ finding.capa_2 or '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Audit Decision <span class="req">*</span></label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="audit_decision"
+                       id="decision-accepted" value="{{ decision_accepted }}">
+                <label class="form-check-label" for="decision-accepted">
+                    <strong>ACCEPTED</strong> &mdash; close this issue
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="audit_decision"
+                       id="decision-not-accepted" value="{{ decision_not_accepted }}">
+                <label class="form-check-label" for="decision-not-accepted">
+                    <strong>NOT ACCEPTED</strong> &mdash; return to the recipient for revision
+                </label>
+            </div>
+        </div>
+
+        <div class="mb-3" id="justification-wrap" style="display:none;">
+            <label for="audit_justification" class="form-label">Justification <span class="req">*</span></label>
+            <textarea class="form-control" id="audit_justification" name="audit_justification" rows="4"
+                      placeholder="Why is the CAPA not accepted, and what must be corrected?"></textarea>
+            <div class="form-text">Mandatory when the decision is NOT ACCEPTED.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="review-attachments" class="form-label">Supporting Documents</label>
+            <input type="file" class="form-control" id="review-attachments" name="attachments" multiple>
+            <div class="form-text">Optional. Maximum 200MB per file.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-gavel me-1"></i> Submit Review
+        </button>
+    </div>
+</form>
+{% elif finding.capa_2 %}
+<div class="capa-card">
+    <h2>Audit Response</h2>
+    <div class="capa-field mb-3">
+        <label>CAPA 2</label>
+        <div class="capa-readonly-text">{{ finding.capa_2 }}</div>
+    </div>
+    {% if finding.audit_justification %}
+    <div class="capa-field mb-3">
+        <label>Justification (Not Accepted)</label>
+        <div class="capa-readonly-text">{{ finding.audit_justification }}</div>
+    </div>
+    {% endif %}
+    <div class="capa-fields mb-3">
+        <div class="capa-field">
+            <label>Decision</label>
+            <div class="value">
+                {% if finding.audit_decision == decision_accepted %}
+                    <span class="status-badge capa-closed">ACCEPTED</span>
+                {% elif finding.audit_decision == decision_not_accepted %}
+                    <span class="status-badge capa-revision">NOT ACCEPTED</span>
+                {% else %}-{% endif %}
+            </div>
+        </div>
+        <div class="capa-field">
+            <label>Reviewed By</label>
+            <div class="value">{{ finding.reviewer.username if finding.reviewer else '-' }}</div>
+        </div>
+        <div class="capa-field">
+            <label>Reviewed At</label>
+            <div class="value">{{ finding.audit_reviewed_at|ist_strftime('%d-%m-%Y %H:%M') }}</div>
+        </div>
+        {% if finding.closed_at %}
+        <div class="capa-field">
+            <label>Closed At</label>
+            <div class="value">{{ finding.closed_at|ist_strftime('%d-%m-%Y %H:%M') }}</div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="capa-field">
+        <label>Audit Review Attachments</label>
+        {{ file_list(review_files) }}
+    </div>
+</div>
+{% elif is_auditor %}
+<div class="capa-card">
+    <h2>Audit Response</h2>
+    <div class="capa-empty">
+        <i class="fas fa-gavel"></i>
+        CAPA 2 and the audit decision become available once the recipient submits their response.
+    </div>
+</div>
+{% endif %}
+
+<div class="capa-card">
+    <h2><i class="fas fa-timeline me-2"></i>Audit Trail</h2>
+    {% if events %}
+    <ul class="capa-trail">
+        {% for e in events %}
+        <li class="trail-item trail-{{ e.action|lower }}">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="trail-action">
+                    <span class="action-name">{{ e.action.replace('_', ' ')|title }}</span>
+                    {% if 'CREATED' in e.action %}
+                        <span class="badge bg-primary ms-2"><i class="fas fa-plus-circle me-1"></i>Created</span>
+                    {% elif 'RESPONSE' in e.action or 'RESUBMITTED' in e.action %}
+                        <span class="badge bg-info text-dark ms-2"><i class="fas fa-reply me-1"></i>Response</span>
+                    {% elif 'ACCEPTED' in e.action or 'CLOSED' in e.action %}
+                        <span class="badge bg-success ms-2"><i class="fas fa-check-circle me-1"></i>Accepted</span>
+                    {% elif 'REVISION' in e.action or 'REJECTED' in e.action %}
+                        <span class="badge bg-danger ms-2"><i class="fas fa-rotate-left me-1"></i>Revision Requested</span>
+                    {% endif %}
+                </div>
+                <div class="trail-meta">
+                    <i class="fas fa-user-circle me-1"></i><strong>{{ e.user.username if e.user else 'System' }}</strong>
+                    {% if e.user and e.user.role %}<span class="text-muted">({{ e.user.role }})</span>{% endif %} &middot;
+                    <i class="far fa-clock ms-1 me-1"></i>{{ e.created_at|ist_strftime('%d-%m-%Y %H:%M') }}
+                </div>
+            </div>
+            {% if e.old_status and e.new_status and e.old_status != e.new_status %}
+                <div class="trail-transition mt-1">
+                    <span class="badge bg-light text-dark border">{{ status_labels.get(e.old_status, e.old_status) }}</span>
+                    <i class="fas fa-arrow-right mx-1 text-muted"></i>
+                    <span class="badge bg-light text-dark border">{{ status_labels.get(e.new_status, e.new_status) }}</span>
+                </div>
+            {% endif %}
+            {% if e.comment %}<div class="trail-comment mt-1 text-secondary">{{ e.comment }}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="capa-empty"><i class="fas fa-clock-rotate-left"></i>No recorded events.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if can_review %}
+<script>
+(function () {
+    var form     = document.getElementById('capa-review-form');
+    var wrap     = document.getElementById('justification-wrap');
+    var textarea = document.getElementById('audit_justification');
+    var radios   = form.querySelectorAll('input[name="audit_decision"]');
+
+    function sync() {
+        var notAccepted = form.querySelector('input[name="audit_decision"]:checked');
+        var show = notAccepted && notAccepted.value === '{{ decision_not_accepted }}';
+        wrap.style.display = show ? 'block' : 'none';
+        textarea.required = !!show;
+    }
+
+    radios.forEach(function (radio) { radio.addEventListener('change', sync); });
+    sync();
+
+    // Client-side guard only; the backend enforces the same rules.
+    form.addEventListener('submit', function (event) {
+        var capa2 = document.getElementById('capa_2');
+        var decision = form.querySelector('input[name="audit_decision"]:checked');
+        if (!capa2.value.trim()) {
+            event.preventDefault();
+            alert('CAPA 2 is required.');
+            capa2.focus();
+            return;
+        }
+        if (!decision) {
+            event.preventDefault();
+            alert('Select an audit decision: Accepted or Not Accepted.');
+            return;
+        }
+        if (decision.value === '{{ decision_not_accepted }}' && !textarea.value.trim()) {
+            event.preventDefault();
+            alert('Justification is mandatory when the CAPA is not accepted.');
+            textarea.focus();
+        }
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}

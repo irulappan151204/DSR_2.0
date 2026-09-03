@@ -1,0 +1,2272 @@
+{% extends 'base.html' %}
+
+{# Recursive macro to display nested follow-up actions #}
+{% macro render_nested_actions(action, level=0) %}
+    {% if action.child_actions %}
+        <div class="child-actions-timeline" style="margin-left: {{ level * 2.2 }}rem;">
+            {% for child in action.child_actions %}
+            <div class="child-action-item animate-fade-in">
+                <div class="child-action-header">
+                    {% if child.is_finished %}
+                        <span class="status-icon status-finished"><i class="fas fa-check-circle"></i></span>
+                    {% elif child.is_overdue %}
+                        <span class="status-icon status-overdue"><i class="fas fa-exclamation-triangle"></i></span>
+                    {% else %}
+                        <span class="status-icon status-pending"><i class="fas fa-clock"></i></span>
+                    {% endif %}
+                    <span class="action-title">{{ child.title }}</span>
+                    {% if child.priority == 'Critical' %}
+                        <span class="priority-badge priority-critical">Critical</span>
+                    {% elif child.priority == 'High' %}
+                        <span class="priority-badge priority-high">High</span>
+                    {% elif child.priority == 'Medium' %}
+                        <span class="priority-badge priority-medium">Medium</span>
+                    {% else %}
+                        <span class="priority-badge priority-low">Low</span>
+                    {% endif %}
+                    <!-- Show nesting level indicator -->
+                    {% if level > 0 %}
+                        <span class="badge bg-info text-white"><i class="fas fa-link me-1"></i>Level {{ level + 1 }}</span>
+                    {% endif %}
+                </div>
+                <div class="child-action-meta" style="font-size: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.8rem;">
+                    <span><i class="fas fa-tag me-1"></i><strong>Title/Description:</strong> {{ child.title }}</span>
+                    <span><i class="fas fa-user me-1"></i>Assigned: {{ child.assigned_user.username }}</span>
+                    <span><i class="fas fa-user-plus me-1"></i>Created by: {{ child.creator.username }}</span>
+                    <span><i class="fas fa-clock me-1"></i>Created: <span class="ist-datetime">{{ child.created_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                    <span><i class="fas fa-calendar-alt me-1"></i>Due: <span class="ist-datetime">{{ child.due_date | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                    {% if child.is_finished and child.completed_at %}
+                    <span><i class="fas fa-check-circle me-1"></i>Completed: <span class="ist-datetime">{{ child.completed_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                    {% endif %}
+                </div>
+                <div class="child-action-body">
+                    {{ child.action_text }}
+                </div>
+                <div class="child-action-footer">
+                    {% if child.is_finished and child.time_taken %}
+                        <span class="badge bg-success"><i class="fas fa-hourglass-end me-1"></i>{{ child.time_taken }}</span>
+                    {% endif %}
+                    
+                    <!-- Only show Loop button for MD and Team Lead -->
+                    {% if current_user.role == 'MD' or current_user.is_team_lead %}
+                    <button class="btn btn-outline-primary btn-sm loop-btn" data-action-id="{{ child.id }}" data-toggle="modal">
+                        <i class="fas fa-link me-1"></i> Loop
+                    </button>
+                    {% endif %}
+                    
+                    {% if child.loop_message %}
+                        <div class="loop-message-badge">
+                            <i class="fas fa-link me-1"></i>{{ child.loop_message }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if child.completion_message %}
+                        <div class="completion-message-badge">
+                            <i class="fas fa-comment me-1"></i>{{ child.completion_message }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if child.is_finished %}
+                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
+                    {% elif child.is_overdue %}
+                        <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Pending</span>
+                    {% endif %}
+                </div>
+                {% if child.assigned_user_id == current_user.user_id and not child.is_finished %}
+                <form method="post" action="{{ url_for('actions.finish_action', action_id=child.id) }}" class="completion-form">
+                    <input type="hidden" name="redirect_to" value="{{ url_for('actions.action_home') }}">
+                    <div class="input-group">
+                        <select name="status" class="status-dropdown" required>
+                            <option value="Finished">Completed</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Blocked">Blocked</option>
+                        </select>
+                        <textarea name="completion_message" class="form-control" placeholder="Enter completion message..." required></textarea>
+                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-paper-plane"></i> Complete Action</button>
+                    </div>
+                </form>
+                {% endif %}
+                
+                {# Recursively render nested actions #}
+                {{ render_nested_actions(child, level + 1) }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --primary-light: #818cf8;
+        --primary-dark: #4338ca;
+        --success-color: #10b981;
+        --success-light: #d1fae5;
+        --warning-color: #f59e0b;
+        --warning-light: #fef3c7;
+        --danger-color: #ef4444;
+        --danger-light: #fee2e2;
+        --neutral-50: #f9fafb;
+        --neutral-100: #f3f4f6;
+        --neutral-200: #e5e7eb;
+        --neutral-300: #d1d5db;
+        --neutral-400: #9ca3af;
+        --neutral-500: #6b7280;
+        --neutral-600: #4b5563;
+        --neutral-700: #374151;
+    }
+
+    /* Dashboard Cards & Statistics */
+    .stats-card {
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        border: none;
+        height: 100%;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(79, 70, 229, 0.12);
+    }
+    
+    .stats-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .stats-card .card-title {
+        color: var(--neutral-600);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stats-card .stats-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-card .stats-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-card .stats-label {
+        color: var(--neutral-500);
+        font-size: 0.875rem;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    }
+    
+    .bg-gradient-success {
+        background: linear-gradient(135deg, var(--success-color) 0%, #34d399 100%);
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, var(--warning-color) 0%, #fbbf24 100%);
+    }
+    
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #f87171 100%);
+    }
+
+    /* Action Form Card */
+    .action-form-card {
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+        background: #fff;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border: none;
+    }
+    
+    .action-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: #fff;
+        padding: 1.5rem 2rem;
+        font-weight: 600;
+        font-size: 1.25rem;
+        letter-spacing: 0.025em;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+    }
+    
+    .action-header i {
+        margin-right: 0.75rem;
+        font-size: 1.1em;
+    }
+    
+    .action-form-body {
+        padding: 2rem;
+    }
+    
+    .action-form-card label {
+        font-weight: 500;
+        color: var(--neutral-700);
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-form-card .form-control, 
+    .action-form-card .form-select {
+        border-radius: 0.5rem;
+        border: 1px solid var(--neutral-200);
+        background: var(--neutral-50);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+    
+    .action-form-card .form-control:focus, 
+    .action-form-card .form-select:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .action-form-card .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        letter-spacing: 0.025em;
+        transition: all 0.3s;
+    }
+    
+    .action-form-card .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+    
+    .action-form-card .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Action List Table */
+    .action-list-card {
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+        background: #fff;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border: none;
+    }
+    
+    .action-list-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: #fff;
+        padding: 1.25rem 2rem;
+        font-weight: 600;
+        font-size: 1.25rem;
+        letter-spacing: 0.025em;
+        display: flex;
+        align-items: center;
+    }
+    
+    .action-list-header i {
+        margin-right: 0.75rem;
+        font-size: 1.1em;
+    }
+    
+    .action-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .action-table th {
+        background: var(--primary-color);
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+        border: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .action-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--neutral-200);
+        font-size: 0.95rem;
+    }
+    
+    .action-table tr {
+        transition: all 0.2s;
+    }
+    
+    .action-table tr:hover {
+        background: var(--neutral-50) !important;
+    }
+    
+    .action-table tr.finished-row {
+        background: linear-gradient(to right, var(--success-light) 0%, rgba(209, 250, 229, 0.3) 100%) !important;
+    }
+    
+    .action-table tr.overdue-row {
+        background: linear-gradient(to right, var(--danger-light) 0%, rgba(254, 226, 226, 0.3) 100%) !important;
+    }
+    
+    .action-table .action-title {
+        font-weight: 600;
+        color: var(--neutral-700);
+    }
+    
+    .action-table .action-follow-up {
+        margin-left: 1.5rem;
+        position: relative;
+    }
+    
+    .action-table .action-follow-up::before {
+        content: "";
+        position: absolute;
+        left: -1.5rem;
+        top: 50%;
+        width: 1.25rem;
+        height: 1px;
+        background: var(--primary-light);
+    }
+    
+    .action-table .action-follow-up::after {
+        content: "";
+        position: absolute;
+        left: -1.5rem;
+        top: 0;
+        width: 1px;
+        height: 100%;
+        background: var(--primary-light);
+    }
+
+    /* Priority Badges */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.35em 0.65em;
+        border-radius: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .badge-critical {
+        background-color: var(--danger-color);
+        color: white;
+    }
+    
+    .badge-high {
+        background-color: var(--warning-color);
+        color: var(--neutral-700);
+    }
+    
+    .badge-medium {
+        background-color: #3b82f6;
+        color: white;
+    }
+    
+    .badge-low {
+        background-color: var(--neutral-400);
+        color: white;
+    }
+    
+    /* Action buttons */
+    .btn-action {
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .btn-success {
+        background: var(--success-color);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        background: #0da271;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+    
+    /* Completion message form */
+    .completion-form {
+        margin-top: 1rem;
+        width: 100%;
+        max-width: 100%;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 1rem;
+        padding: 1.2rem;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.08);
+    }
+    
+    .completion-form .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100%;
+    }
+    
+    .completion-form .status-dropdown {
+        width: auto;
+        min-width: 140px;
+        border-radius: 0.6rem;
+        border: 2px solid #e2e8f0;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        background: #fff;
+        color: #4f46e5;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    
+    .completion-form .status-dropdown:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+    
+    .completion-form .form-control {
+        border-radius: 0.6rem;
+        border: 2px solid #e2e8f0;
+        width: 100%;
+        min-height: 100px;
+        resize: vertical;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        background: #fff;
+        transition: all 0.2s ease;
+    }
+    
+    .completion-form .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+    
+    .completion-form .btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.7rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        align-self: flex-start;
+        margin-top: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .completion-form .btn:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .completion-form .btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Team summary table */
+    .team-summary-table th {
+        background: var(--primary-color);
+        color: white;
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .team-summary-table td {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .action-table {
+            font-size: 0.9rem;
+        }
+        
+        .action-header, .action-list-header {
+            padding: 1.25rem 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .action-form-body {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-card .stats-value {
+            font-size: 1.8rem;
+        }
+        
+        .action-table th {
+            font-size: 0.75rem;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .action-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    .teamwise-section {
+        background: linear-gradient(135deg, #f5f7fa 60%, #e0e7ef 100%);
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.10);
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .teamwise-header {
+        display: flex;
+        align-items: center;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #4f46e5;
+        margin-bottom: 2rem;
+        letter-spacing: 0.03em;
+    }
+    .teamwise-header i {
+        font-size: 2.2rem;
+        margin-right: 1rem;
+        color: #818cf8;
+    }
+    .teamwise-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 2rem;
+    }
+    .team-card {
+        background: #fff;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 18px rgba(67, 97, 238, 0.08);
+        padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+        transition: box-shadow 0.2s, transform 0.2s;
+        border-left: 6px solid #6366f1;
+    }
+    .team-card:hover {
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.16);
+        transform: translateY(-4px) scale(1.02);
+    }
+    .team-card .team-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #6366f1;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    .team-card .team-icon {
+        font-size: 1.3rem;
+        margin-right: 0.5rem;
+        color: #818cf8;
+    }
+    .team-card .team-total {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: #4f46e5;
+        margin-bottom: 0.7rem;
+    }
+    .team-card .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.2rem;
+    }
+    .team-chip {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 1rem;
+        padding: 0.35em 1em;
+        background: #f3f4f6;
+        color: #374151;
+        box-shadow: 0 1px 4px rgba(67, 97, 238, 0.04);
+    }
+    .chip-completed { background: #d1fae5; color: #059669; }
+    .chip-pending { background: #fef3c7; color: #b45309; }
+    .chip-overdue { background: #fee2e2; color: #b91c1c; }
+    .chip-followup { background: #e0e7ff; color: #3730a3; }
+    .chip-critical { background: #fee2e2; color: #ef4444; }
+    .chip-high { background: #fef9c3; color: #f59e0b; }
+    .chip-medium { background: #dbeafe; color: #2563eb; }
+    .chip-low { background: #e5e7eb; color: #6b7280; }
+    @media (max-width: 600px) {
+        .teamwise-header { font-size: 1.1rem; }
+        .team-card .team-total { font-size: 1.3rem; }
+    }
+
+    .create-action-side {
+        max-width: 370px;
+        min-width: 300px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: 0;
+        position: sticky;
+        top: 2rem;
+        z-index: 2;
+    }
+    .create-action-card {
+        background: linear-gradient(135deg, #f5f7fa 60%, #e0e7ef 100%);
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.13);
+        padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .create-action-card .create-icon {
+        background: linear-gradient(135deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        border-radius: 50%;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.13);
+    }
+    .create-action-card .form-section {
+        width: 100%;
+        margin-bottom: 1.2rem;
+    }
+    .create-action-card label {
+        font-weight: 600;
+        color: #4f46e5;
+        margin-bottom: 0.3rem;
+    }
+    .create-action-card .form-control, .create-action-card .form-select {
+        border-radius: 0.5rem;
+        border: 1px solid #c7d2fe;
+        background: #f8fafc;
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
+    }
+    .create-action-card .btn-primary {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+        width: 100%;
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+    .create-action-card .btn-primary:hover {
+        background: linear-gradient(90deg, #818cf8 60%, #6366f1 100%);
+    }
+    @media (max-width: 991px) {
+        .create-action-side {
+            max-width: 100%;
+            min-width: unset;
+            margin: 0 auto 2rem auto;
+            position: static;
+        }
+    }
+
+    .actionlist-section {
+        margin-top: 2rem;
+    }
+    .parent-action-card {
+        background: #fff;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 18px rgba(67, 97, 238, 0.10);
+        margin-bottom: 2.2rem;
+        padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+        border-left: 7px solid #6366f1;
+        position: relative;
+        transition: box-shadow 0.2s, transform 0.2s;
+        animation: fadeIn 0.5s;
+    }
+    .parent-action-card:hover {
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.16);
+        transform: translateY(-3px) scale(1.01);
+    }
+    .parent-action-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.7rem;
+    }
+    .parent-action-header .status-icon {
+        font-size: 1.5rem;
+        margin-right: 0.7rem;
+    }
+    .parent-action-header .action-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #4f46e5;
+        margin-right: 0.7rem;
+    }
+    .parent-action-header .priority-badge {
+        margin-right: 0.5rem;
+    }
+    .parent-action-meta {
+        font-size: 0.95rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+    .parent-action-body {
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+    .parent-action-footer {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.7rem;
+    }
+    .parent-action-footer .badge {
+        font-size: 0.9rem;
+    }
+    .parent-action-footer .loop-btn {
+        font-size: 0.95rem;
+        padding: 0.35em 1em;
+    }
+    .child-actions-timeline {
+        margin-left: 2.2rem;
+        border-left: 2px dashed #c7d2fe;
+        padding-left: 1.2rem;
+        margin-top: 1rem;
+    }
+    .child-action-item {
+        background: #f8fafc;
+        border-radius: 0.8rem;
+        margin-bottom: 1.1rem;
+        padding: 1rem 1.2rem 0.8rem 1.2rem;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.06);
+        border-left: 5px solid #818cf8;
+        animation: fadeIn 0.5s;
+    }
+    .child-action-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.4rem;
+    }
+    .child-action-header .status-icon {
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+    }
+    .child-action-header .action-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #6366f1;
+        margin-right: 0.5rem;
+    }
+    .child-action-header .priority-badge {
+        margin-right: 0.4rem;
+    }
+    .child-action-meta {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 0.2rem;
+    }
+    .child-action-body {
+        color: #374151;
+        font-size: 0.97rem;
+    }
+    .child-action-footer {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+    .child-action-footer .badge {
+        font-size: 0.85rem;
+    }
+    .child-action-footer .loop-btn {
+        font-size: 0.9rem;
+        padding: 0.3em 0.9em;
+    }
+    .child-action-footer .completion-form {
+        margin-top: 0;
+    }
+    .priority-badge {
+        border-radius: 1rem;
+        padding: 0.3em 0.9em;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #fff;
+        background: #6366f1;
+    }
+    .priority-critical { background: #ef4444; }
+    .priority-high { background: #f59e0b; color: #fffbe6; }
+    .priority-medium { background: #3b82f6; }
+    .priority-low { background: #6b7280; }
+    .status-finished { color: #10b981; }
+    .status-overdue { color: #ef4444; }
+    .status-pending { color: #f59e0b; }
+    .status-default { color: #6366f1; }
+    @media (max-width: 600px) {
+        .parent-action-card, .child-action-item { padding: 1rem 0.7rem 0.7rem 0.7rem; }
+        .child-actions-timeline { margin-left: 1rem; padding-left: 0.5rem; }
+    }
+
+    .dashboard-main-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.5rem;
+        margin-top: 0;
+    }
+    .dashboard-main-left {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .dashboard-main-right {
+        flex: 0 0 370px;
+        min-width: 300px;
+        max-width: 370px;
+        margin-left: auto;
+        margin-right: 0;
+        position: relative;
+    }
+    @media (max-width: 1200px) {
+        .dashboard-main-row { flex-direction: column; gap: 2rem; }
+        .dashboard-main-right { max-width: 100%; min-width: unset; margin: 0 auto; position: static; }
+    }
+    @media (max-width: 991px) {
+        .dashboard-main-row { flex-direction: column; gap: 2rem; }
+        .dashboard-main-right { max-width: 100%; min-width: unset; margin: 0 auto; position: static; }
+    }
+    .section-spacer { margin-bottom: 2.5rem; }
+    .section-header {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #4f46e5;
+        margin-bottom: 1.2rem;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+    /* Added tab styles */
+    .action-tabs {
+        display: flex;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--neutral-200);
+        padding-bottom: 0.5rem;
+    }
+    
+    .action-tab {
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        cursor: pointer;
+        position: relative;
+        color: var(--neutral-500);
+        border-bottom: 3px solid transparent;
+        margin-right: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .action-tab.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+    }
+    
+    .action-tab:hover:not(.active) {
+        color: var(--neutral-700);
+        background-color: var(--neutral-100);
+    }
+    
+    .action-tab-content {
+        display: none;
+    }
+    
+    .action-tab-content.active {
+        display: block;
+    }
+
+    /* Loop modal styles */
+    .loop-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+    
+    .loop-modal.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+    
+    .loop-modal-content {
+        background-color: white;
+        border-radius: 1rem;
+        width: 90%;
+        max-width: 600px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+    
+    .loop-modal.active .loop-modal-content {
+        transform: translateY(0);
+    }
+    
+    .loop-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--neutral-200);
+    }
+    
+    .loop-modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .loop-modal-close {
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--neutral-500);
+    }
+    
+    .loop-modal-body {
+        margin-bottom: 1.5rem;
+        max-height: 55vh;
+        overflow-y: auto;
+    }
+    
+    .loop-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    /* Completion status styles */
+    .completion-form .status-dropdown {
+        width: auto;
+        min-width: 120px;
+        margin-right: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--neutral-300);
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .custom-multiselect {
+        position: relative;
+        width: 100%;
+        font-family: inherit;
+    }
+    .multiselect-selected {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+        border: none;
+        transition: box-shadow 0.2s;
+    }
+    .multiselect-selected.active, .multiselect-selected:focus {
+        box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+    }
+    .multiselect-dropdown {
+        display: none;
+        position: absolute;
+        top: 110%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.13);
+        z-index: 10;
+        padding: 0.5rem 0;
+        max-height: 260px;
+        overflow-y: auto;
+        border: 1px solid #c7d2fe;
+    }
+    .multiselect-dropdown.show {
+        display: block;
+        animation: fadeIn 0.2s;
+    }
+    .multiselect-option {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-radius: 0.4rem;
+    }
+    .multiselect-option:hover {
+        background: #f3f4f6;
+    }
+    .multiselect-option input[type="checkbox"] {
+        accent-color: #6366f1;
+        margin-right: 0.7rem;
+        width: 1.1em;
+        height: 1.1em;
+    }
+    .styled-select {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+        border: none;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.7rem;
+        transition: box-shadow 0.2s;
+    }
+    .styled-select:focus {
+        box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+    }
+
+    .custom-singleselect {
+        position: relative;
+        width: 100%;
+        font-family: inherit;
+    }
+    .singleselect-selected {
+        background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+        color: #fff;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+        border: none;
+        transition: box-shadow 0.2s;
+    }
+    .singleselect-selected.active, .singleselect-selected:focus {
+        box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+    }
+    .singleselect-dropdown {
+        display: none;
+        position: absolute;
+        top: 110%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 32px rgba(67, 97, 238, 0.13);
+        z-index: 10;
+        padding: 0.5rem 0;
+        max-height: 260px;
+        overflow-y: auto;
+        border: 1px solid #c7d2fe;
+    }
+    .singleselect-dropdown.show {
+        display: block;
+        animation: fadeIn 0.2s;
+    }
+    .singleselect-option {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-radius: 0.4rem;
+    }
+    .singleselect-option:hover {
+        background: #f3f4f6;
+    }
+    .singleselect-option input[type="radio"] {
+        accent-color: #6366f1;
+        margin-right: 0.7rem;
+        width: 1.1em;
+        height: 1.1em;
+    }
+
+    /* Date Filter Styles */
+    .date-filter-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 1.2rem;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 18px rgba(67, 97, 238, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .filter-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.2rem;
+        color: #4f46e5;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .filter-header i {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .filter-input {
+        border-radius: 0.6rem;
+        border: 2px solid #e2e8f0;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        background: #fff;
+        transition: all 0.2s ease;
+        min-width: 140px;
+    }
+
+    .filter-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-left: auto;
+        align-items: end;
+        padding-bottom: 0.2rem;
+    }
+
+    .filter-btn {
+        border-radius: 0.6rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .filter-btn-apply {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .filter-btn-apply:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .filter-btn-clear {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        color: white;
+    }
+
+    .filter-btn-clear:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+
+    .filter-toggle {
+        display: flex;
+        background: #fff;
+        border-radius: 0.6rem;
+        border: 2px solid #e2e8f0;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .filter-toggle-btn {
+        background: none;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #64748b;
+    }
+
+    .filter-toggle-btn.active {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .filter-range-group {
+        display: none;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-range-group.active {
+        display: flex;
+    }
+
+    .filter-single-group {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-single-group.hidden {
+        display: none;
+    }
+
+    .active-filter-indicator {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-left: 1rem;
+    }
+
+    .default-date-info {
+        color: #6b7280;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-top: 0.3rem;
+        font-style: italic;
+    }
+
+    .default-indicator {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .filter-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-buttons {
+            margin-left: 0;
+            justify-content: center;
+        }
+
+        .filter-range-group,
+        .filter-single-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .filter-input {
+            min-width: auto;
+        }
+    }
+
+    /* Add after .badge styles */
+    .completion-message-badge {
+        display: block;
+        width: 100%;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        background-color: #e0f2fe !important;
+        color: #0369a1 !important;
+        border-radius: 0.5rem;
+        padding: 0.75em 1em;
+        box-shadow: 0 2px 8px rgba(3, 105, 161, 0.08);
+    }
+
+    .loop-message-badge {
+        display: block;
+        width: 100%;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        background-color: #fef3c7 !important;
+        color: #b45309 !important;
+        border-radius: 0.5rem;
+        padding: 0.75em 1em;
+        box-shadow: 0 2px 8px rgba(180, 83, 9, 0.08);
+    }
+
+    @media (max-width: 991px) {
+        .completion-message-badge {
+            font-size: 0.95rem;
+            padding: 0.6em 0.7em;
+        }
+        .loop-message-badge {
+            font-size: 0.95rem;
+            padding: 0.6em 0.7em;
+        }
+    }
+    @media (max-width: 600px) {
+        .completion-message-badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.5em;
+        }
+        .loop-message-badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.5em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Team-wise Action Counts: always at the top, full width -->
+{% if current_user.role == 'MD' and team_action_counts %}
+    <div class="section-spacer">
+        <div class="section-header"><i class="fas fa-users-cog"></i> Team-wise Action Counts</div>
+        <div class="teamwise-section animate-fade-in">
+            <div class="teamwise-grid">
+                {% for team, counts in team_action_counts.items() %}
+                <div class="team-card">
+                    <div class="team-name"><span class="team-icon"><i class="fas fa-users"></i></span>{{ team }}</div>
+                    <div class="team-total">{{ counts.total }}</div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-completed"><i class="fas fa-check-circle me-1"></i> {{ counts.completed }} Completed</span>
+                        <span class="team-chip chip-pending"><i class="fas fa-clock me-1"></i> {{ counts.pending }} Pending</span>
+                        <span class="team-chip chip-overdue"><i class="fas fa-exclamation-triangle me-1"></i> {{ counts.overdue }} Overdue</span>
+                        <span class="team-chip chip-followup"><i class="fas fa-code-branch me-1"></i> {{ counts.followup|default(0) }} Follow-up</span>
+                    </div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-critical"><i class="fas fa-bolt me-1"></i> {{ counts.priority['Critical'] }} Critical</span>
+                        <span class="team-chip chip-high"><i class="fas fa-arrow-up me-1"></i> {{ counts.priority['High'] }} High</span>
+                        <span class="team-chip chip-medium"><i class="fas fa-arrow-right me-1"></i> {{ counts.priority['Medium'] }} Medium</span>
+                        <span class="team-chip chip-low"><i class="fas fa-arrow-down me-1"></i> {{ counts.priority['Low'] }} Low</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% elif current_user.is_team_lead and action_counts and priority_counts %}
+    <div class="section-spacer">
+        <div class="section-header"><i class="fas fa-users-cog"></i> My Team Action Summary</div>
+        <div class="teamwise-section animate-fade-in">
+            <div class="teamwise-grid">
+                <!-- Parent Actions Card -->
+                <div class="team-card">
+                    <div class="team-name"><span class="team-icon"><i class="fas fa-tasks"></i></span>Parent Actions</div>
+                    <div class="team-total">{{ action_counts.parent.total }}</div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-completed"><i class="fas fa-check-circle me-1"></i> {{ action_counts.parent.completed }} Completed</span>
+                        <span class="team-chip chip-pending"><i class="fas fa-clock me-1"></i> {{ action_counts.parent.pending }} Pending</span>
+                        <span class="team-chip chip-overdue"><i class="fas fa-exclamation-triangle me-1"></i> {{ action_counts.parent.overdue }} Overdue</span>
+                    </div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-critical"><i class="fas fa-bolt me-1"></i> {{ priority_counts.parent['Critical'] }} Critical</span>
+                        <span class="team-chip chip-high"><i class="fas fa-arrow-up me-1"></i> {{ priority_counts.parent['High'] }} High</span>
+                        <span class="team-chip chip-medium"><i class="fas fa-arrow-right me-1"></i> {{ priority_counts.parent['Medium'] }} Medium</span>
+                        <span class="team-chip chip-low"><i class="fas fa-arrow-down me-1"></i> {{ priority_counts.parent['Low'] }} Low</span>
+                    </div>
+                </div>
+                <!-- Child Actions Card -->
+                <div class="team-card">
+                    <div class="team-name"><span class="team-icon"><i class="fas fa-code-branch"></i></span>Follow-up Actions</div>
+                    <div class="team-total">{{ action_counts.child.total }}</div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-completed"><i class="fas fa-check-circle me-1"></i> {{ action_counts.child.completed }} Completed</span>
+                        <span class="team-chip chip-pending"><i class="fas fa-clock me-1"></i> {{ action_counts.child.pending }} Pending</span>
+                        <span class="team-chip chip-overdue"><i class="fas fa-exclamation-triangle me-1"></i> {{ action_counts.child.overdue }} Overdue</span>
+                    </div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-critical"><i class="fas fa-bolt me-1"></i> {{ priority_counts.child['Critical'] }} Critical</span>
+                        <span class="team-chip chip-high"><i class="fas fa-arrow-up me-1"></i> {{ priority_counts.child['High'] }} High</span>
+                        <span class="team-chip chip-medium"><i class="fas fa-arrow-right me-1"></i> {{ priority_counts.child['Medium'] }} Medium</span>
+                        <span class="team-chip chip-low"><i class="fas fa-arrow-down me-1"></i> {{ priority_counts.child['Low'] }} Low</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% elif current_user.role not in ['MD', 'Admin'] and action_counts and priority_counts %}
+    <div class="section-spacer">
+        <div class="section-header"><i class="fas fa-user-check"></i> My Action Summary</div>
+        <div class="teamwise-section animate-fade-in">
+            <div class="teamwise-grid">
+                <div class="team-card">
+                    <div class="team-name"><span class="team-icon"><i class="fas fa-user"></i></span>My Actions</div>
+                    <div class="team-total">{{ action_counts.total }}</div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-completed"><i class="fas fa-check-circle me-1"></i> {{ action_counts.completed }} Completed</span>
+                        <span class="team-chip chip-pending"><i class="fas fa-clock me-1"></i> {{ action_counts.pending }} Pending</span>
+                        <span class="team-chip chip-overdue"><i class="fas fa-exclamation-triangle me-1"></i> {{ action_counts.overdue }} Overdue</span>
+                    </div>
+                    <div class="chip-row">
+                        <span class="team-chip chip-critical"><i class="fas fa-bolt me-1"></i> {{ priority_counts['Critical'] }} Critical</span>
+                        <span class="team-chip chip-high"><i class="fas fa-arrow-up me-1"></i> {{ priority_counts['High'] }} High</span>
+                        <span class="team-chip chip-medium"><i class="fas fa-arrow-right me-1"></i> {{ priority_counts['Medium'] }} Medium</span>
+                        <span class="team-chip chip-low"><i class="fas fa-arrow-down me-1"></i> {{ priority_counts['Low'] }} Low</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Date Filter Section -->
+<div class="date-filter-section animate-fade-in">
+    <div class="filter-header">
+        <i class="fas fa-calendar-alt"></i>
+        Filter Actions by Date
+        {% if filter_date or (start_date and end_date) %}
+            <div class="active-filter-indicator">
+                <i class="fas fa-filter"></i>
+                {% if filter_date %}
+                    {{ filter_date }}
+                    {% if not request.args.get('filter_date') and not request.args.get('start_date') and not request.args.get('end_date') %}
+                        <span class="default-indicator">
+                            <i class="fas fa-clock"></i>
+                            auto
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {{ start_date }} to {{ end_date }}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <form method="GET" action="{{ url_for('actions.action_home') }}" id="dateFilterForm">
+        <div class="filter-toggle">
+            <button type="button" class="filter-toggle-btn active" id="singleDateToggle">
+                <i class="fas fa-calendar-day me-2"></i>Single Date
+            </button>
+            <button type="button" class="filter-toggle-btn" id="dateRangeToggle">
+                <i class="fas fa-calendar-week me-2"></i>Date Range
+            </button>
+        </div>
+        
+        <div class="filter-controls">
+            <!-- Single Date Filter -->
+            <div class="filter-single-group" id="singleDateGroup">
+                <div class="filter-group">
+                    <label for="filter_date">Select Date</label>
+                    <input type="date" class="filter-input" id="filter_date" name="filter_date" value="{{ filter_date or '' }}">
+                    {% if not (filter_date or start_date or end_date) %}
+                    <div class="default-date-info">
+                        <i class="fas fa-info-circle"></i>
+                        Showing yesterday's actions by default
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Date Range Filter -->
+            <div class="filter-range-group" id="dateRangeGroup">
+                <div class="filter-group">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" class="filter-input" id="start_date" name="start_date" value="{{ start_date or '' }}">
+                </div>
+                <div class="filter-group">
+                    <label for="end_date">End Date</label>
+                    <input type="date" class="filter-input" id="end_date" name="end_date" value="{{ end_date or '' }}">
+                </div>
+            </div>
+            
+            <div class="filter-buttons">
+                <button type="submit" class="filter-btn filter-btn-apply">
+                    <i class="fas fa-search"></i>
+                    Apply Filter
+                </button>
+                <a href="{{ url_for('actions.action_home') }}" class="filter-btn filter-btn-clear">
+                    <i class="fas fa-times"></i>
+                    Clear Filter
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="dashboard-main-row">
+    <div class="dashboard-main-left">
+        <div class="section-spacer">
+            <div class="section-header"><i class="fas fa-list"></i> Actions List</div>
+            
+            <!-- Action Tabs -->
+            <div class="action-tabs">
+                <div class="action-tab active" data-tab="pending-actions">
+                    <i class="fas fa-clock me-2"></i>Pending Actions
+                </div>
+                <div class="action-tab" data-tab="completed-actions">
+                    <i class="fas fa-check-circle me-2"></i>Completed Actions
+                </div>
+            </div>
+            
+            <!-- Actions List Section - Pending Actions -->
+            <div class="action-tab-content active" id="pending-actions-content">
+                {% if actions %}
+                    {% set pending_parent_actions = [] %}
+                    
+                    {% for action in actions %}
+                        {% if not action.is_finished and not action.parent_action_id %}
+                            {% set _ = pending_parent_actions.append(action) %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% for parent in pending_parent_actions %}
+                    <div class="parent-action-card animate-fade-in">
+                        <div class="parent-action-header">
+                            {% if parent.is_finished %}
+                                <span class="status-icon status-finished"><i class="fas fa-check-circle"></i></span>
+                            {% elif parent.is_overdue %}
+                                <span class="status-icon status-overdue"><i class="fas fa-exclamation-triangle"></i></span>
+                            {% else %}
+                                <span class="status-icon status-pending"><i class="fas fa-clock"></i></span>
+                            {% endif %}
+                            <span class="action-title">{{ parent.title }}</span>
+                            {% if parent.priority == 'Critical' %}
+                                <span class="priority-badge priority-critical">Critical</span>
+                            {% elif parent.priority == 'High' %}
+                                <span class="priority-badge priority-high">High</span>
+                            {% elif parent.priority == 'Medium' %}
+                                <span class="priority-badge priority-medium">Medium</span>
+                            {% else %}
+                                <span class="priority-badge priority-low">Low</span>
+                            {% endif %}
+                        </div>
+                        <div class="parent-action-meta" style="font-size: 0.8rem; display: flex; flex-wrap: wrap; gap: 1rem;">
+                            <span><i class="fas fa-tag me-1"></i><strong>Title/Description:</strong> {{ parent.title }}</span>
+                            <span><i class="fas fa-user me-1"></i>Assigned: {{ parent.assigned_user.username }}</span>
+                            <span><i class="fas fa-user-plus me-1"></i>Created by: {{ parent.creator.username }}</span>
+                            <span><i class="fas fa-clock me-1"></i>Created: <span class="ist-datetime">{{ parent.created_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            <span><i class="fas fa-calendar-alt me-1"></i>Due: <span class="ist-datetime">{{ parent.due_date | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            {% if parent.is_finished and parent.completed_at %}
+                            <span><i class="fas fa-check-circle me-1"></i>Completed: <span class="ist-datetime">{{ parent.completed_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            {% endif %}
+                        </div>
+                        <div class="parent-action-body">
+                            {{ parent.action_text }}
+                        </div>
+                        <div class="parent-action-footer">
+                            {% if parent.is_finished and parent.time_taken %}
+                                <span class="badge bg-success"><i class="fas fa-hourglass-end me-1"></i>{{ parent.time_taken }}</span>
+                            {% endif %}
+                            
+                            <!-- Only show Loop button for MD and Team Lead -->
+                            {% if current_user.role == 'MD' or current_user.is_team_lead %}
+                            <button class="btn btn-outline-primary btn-sm loop-btn" data-action-id="{{ parent.id }}" data-toggle="modal">
+                                <i class="fas fa-link me-1"></i> Loop
+                            </button>
+                            {% endif %}
+                            
+                            {% if parent.child_actions %}
+                                <span class="badge bg-primary ms-1"><i class="fas fa-code-branch me-1"></i>{{ parent.child_actions|length }} Follow-up</span>
+                            {% endif %}
+                            
+                            {% if parent.is_finished %}
+                                <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
+                            {% elif parent.is_overdue %}
+                                <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Pending</span>
+                            {% endif %}
+                        </div>
+                        
+                        {# Use recursive macro to display nested follow-up actions #}
+                        {{ render_nested_actions(parent) }}
+                        {% if parent.assigned_user_id == current_user.user_id and not parent.is_finished %}
+                        <form method="post" action="{{ url_for('actions.finish_action', action_id=parent.id) }}" class="completion-form">
+                            <input type="hidden" name="redirect_to" value="{{ url_for('actions.action_home') }}">
+                            <div class="input-group">
+                                <select name="status" class="status-dropdown" required>
+                                    <option value="Finished">Completed</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Blocked">Blocked</option>
+                                </select>
+                                <textarea name="completion_message" class="form-control" placeholder="Enter completion message..." required></textarea>
+                                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-paper-plane"></i> Complete Action</button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">No pending actions found.</div>
+                {% endif %}
+            </div>
+            
+            <!-- Actions List Section - Completed Actions -->
+            <div class="action-tab-content" id="completed-actions-content">
+                {% if actions %}
+                    {% set completed_parent_actions = [] %}
+                    
+                    {% for action in actions %}
+                        {% if action.is_finished and not action.parent_action_id %}
+                            {% set _ = completed_parent_actions.append(action) %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% for parent in completed_parent_actions %}
+                    <div class="parent-action-card animate-fade-in">
+                        <div class="parent-action-header">
+                            <span class="status-icon status-finished"><i class="fas fa-check-circle"></i></span>
+                            <span class="action-title">{{ parent.title }}</span>
+                            {% if parent.priority == 'Critical' %}
+                                <span class="priority-badge priority-critical">Critical</span>
+                            {% elif parent.priority == 'High' %}
+                                <span class="priority-badge priority-high">High</span>
+                            {% elif parent.priority == 'Medium' %}
+                                <span class="priority-badge priority-medium">Medium</span>
+                            {% else %}
+                                <span class="priority-badge priority-low">Low</span>
+                            {% endif %}
+                        </div>
+                        <div class="parent-action-meta" style="font-size: 0.8rem; display: flex; flex-wrap: wrap; gap: 1rem;">
+                            <span><i class="fas fa-tag me-1"></i><strong>Title/Description:</strong> {{ parent.title }}</span>
+                            <span><i class="fas fa-user me-1"></i>Assigned: {{ parent.assigned_user.username }}</span>
+                            <span><i class="fas fa-user-plus me-1"></i>Created by: {{ parent.creator.username }}</span>
+                            <span><i class="fas fa-clock me-1"></i>Created: <span class="ist-datetime">{{ parent.created_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            <span><i class="fas fa-calendar-alt me-1"></i>Due: <span class="ist-datetime">{{ parent.due_date | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            {% if parent.is_finished and parent.completed_at %}
+                            <span><i class="fas fa-check-circle me-1"></i>Completed: <span class="ist-datetime">{{ parent.completed_at | ist_strftime('%Y-%m-%d %H:%M') }}</span></span>
+                            {% endif %}
+                        </div>
+                        <div class="parent-action-body">
+                            {{ parent.action_text }}
+                        </div>
+                        <div class="parent-action-footer">
+                            {% if parent.time_taken %}
+                                <span class="badge bg-success"><i class="fas fa-hourglass-end me-1"></i>{{ parent.time_taken }}</span>
+                            {% endif %}
+                            
+                            <!-- Only show Loop button for MD and Team Lead -->
+                            {% if current_user.role == 'MD' or current_user.is_team_lead %}
+                            <button class="btn btn-outline-primary btn-sm loop-btn" data-action-id="{{ parent.id }}" data-toggle="modal">
+                                <i class="fas fa-link me-1"></i> Loop
+                            </button>
+                            {% endif %}
+                            
+                            {% if parent.loop_message %}
+                                <div class="loop-message-badge">
+                                    <i class="fas fa-link me-1"></i>{{ parent.loop_message }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if parent.completion_message %}
+                                <div class="completion-message-badge">
+                                    <i class="fas fa-comment me-1"></i>{{ parent.completion_message }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if parent.child_actions %}
+                                <span class="badge bg-primary ms-1"><i class="fas fa-code-branch me-1"></i>{{ parent.child_actions|length }} Follow-up</span>
+                            {% endif %}
+                            
+                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
+                        </div>
+                        
+                        {# Use recursive macro to display nested follow-up actions #}
+                        {{ render_nested_actions(parent) }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">No completed actions found.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-main-right">
+        {% if (current_user.role == 'MD' or current_user.is_team_lead) and (not loop_mode or not parent_action) %}
+        <div class="create-action-side">
+            <div class="create-action-card animate-fade-in">
+                <div class="create-icon mb-3"><i class="fas fa-bolt"></i></div>
+                <h4 class="mb-3 fw-bold text-center" style="color:#4f46e5; letter-spacing:0.02em;">Create Action</h4>
+                <form method="post" action="{{ url_for('actions.create_action') }}">
+                    <input type="hidden" name="redirect_to" value="{{ url_for('actions.action_home') }}">
+                    {% if current_user.role == 'MD' or current_user.is_team_lead %}
+                    <!-- Team Filter Dropdown (MD only) -->
+                    <div class="form-section">
+                        <label for="team_filter" class="form-label">Select Team</label>
+                        <select class="form-select" id="team_filter" name="team_filter">
+                            <option value="">Select Team</option>
+                            <option value="team1">Academics</option>
+                            <option value="team2">Admin</option>
+                            <option value="team3">Audit</option>
+                        </select>
+                    </div>
+                    {% endif %}
+                    <!-- Title/Description Dropdown (filtered by team) -->
+                    <div class="form-section">
+                        <label for="title" class="form-label">Title/Description</label>
+                        <select class="form-select" id="title_select" name="title_select" required>
+                            <option value="">Select Title</option>
+                            <option value="Calendar Schedule" data-team="team1">1. Calendar Schedule</option>
+                            <option value="ASA / Activities Attendance" data-team="team1">2. ASA / Activities Attendance</option>
+                            <option value="Students Attendance" data-team="team1">3. Students Attendance</option>
+                            <option value="Students Grooming" data-team="team1">4. Students Grooming</option>
+                            <option value="Students Late Coming" data-team="team1">5. Students Late Coming</option>
+                            <option value="Admission Status" data-team="team1">6. Admission Status</option>
+                            <option value="Transfer Certificate (MLM)" data-team="team1">7. Transfer Certificate (MLM)</option>
+                            <option value="Parent Activity" data-team="team1">8. Parent Activity</option>
+                            <option value="Parent Visit" data-team="team1">9. Parent Visit</option>
+                            <option value="Exam Schedule" data-team="team1">10. Exam Schedule</option>
+                            <option value="Information from External Agencies" data-team="team1">11. Information from External Agencies</option>
+                            <option value="Sick Bay (Students)" data-team="team1">12. Sick Bay (Students)</option>
+                            <option value="Home School Communications (MLM)" data-team="team1">13. Home School Communications (MLM)</option>
+                            <option value="Disciplinary Measures (MLM)" data-team="team1">14. Disciplinary Measures (MLM)</option>
+                            <option value="Logistics (Logistics Team)" data-team="team1">15. Logistics (Logistics Team)</option>
+                            <option value="Intra Grade Competition Certificate (Certificates Team)" data-team="team1">16. Intra Grade Competition Certificate (Certificates Team)</option>
+                            <option value="Staff Concern" data-team="team1">17. Staff Concern</option>
+                            <option value="Parent Concern" data-team="team1">18. Parent Concern</option>
+                            <option value="AEP Attendance" data-team="team1">19. AEP Attendance</option>
+                            <option value="Extended Class Attendance" data-team="team1">20. Extended Class Attendance</option>
+                            <option value="Training Session" data-team="team1">21. Training Session</option>
+                            <option value="Team Weekly Meeting" data-team="team1">22. Team Weekly Meeting</option>
+                            <option value="Special Education" data-team="team1">23. Special Education</option>
+                            <option value="Hostel" data-team="team1">24. Hostel</option>
+                            <option value="SEC" data-team="team1">25. SEC</option>
+                            <option value="School Counsellor" data-team="team1">26. School Counsellor</option>
+                            <option value="Scholorius / Smart Tail" data-team="team1">27. Scholorius / Smart Tail</option>
+                            <option value="Others" data-team="team1">28. Others</option>
+
+                            <option value="HR Attendance" data-team="team2">1. HR Attendance</option>
+                            <option value="Recruitment" data-team="team2">2. Recruitment</option>
+                            <option value="Interview Schedule" data-team="team2">3. Interview Schedule</option>
+                            <option value="Exit" data-team="team2">4. Exit</option>
+                            <option value="Concerns / Kural" data-team="team2">5. Concerns / Kural</option>
+                            <option value="Visitors" data-team="team2">6. Visitors</option>
+                            <option value="Stores & Materials" data-team="team2">7. Stores & Materials</option>
+                            <option value="Camera & Monitoring" data-team="team2">8. Camera & Monitoring</option>
+                            <option value="Biometrics Access Card Punching" data-team="team2">9. Biometrics Access Card Punching</option>
+                            <option value="Water TDS Deviation" data-team="team2">10. Water TDS Deviation</option>
+                            <option value="Testing & Cleaning" data-team="team2">11. Testing & Cleaning</option>
+                            <option value="Washroom Cleanliness" data-team="team2">12. Washroom Cleanliness</option>
+                            <option value="Transport Maintenance and Service" data-team="team2">13. Transport Maintenance and Service</option>
+                            <option value="Maintenance - AC Temperature" data-team="team2">14. Maintenance - AC Temperature</option>
+                            <option value="Labor, EB, Solar, Genset" data-team="team2">15. Labor, EB, Solar, Genset</option>
+                            <option value="Security" data-team="team2">16. Security</option>
+                            <option value="Documents Movement" data-team="team2">17. Documents Movement</option>
+                            <option value="Govt Official Documents (3 Months prior from expiry)" data-team="team2">18. Govt Official Documents (3 Months prior from expiry)</option>
+                            <option value="Digital / Marketing" data-team="team2">19. Digital / Marketing</option>
+                            <option value="Intercom Maintenance" data-team="team2">20. Intercom Maintenance</option>
+                            <option value="Health Check Up" data-team="team2">21. Health Check Up</option>
+                            <option value="Net Connectivity and Print Details and Verification" data-team="team2">22. Net Connectivity and Print Details and Verification</option>
+                            <option value="General Maintenance – IT Products" data-team="team2">23. General Maintenance – IT Products</option>
+                            <option value="Calendar Schedule" data-team="team2">24. Calendar Schedule</option>
+                            <option value="Training Attendance" data-team="team2">25. Training Attendance</option>
+                            <option value="Training Details (CBSE/CIS/External)" data-team="team2">26. Training Details (CBSE/CIS/External)</option>
+                            <option value="Others" data-team="team2">27. Others</option>
+
+                            <option value="Audit" data-team="team3">1. Audit</option>
+                            <option value="Others" data-team="team3">2. Others</option>
+                            
+                        </select>
+                        <!-- fallback input for custom title if needed -->
+                        <input type="text" class="form-control mt-2" id="title_input" name="title" placeholder="Or enter custom title" style="display:none;">
+                    </div>
+                    <div class="form-section">
+                        <label for="assigned_user" class="form-label">Assign to User</label>
+                        {% if current_user.role == 'MD' or current_user.is_team_lead %}
+                        <div class="custom-multiselect">
+                            <div class="multiselect-selected" id="multiselectSelected">Select User(s)</div>
+                            <div class="multiselect-dropdown" id="multiselectDropdown">
+                                <label class="multiselect-option" data-team="all">
+                                    <input type="checkbox" value="all" class="assigned-user-checkbox"> All Members
+                                </label>
+                                {% for user in users %}
+                                    {% if user.role not in ['Admin'] %}
+                                    <label class="multiselect-option" data-team="team{{ user.team_id }}">
+                                        <input type="checkbox" value="{{ user.user_id }}" class="assigned-user-checkbox"> {{ user.username }} ({{ user.role }})
+                                    </label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <input type="hidden" name="assigned_user" id="assignedUserHidden">
+                        <small class="text-muted">Tick to select multiple users. Click box to open/close.</small>
+                        {% else %}
+                        <div class="custom-singleselect">
+                            <div class="singleselect-selected" id="singleselectSelected">Select User</div>
+                            <div class="singleselect-dropdown" id="singleselectDropdown">
+                                {% for user in users %}
+                                    {% if user.team_id == current_user.team_id and user.user_id != current_user.user_id %}
+                                    <label class="singleselect-option" data-team="team{{ user.team_id }}">
+                                        <input type="radio" name="assigned_user" value="{{ user.user_id }}" class="assigned-user-radio"> {{ user.username }}
+                                    </label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <small class="text-muted">Click to select a team member.</small>
+                        {% endif %}
+                    </div>
+                    <div class="form-section">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-select" id="priority" name="priority" required>
+                            <option value="Critical">Critical</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-section">
+                        <label for="due_date" class="form-label">Due Date/Time</label>
+                        <input type="datetime-local" class="form-control" id="due_date" name="due_date" required>
+                    </div>
+                    <div class="form-section">
+                        <label for="action" class="form-label">Action</label>
+                        <textarea class="form-control" id="action" name="action" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Submit</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Loop Action Modal -->
+<div class="loop-modal" id="loopModal">
+    <div class="loop-modal-content">
+        <div class="loop-modal-header">
+            <h5 class="loop-modal-title"><i class="fas fa-link me-2"></i> Create Follow-up Action</h5>
+            <span class="loop-modal-close" id="closeLoopModal"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="loop-modal-body">
+            <form id="loopForm" method="post">
+                <input type="hidden" name="redirect_to" value="{{ url_for('actions.action_home') }}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title/Description</label>
+                    <input type="text" class="form-control" id="loop_title" name="title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="assigned_user" class="form-label">Assign to User</label>
+                    <select class="form-select" id="loop_assigned_user" name="assigned_user" required>
+                        <option value="">Select User</option>
+                        {% for user in users %}
+                        <option value="{{ user.user_id }}">{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="priority" class="form-label">Priority</label>
+                    <select class="form-select" id="loop_priority" name="priority" required>
+                        <option value="Critical">Critical</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="due_date" class="form-label">Due Date/Time</label>
+                    <input type="datetime-local" class="form-control" id="loop_due_date" name="due_date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loop_message" class="form-label">Loop Message</label>
+                    <textarea class="form-control" id="loop_message" name="loop_message" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="action" class="form-label">Action</label>
+                    <textarea class="form-control" id="loop_action" name="action" rows="4" required></textarea>
+                </div>
+                <div class="loop-modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelLoopModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Follow-up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set userTeam and userRole JS variables
+    {% if current_user.role != 'MD' %}
+    window.userTeam = 'team{{ current_user.team_id }}';
+    {% else %}
+    window.userTeam = null;
+    {% endif %}
+    window.userRole = '{{ current_user.role }}';
+</script>
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Date filter functionality
+        const singleDateToggle = document.getElementById('singleDateToggle');
+        const dateRangeToggle = document.getElementById('dateRangeToggle');
+        const singleDateGroup = document.getElementById('singleDateGroup');
+        const dateRangeGroup = document.getElementById('dateRangeGroup');
+        const dateFilterForm = document.getElementById('dateFilterForm');
+        
+        // Toggle between single date and date range
+        singleDateToggle.addEventListener('click', function() {
+            singleDateToggle.classList.add('active');
+            dateRangeToggle.classList.remove('active');
+            singleDateGroup.classList.remove('hidden');
+            dateRangeGroup.classList.remove('active');
+            
+            // Clear date range inputs
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+        });
+        
+        dateRangeToggle.addEventListener('click', function() {
+            dateRangeToggle.classList.add('active');
+            singleDateToggle.classList.remove('active');
+            singleDateGroup.classList.add('hidden');
+            dateRangeGroup.classList.add('active');
+            
+            // Clear single date input
+            document.getElementById('filter_date').value = '';
+        });
+        
+        // Form validation
+        dateFilterForm.addEventListener('submit', function(e) {
+            const filterDate = document.getElementById('filter_date').value;
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+            if (singleDateToggle.classList.contains('active')) {
+                if (!filterDate) {
+                    e.preventDefault();
+                    alert('Please select a date to filter by.');
+                    return;
+                }
+            } else {
+                if (!startDate || !endDate) {
+                    e.preventDefault();
+                    alert('Please select both start and end dates for the date range.');
+                    return;
+                }
+                if (new Date(startDate) > new Date(endDate)) {
+                    e.preventDefault();
+                    alert('Start date cannot be later than end date.');
+                    return;
+                }
+            }
+        });
+        
+        // Initialize based on current filter state
+        const hasFilterDate = document.getElementById('filter_date').value;
+        const hasStartDate = document.getElementById('start_date').value;
+        const hasEndDate = document.getElementById('end_date').value;
+        
+        if (hasStartDate && hasEndDate) {
+            dateRangeToggle.click();
+        }
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.action-tab');
+        const tabContents = document.querySelectorAll('.action-tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tabId + '-content').classList.add('active');
+            });
+        });
+        
+        // Loop modal functionality
+        const loopBtns = document.querySelectorAll('.loop-btn');
+        const loopModal = document.getElementById('loopModal');
+        const closeLoopModal = document.getElementById('closeLoopModal');
+        const cancelLoopModal = document.getElementById('cancelLoopModal');
+        const loopForm = document.getElementById('loopForm');
+        
+        loopBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const actionId = btn.getAttribute('data-action-id');
+                loopForm.action = `/actions/loop/${actionId}`;
+                loopModal.classList.add('active');
+            });
+        });
+        
+        closeLoopModal.addEventListener('click', () => {
+            loopModal.classList.remove('active');
+        });
+        
+        cancelLoopModal.addEventListener('click', () => {
+            loopModal.classList.remove('active');
+        });
+        
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === loopModal) {
+                loopModal.classList.remove('active');
+            }
+        });
+
+        // Custom multiselect for MD
+        const selected = document.getElementById('multiselectSelected');
+        const dropdown = document.getElementById('multiselectDropdown');
+        const checkboxes = dropdown ? dropdown.querySelectorAll('.assigned-user-checkbox') : [];
+        const hiddenInput = document.getElementById('assignedUserHidden');
+        if(selected && dropdown && hiddenInput) {
+            selected.addEventListener('click', function(e) {
+                dropdown.classList.toggle('show');
+                selected.classList.toggle('active');
+            });
+            document.addEventListener('click', function(e) {
+                if (!selected.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                    selected.classList.remove('active');
+                }
+            });
+            function updateSelectedText() {
+                let checked = dropdown.querySelectorAll('.assigned-user-checkbox:checked');
+                let names = [];
+                checked.forEach(function(cb) {
+                    let label = cb.parentElement.textContent.trim();
+                    if(cb.value === 'all') {
+                        names = ['All Members'];
+                        return false;
+                    }
+                    if(cb.value !== 'all') names.push(label.replace('All Members', '').trim());
+                });
+                selected.textContent = names.length ? names.join(', ') : 'Select User(s)';
+                // Update hidden input for form submit
+                let values = Array.from(checked).map(cb => cb.value);
+                hiddenInput.value = values.join(',');
+            }
+            checkboxes.forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    if(cb.value === 'all') {
+                        if(cb.checked) {
+                            checkboxes.forEach(function(otherCb) {
+                                if(otherCb.value !== 'all') otherCb.checked = false;
+                            });
+                        }
+                } else {
+                        let allCheckbox = dropdown.querySelector('.assigned-user-checkbox[value="all"]');
+                        if(allCheckbox) allCheckbox.checked = false;
+                }
+                updateSelectedText();
+            });
+            });
+        }
+
+        // Custom singleselect for Team Lead
+        const singleSelected = document.getElementById('singleselectSelected');
+        const singleDropdown = document.getElementById('singleselectDropdown');
+        const radios = singleDropdown ? singleDropdown.querySelectorAll('.assigned-user-radio') : [];
+        if(singleSelected && singleDropdown) {
+            singleSelected.addEventListener('click', function(e) {
+                singleDropdown.classList.toggle('show');
+                singleSelected.classList.toggle('active');
+            });
+            document.addEventListener('click', function(e) {
+                if (!singleSelected.contains(e.target) && !singleDropdown.contains(e.target)) {
+                    singleDropdown.classList.remove('show');
+                    singleSelected.classList.remove('active');
+                }
+            });
+            radios.forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    let label = radio.parentElement.textContent.trim();
+                    singleSelected.textContent = label;
+                    singleDropdown.classList.remove('show');
+                    singleSelected.classList.remove('active');
+                });
+            });
+        }
+
+        // Team filter logic
+        const teamFilter = document.getElementById('team_filter');
+        const titleSelect = document.getElementById('title_select');
+        const titleInput = document.getElementById('title_input');
+        // User selects
+        const multiUserOptions = document.querySelectorAll('.multiselect-option[data-team]');
+        const singleUserOptions = document.querySelectorAll('.singleselect-option[data-team]');
+
+        // Helper: get current user's team for team leads/members
+        let userTeam = window.userTeam || null;
+
+        function filterTitlesByTeam(team) {
+            Array.from(titleSelect.options).forEach(opt => {
+                if (!opt.value || !opt.dataset.team) {
+                    opt.style.display = '';
+                } else {
+                    opt.style.display = (opt.dataset.team === team) ? '' : 'none';
+                }
+            });
+            titleSelect.value = '';
+        }
+        function filterUsersByTeam(team) {
+            if (multiUserOptions.length) {
+                multiUserOptions.forEach(opt => {
+                    if (opt.getAttribute('data-team') === 'all' || opt.getAttribute('data-team') === team) {
+                        opt.style.display = '';
+                    } else {
+                        opt.style.display = 'none';
+                    }
+                });
+            }
+            if (singleUserOptions.length) {
+                singleUserOptions.forEach(opt => {
+                    if (opt.getAttribute('data-team') === team) {
+                        opt.style.display = '';
+                    } else {
+                        opt.style.display = 'none';
+                    }
+                });
+            }
+        }
+        // Only MD can change team filter
+        if (teamFilter) {
+            teamFilter.addEventListener('change', function() {
+                const team = teamFilter.value;
+                if (team) {
+                    filterTitlesByTeam(team);
+                    filterUsersByTeam(team);
+                } else {
+                    // Show all if no team selected
+                    Array.from(titleSelect.options).forEach(opt => { opt.style.display = ''; });
+                    if (multiUserOptions.length) multiUserOptions.forEach(opt => { opt.style.display = ''; });
+                    if (singleUserOptions.length) singleUserOptions.forEach(opt => { opt.style.display = ''; });
+                }
+            });
+        } else if (userTeam) {
+            // For team leads, show all users including MD. For team members, filter by their own team
+            filterTitlesByTeam(userTeam);
+            if (window.userRole === 'Team Lead') {
+                // Team leads can see all users including MD
+                if (multiUserOptions.length) {
+                    multiUserOptions.forEach(function(opt) { 
+                        opt.style.display = ''; 
+                    });
+                }
+                if (singleUserOptions.length) {
+                    singleUserOptions.forEach(function(opt) { 
+                        opt.style.display = ''; 
+                    });
+                }
+            } else {
+                // Team members filter by their own team
+                filterUsersByTeam(userTeam);
+            }
+        }
+        // Optionally, allow custom title input
+        titleSelect.addEventListener('change', function() {
+            if (titleSelect.value === '') {
+                // Custom title required
+                titleInput.value = '';
+                titleInput.style.display = '';
+                titleInput.required = true;
+            } else {
+                // Use selected dropdown value – store it in hidden input (title)
+                titleInput.value = titleSelect.value;
+                titleInput.style.display = 'none';
+                titleInput.required = false;
+            }
+        });
+
+        // Initialize hidden input with default select value (if page re-load fails validation)
+        if (titleSelect && titleSelect.value !== '') {
+            titleInput.value = titleSelect.value;
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

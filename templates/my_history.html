@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}My Submission History{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h3 class="mb-0"><i class="fas fa-clock me-2"></i>My Submission History</h3>
+  </div>
+  <div class="card-body">
+    <form class="row g-3 mb-3" method="get">
+      <div class="col-sm-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="start" value="{{ start }}" class="form-control" />
+      </div>
+      <div class="col-sm-3">
+        <label class="form-label">End Date</label>
+        <input type="date" name="end" value="{{ end }}" class="form-control" />
+      </div>
+      <div class="col-sm-4">
+        <label class="form-label">Form (optional, model class name)</label>
+        <input type="text" name="form" value="{{ form_query }}" placeholder="e.g. Team2WaterTDSDeviation" class="form-control" />
+      </div>
+      <div class="col-sm-2 d-flex align-items-end">
+        <button class="btn btn-primary w-100" type="submit"><i class="fas fa-filter me-2"></i>Filter</button>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th style="white-space:nowrap;">Submitted At</th>
+            <th>Form</th>
+            <th>Form ID</th>
+            <th>Form Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if rows %}
+            {% for r in rows %}
+              <tr>
+                <td style="white-space:nowrap;">{{ r.submitted_at|ist_strftime('%b %d, %Y %I:%M %p') }}</td>
+                <td>{{ r.form_name }}</td>
+                <td>{{ r.form_id }}</td>
+                <td>
+                  {% if r.form_data %}
+                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formData{{ r.form_name }}{{ r.form_id }}" aria-expanded="false">
+                      <i class="fas fa-eye"></i> View Data
+                    </button>
+                    <div class="collapse mt-2" id="formData{{ r.form_name }}{{ r.form_id }}">
+                      <div class="card card-body">
+                        <div class="row">
+                          {% for field_name, field_value in r.form_data.items() %}
+                            <div class="col-md-6 mb-2">
+                              <strong>{{ field_name|replace('_', ' ')|title }}:</strong>
+                              <span class="text-muted">{{ field_value }}</span>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <span class="text-muted">No data</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted">No submissions found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
