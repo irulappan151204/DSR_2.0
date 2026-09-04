@@ -33,7 +33,12 @@
                             <label for="team_id" class="form-label">Assign to Team</label>
                             <select class="form-select" id="team_id" name="team_id" required>
                                 {% for team in teams %}
-                                <option value="{{ team.team_id }}">{{ team.team_name }}</option>
+                                <option value="{{ team.team_id }}">
+                                    {% if team.team_id == 1 or team.team_name == 'Team 1' %}Academics
+                                    {% elif team.team_id == 2 or team.team_name == 'Team 2' %}Admin
+                                    {% elif team.team_id == 3 or team.team_name == 'Team 3' %}Audit
+                                    {% else %}{{ team.team_name }}{% endif %}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>

@@ -24,6 +24,21 @@ class User(UserMixin, db.Model):
     def is_team_lead(self):
         return self.role == 'Team Lead'
 
+    @property
+    def is_active(self):
+        """Flask-Login contract: Returns False if the account has been deactivated."""
+        return not (self.password and self.password.startswith('!DISABLED$'))
+
+    def deactivate(self):
+        """Mark account inactive via the shadow flag."""
+        if self.password and not self.password.startswith('!DISABLED$'):
+            self.password = f"!DISABLED${self.password}"
+
+    def reactivate(self):
+        """Restore account to active state."""
+        if self.password and self.password.startswith('!DISABLED$'):
+            self.password = self.password.replace('!DISABLED$', '', 1)
+
 class Team(db.Model):
     __tablename__ = 'teams'
     
@@ -35,6 +50,19 @@ class Team(db.Model):
     team_lead = db.relationship('User', foreign_keys=[lead_id], back_populates='led_team')
     members = db.relationship('User', back_populates='team', foreign_keys='User.team_id')
     issues = db.relationship('Issue', backref=db.backref('team', uselist=False), lazy=True)
+    
+    @property
+    def designated_lead(self):
+        """Returns the assigned team lead, falling back to an active member with role 'Team Lead' if lead_id is unset."""
+        if self.lead_id and self.team_lead:
+            return self.team_lead
+        for member in self.members:
+            if member.role == 'Team Lead' and member.is_active:
+                return member
+        for member in self.members:
+            if member.role == 'Team Lead':
+                return member
+        return None
     
     # Team 1 Form Relationships
     team1_calendar = db.relationship('Team1CalendarSchedule', backref='team', lazy=True)

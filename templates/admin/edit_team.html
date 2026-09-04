@@ -101,17 +101,17 @@
                 <label class="form-label">Team Name</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-users"></i></span>
-                  <input type="text" class="form-control bg-light" value="{{ team.team_name }}" disabled>
+                  <input type="text" class="form-control bg-light" value="{% if team.team_id == 1 or team.team_name == 'Team 1' %}Academics{% elif team.team_id == 2 or team.team_name == 'Team 2' %}Admin{% elif team.team_id == 3 or team.team_name == 'Team 3' %}Audit{% else %}{{ team.team_name }}{% endif %}" disabled>
                 </div>
               </div>
               <div class="mb-4">
                 <label for="lead_id" class="form-label">Team Lead</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-                  <select class="form-select" id="lead_id" name="lead_id" required>
-                    <option value="">Select a team lead</option>
-                    {% for lead in team_leads %}
-                    <option value="{{ lead.id }}" {% if lead.id == team.lead_id %}selected{% endif %}>{{ lead.username }}</option>
+                  <select class="form-select" id="lead_id" name="lead_id">
+                    <option value="">-- No Team Lead Assigned --</option>
+                    {% for lead in team_leads if lead.is_active %}
+                    <option value="{{ lead.user_id }}" {% if lead.user_id == team.lead_id %}selected{% endif %}>{{ lead.username }}</option>
                     {% endfor %}
                   </select>
                 </div>

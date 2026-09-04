@@ -115,18 +115,26 @@
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                 {% for category, message in messages %}
-                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
                 {% endfor %}
               {% endif %}
             {% endwith %}
-            <form method="POST" action="{{ url_for('add_user') }}">
+            <form method="POST" action="{{ url_for('add_user') }}" id="addUserForm">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="password" name="password" required autocomplete="new-password">
+                  <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="password" title="Toggle password visibility">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
@@ -143,7 +151,12 @@
                 <select class="form-select" id="team_id" name="team_id">
                   <option value="">Select Team</option>
                   {% for team in teams %}
-                  <option value="{{ team.team_id }}">{{ team.team_name }}</option>
+                  <option value="{{ team.team_id }}">
+                    {% if team.team_id == 1 or team.team_name == 'Team 1' %}Academics
+                    {% elif team.team_id == 2 or team.team_name == 'Team 2' %}Admin
+                    {% elif team.team_id == 3 or team.team_name == 'Team 3' %}Audit
+                    {% else %}{{ team.team_name }}{% endif %}
+                  </option>
                   {% endfor %}
                 </select>
               </div>
@@ -154,23 +167,29 @@
             </form>
           </div>
         </div>
-        <!-- New Feature: User Summary -->
-        {% if users is defined and users|length > 0 %}
-        <div class="user-summary">
-          <div class="user-summary-title"><i class="fas fa-users me-2"></i>Current Users</div>
-          <ul class="user-summary-list">
-            {% for user in users %}
-            <li>
-              <span>{{ user.username }}</span>
-              <span class="user-summary-role">{{ user.role }}</span>
-              <span class="user-summary-team">{{ user.team.team_name if user.team else 'No Team' }}</span>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const targetId = this.dataset.target;
+      const input = document.getElementById(targetId);
+      const icon = this.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    });
+  });
+});
+</script>
 {% endblock %} 

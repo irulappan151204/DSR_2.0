@@ -17,6 +17,9 @@ def register_auth_routes(app):
             username = request.form.get('username')
             password = request.form.get('password')
             user = User.query.filter_by(username=username).first()
+            if user and not user.is_active:
+                flash('This account has been deactivated. Please contact an administrator.', 'error')
+                return render_template('login.html')
 
             if user and bcrypt.check_password_hash(user.password, password):
                 login_user(user)

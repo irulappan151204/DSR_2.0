@@ -97,3 +97,76 @@ def build_dashboard_context(current_user, selected_team_arg, selected_date_arg):
         context['team3_new_audit_data'] = []
 
     return context
+
+def get_main_dashboard_data(current_user):
+    """Compute and return template name and context dictionary for /dashboard based on role."""
+    from repositories.team_repository import ensure_default_teams
+
+    if current_user.role == 'Admin':
+        ensure_default_teams()
+        users = User.query.all()
+        teams = Team.query.all()
+        total_issues = Issue.query.count()
+        open_issues = Issue.query.filter_by(status='Open').count()
+        recent_issues = Issue.query.order_by(Issue.created_at.desc()).limit(5).all()
+        return {
+            'type': 'render',
+            'template': 'admin_dashboard.html',
+            'context': {
+                'users': users,
+                'teams': teams,
+                'total_issues': total_issues,
+                'open_issues': open_issues,
+                'recent_issues': recent_issues
+            }
+        }
+    elif current_user.role == 'Team Lead':
+        team_param = 'team1' if current_user.team_id == 1 else 'team2' if current_user.team_id == 2 else 'team3'
+        return {
+            'type': 'redirect',
+            'endpoint': 'md_dashboard.md_dashboard',
+            'params': {'team': team_param}
+        }
+    elif current_user.role == 'Team Member':
+        team_issues = Issue.query.filter_by(team_id=current_user.team_id).all()
+        total_issues = len(team_issues)
+        pending_issues = len([i for i in team_issues if i.status == 'Open'])
+        in_progress_issues = len([i for i in team_issues if i.status == 'In Progress'])
+        solved_issues = len([i for i in team_issues if i.status == 'Solved'])
+        recent_issues = Issue.query.filter_by(team_id=current_user.team_id).order_by(Issue.created_at.desc()).limit(5).all()
+        team = Team.query.get(current_user.team_id)
+        return {
+            'type': 'render',
+            'template': 'team_member_dashboard.html',
+            'context': {
+                'team_issues': team_issues,
+                'total_issues': total_issues,
+                'pending_issues': pending_issues,
+                'in_progress_issues': in_progress_issues,
+                'solved_issues': solved_issues,
+                'recent_issues': recent_issues,
+                'team': team
+            }
+        }
+    elif current_user.role == 'MD':
+        users = User.query.all()
+        teams = Team.query.all()
+        total_issues = Issue.query.count()
+        open_issues = Issue.query.filter_by(status='Open').count()
+        recent_issues = Issue.query.order_by(Issue.created_at.desc()).limit(5).all()
+        return {
+            'type': 'render',
+            'template': 'md_dashboard.html',
+            'context': {
+                'users': users,
+                'teams': teams,
+                'total_issues': total_issues,
+                'open_issues': open_issues,
+                'recent_issues': recent_issues
+            }
+        }
+    return {
+        'type': 'redirect',
+        'endpoint': 'login',
+        'params': {}
+    }

@@ -88,7 +88,7 @@
 
     // Real-time updates using Socket.IO
     if (typeof socket === 'undefined') {
-        var socket = io();
+        var socket = io({ transports: ['polling'], upgrade: false });
     }
     socket.on('issue_update', function(data) {
         // Refresh the page when an issue is updated

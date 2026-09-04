@@ -188,3 +188,45 @@ def prepare_actions_dashboard(user, filter_date, start_date, end_date):
         'start_date': start_date,
         'end_date': end_date
     }
+
+def get_pending_actions_context(current_user):
+    """Calculate pending actions status and count for template context processor."""
+    if not getattr(current_user, 'is_authenticated', False):
+        return {
+            'has_pending_actions': False,
+            'pending_actions_count': 0
+        }
+
+    now = datetime.now(ZoneInfo('Asia/Kolkata'))
+    start_date_obj = datetime.strptime('2025-07-01', '%Y-%m-%d').date()
+    end_date_obj = now.date()
+    date_filter = db.and_(
+        db.func.date(Action.created_at) >= start_date_obj,
+        db.func.date(Action.created_at) <= end_date_obj
+    )
+
+    base_q = Action.query.filter(
+        Action.parent_action_id.is_(None),
+        Action.status != 'Finished',
+        date_filter
+    )
+
+    if current_user.role == 'MD':
+        pending_actions = base_q.count()
+    elif current_user.is_team_lead:
+        team_user_ids = [r[0] for r in db.session.query(User.user_id).filter_by(team_id=current_user.team_id).all()]
+        pending_actions = base_q.filter(
+            (Action.assigned_user_id.in_(team_user_ids)) |
+            (Action.created_by.in_(team_user_ids))
+        ).count()
+    else:
+        pending_actions = base_q.filter(
+            (Action.assigned_user_id == current_user.user_id) |
+            (Action.created_by == current_user.user_id)
+        ).count()
+
+    return {
+        'has_pending_actions': pending_actions > 0,
+        'pending_actions_count': pending_actions
+    }
+

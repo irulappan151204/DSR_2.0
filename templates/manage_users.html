@@ -35,7 +35,12 @@
                             <select class="form-select" id="team_id" name="team_id">
                                 <option value="">Select Team</option>
                                 {% for team in teams %}
-                                <option value="{{ team.team_id }}">{{ team.team_name }}</option>
+                                <option value="{{ team.team_id }}">
+                                    {% if team.team_id == 1 or team.team_name == 'Team 1' %}Academics
+                                    {% elif team.team_id == 2 or team.team_name == 'Team 2' %}Admin
+                                    {% elif team.team_id == 3 or team.team_name == 'Team 3' %}Audit
+                                    {% else %}{{ team.team_name }}{% endif %}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -70,8 +75,14 @@
                                         <span class="badge bg-{{ 'primary' if user.role == 'Admin' else 'success' if user.role == 'Team Lead' else 'info' if user.role == 'Team Member' else 'secondary' }}">
                                             {{ user.role }}
                                         </span>
+                                    <td>
+                                        {% if user.team %}
+                                            {% if user.team.team_id == 1 or user.team.team_name == 'Team 1' %}Academics
+                                            {% elif user.team.team_id == 2 or user.team.team_name == 'Team 2' %}Admin
+                                            {% elif user.team.team_id == 3 or user.team.team_name == 'Team 3' %}Audit
+                                            {% else %}{{ user.team.team_name }}{% endif %}
+                                        {% else %}N/A{% endif %}
                                     </td>
-                                    <td>{{ user.team.team_name if user.team else 'N/A' }}</td>
                                     <td>
                                         <a href="{{ url_for('edit_user', user_id=user.user_id) }}" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>

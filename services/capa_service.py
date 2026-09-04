@@ -272,3 +272,21 @@ def _clean(value, limit=None):
     if limit:
         text = text[:limit]
     return text
+
+def get_pending_critical_context(current_user):
+    """Inject the Critical/CAPA pending count into template context."""
+    from repositories.capa_repository import get_pending_critical_count
+    if not getattr(current_user, 'is_authenticated', False):
+        return {
+            'has_pending_critical': False,
+            'pending_critical_count': 0,
+            'can_view_critical': False
+        }
+
+    pending = get_pending_critical_count(current_user)
+    return {
+        'has_pending_critical': pending > 0,
+        'pending_critical_count': pending,
+        'can_view_critical': True
+    }
+

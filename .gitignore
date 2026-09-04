@@ -47,6 +47,7 @@ flask_session/
 .pytest_cache/
 .coverage
 htmlcov/
+scratch/
 
 # --- OS noise ---
 Thumbs.db
