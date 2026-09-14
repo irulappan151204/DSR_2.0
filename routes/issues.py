@@ -85,7 +85,7 @@ def register_issues_routes(app):
         teams = Team.query.all()
         return render_template('issues/edit.html', issue=issue, teams=teams)
 
-    @app.route('/issues/<int:issue_id>/delete')
+    @app.route('/issues/<int:issue_id>/delete', methods=['POST'])
     @login_required
     def delete_issue(issue_id):
         issue = Issue.query.get_or_404(issue_id)

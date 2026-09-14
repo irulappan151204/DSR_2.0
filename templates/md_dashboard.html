@@ -3,64 +3,9 @@
 {% block extra_css %}
 <!-- Team 1 Dashboard Specific Styles -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/md_dashboard.css') }}">
+{% endblock %}
 
-
-<script>
-    // Show loading indicator when page starts loading
-    document.addEventListener('DOMContentLoaded', function() {
-        // Hide loading overlay when page is fully loaded
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-            loadingOverlay.style.opacity = '0';
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-            }, 300);
-        }
-    });
-    
-    // Show loading when form is submitted
-    function showLoading() {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-            loadingOverlay.style.display = 'flex';
-            loadingOverlay.style.opacity = '1';
-        }
-    }
-
-    // Hide loading overlay function
-    function hideLoading() {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-            loadingOverlay.style.opacity = '0';
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-            }, 300);
-        }
-    }
-
-    // Ensure loading overlay is hidden when page is fully loaded
-    window.addEventListener('load', function() {
-        setTimeout(hideLoading, 100);
-    });
-
-    // Handle browser back/forward buttons
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            // Page was loaded from cache (back/forward navigation)
-            setTimeout(hideLoading, 100);
-        }
-    });
-
-    // Additional safety: hide loading overlay after a timeout
-    setTimeout(hideLoading, 2000);
-    </script>
-    {% endblock %}
-    
-    {% block content %}
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-spinner"></div>
-</div>
+{% block content %}
 {% if unack_count and unack_count > 0 %}
 <div class="acknowledgement-alert">
     {% if current_user.role == 'MD' %}

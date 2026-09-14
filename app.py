@@ -1,6 +1,7 @@
 # pyrefly: ignore [missing-import]
 import os
-from flask import Flask
+from flask import Flask, jsonify
+from sqlalchemy import text
 from flask_login import current_user
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -44,19 +45,46 @@ db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt.init_app(app)
-socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
+
+# SocketIO Security: Allow origin whitelist via env var (defaults to '*' in dev)
+cors_env = os.getenv('SOCKETIO_CORS_ALLOWED_ORIGINS', '*').strip()
+if cors_env == '*' or not cors_env:
+    cors_allowed_origins = '*'
+else:
+    cors_allowed_origins = [orig.strip() for orig in cors_env.split(',') if orig.strip()]
+
+socketio_async_mode = os.getenv('SOCKETIO_ASYNC_MODE', 'threading')
+socketio.init_app(app, cors_allowed_origins=cors_allowed_origins, async_mode=socketio_async_mode)
 migrate = Migrate(app, db)
 
-# Configure cache
-cache_config = {
-    'CACHE_TYPE': 'simple',
-    'CACHE_DEFAULT_TIMEOUT': 300,
-    'CACHE_KEY_PREFIX': 'qmis_',
-    'CACHE_THRESHOLD': 1000,
-}
-cache.init_app(app, config=cache_config)
+# Initialize cache using app.config (respects RedisCache when configured in Config)
+cache.init_app(app)
+
+# Security HTTP headers
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    return response
+
+# Health check endpoint for container orchestration
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Docker and monitoring."""
+    status = {"status": "healthy", "database": "unknown"}
+    try:
+        db.session.execute(text("SELECT 1"))
+        status["database"] = "connected"
+        return jsonify(status), 200
+    except Exception as e:
+        status["status"] = "unhealthy"
+        status["database"] = "disconnected"
+        status["error"] = str(e)
+        return jsonify(status), 503
 
 # Register blueprints
+
 app.register_blueprint(statistics_bp)
 app.register_blueprint(md_dashboard_bp)
 app.register_blueprint(report_bp)

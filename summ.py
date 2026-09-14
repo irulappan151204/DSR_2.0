@@ -9,14 +9,15 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # === CONFIGURATION ===
-RDS_HOST = 'dsr-database.c4zkywesipaz.us-east-1.rds.amazonaws.com'
-DB_NAME = 'DSR'
-DB_USER = 'admin'
-DB_PASSWORD = 'Qmisadmin123'
-DB_PORT = 3306  # default MySQL port
+# Load configuration from environment variables - NEVER hardcode production credentials!
+RDS_HOST = os.getenv('DB_HOST', 'localhost')
+DB_NAME = os.getenv('DB_NAME', 'DSR')
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+DB_PORT = int(os.getenv('DB_PORT', '3306'))
 
-# SQLAlchemy connection string
-DATABASE_URL = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{RDS_HOST}:{DB_PORT}/{DB_NAME}'
+# Prefer DATABASE_URL from environment if available
+DATABASE_URL = os.getenv('DATABASE_URL') or f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{RDS_HOST}:{DB_PORT}/{DB_NAME}'
 
 # === CREATE ENGINE ===
 engine = create_engine(DATABASE_URL)

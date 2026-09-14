@@ -1,0 +1,101 @@
+/* ==========================================================================
+   Centralized Loader & Spinner System
+   Shared across all dashboards (MD, Team1, Team2)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Full-Page Loading Overlay
+   Used by dashboards for page-level transitions (form submit, filter change)
+   -------------------------------------------------------------------------- */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(44, 62, 80, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+/* Circular spinner shown inside the loading overlay */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--light-gray, #ecf0f1);
+    border-top: 4px solid var(--primary-gray, #2c3e50);
+    border-radius: 50%;
+    animation: loaderSpin 1s linear infinite;
+}
+
+@keyframes loaderSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   Section-Level Skeleton Loader
+   Lightweight placeholder shown inside a specific dashboard section while
+   its data is being fetched. Ready for future lazy-loading integration.
+   -------------------------------------------------------------------------- */
+.section-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    gap: 1rem;
+    color: var(--text-muted, #7f8c8d);
+    font-size: var(--font-size-sm, 0.875rem);
+}
+
+.section-loader .section-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border-gray, #bdc3c7);
+    border-top: 3px solid var(--primary-gray, #2c3e50);
+    border-radius: 50%;
+    animation: loaderSpin 0.8s linear infinite;
+}
+
+/* Skeleton shimmer bar used as a content placeholder */
+.skeleton-bar {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(
+        90deg,
+        var(--light-gray, #ecf0f1) 25%,
+        #e0e0e0 50%,
+        var(--light-gray, #ecf0f1) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmerSlide 1.5s ease-in-out infinite;
+}
+
+.skeleton-bar.short  { width: 40%; }
+.skeleton-bar.medium { width: 65%; }
+.skeleton-bar.long   { width: 90%; }
+
+@keyframes shimmerSlide {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* --------------------------------------------------------------------------
+   Inline Button Spinner (reusable utility class)
+   Apply to any <i> or <span> inside a button for a spinning icon indicator.
+   -------------------------------------------------------------------------- */
+.btn-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: loaderSpin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.4rem;
+}

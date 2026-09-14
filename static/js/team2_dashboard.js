@@ -144,24 +144,7 @@ function toggleFullscreen(button) {
     }
 }
 
-// Enhanced loading function
-function showLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.style.opacity = '1';
-        
-        // Add a timeout to prevent infinite loading
-        setTimeout(() => {
-            if (loadingOverlay.style.display === 'flex') {
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                }, 300);
-            }
-        }, 10000); // 10 second timeout
-    }
-}
+// Loading overlay functions are now centralized in static/js/loader.js
 
 // Add keyboard navigation support
 document.addEventListener('keydown', function(e) {
