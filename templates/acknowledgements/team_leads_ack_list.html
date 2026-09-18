@@ -276,10 +276,21 @@
 
 <div class="ack-container">
     <div class="page-header">
-        <h1 class="page-title">Team Leads Acknowledgement Status</h1>
-        <a href="{{ url_for('md_dashboard.md_dashboard') }}" class="btn btn-primary no-loader" style="background:#6366f1; color:#fff; font-weight:600; border-radius:0.6rem; box-shadow:0 2px 8px rgba(67,97,238,0.15); padding:0.6em 1.5em; text-decoration:none;">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
+        <h1 class="page-title">
+            {% if is_md %}
+                Team Leads Acknowledgement Status
+            {% else %}
+                My Team Lead Status &mdash; {{ current_user.team.team_name if current_user.team else 'Lead' }}
+            {% endif %}
+        </h1>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary no-loader" style="font-weight:600; border-radius:0.6rem; padding:0.6em 1.2em;">
+                <i class="fas fa-user me-1"></i> Back to Profile
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary no-loader" style="background:#6366f1; color:#fff; font-weight:600; border-radius:0.6rem; box-shadow:0 2px 8px rgba(67,97,238,0.15); padding:0.6em 1.2em; text-decoration:none;">
+                <i class="fas fa-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
     </div>
     
     <!-- Filter Section -->
@@ -289,15 +300,22 @@
             <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
         </div>
         <div class="filter-body" id="filterBody">
-                         <div class="filter-group">
-                 <label for="teamFilter">Team</label>
-                 <select id="teamFilter" class="form-control">
-                     <option value="all">All Teams</option>
-                     <option value="Academic">Academic</option>
-                     <option value="Admin">Admin</option>
-                     <option value="Audit">Audit</option>
-                 </select>
-             </div>
+            <div class="filter-group">
+                <label for="teamFilter">Team</label>
+                <select id="teamFilter" class="form-control">
+                    {% if is_md %}
+                        <option value="all">All Teams</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Audit">Audit</option>
+                    {% else %}
+                        {% set user_team_name = current_user.team.team_name if current_user.team else 'Academic' %}
+                        {% set display_map = {'Team 1': 'Academic', 'Team 2': 'Admin', 'Team 3': 'Audit'} %}
+                        {% set mapped_name = display_map.get(user_team_name, user_team_name) %}
+                        <option value="{{ mapped_name }}">{{ mapped_name }} (Your Team)</option>
+                    {% endif %}
+                </select>
+            </div>
             <div class="filter-group">
                 <label for="statusFilter">Status</label>
                 <select id="statusFilter" class="form-control">

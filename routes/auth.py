@@ -44,5 +44,7 @@ def register_auth_routes(app):
     @login_required
     def profile():
         """Render the user profile page"""
-        return render_template('profile.html', user=current_user)
+        from acknowledgements import get_unack_count_for_user
+        unack_count = get_unack_count_for_user(current_user)
+        return render_template('profile.html', user=current_user, unack_count=unack_count)
 

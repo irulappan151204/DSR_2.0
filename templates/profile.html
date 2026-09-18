@@ -348,17 +348,144 @@
         .hero-left { gap: 1rem; }
     }
 
-    @media (max-width: 576px) {
-        .hero-avatar { width: 56px; height: 56px; font-size: 1.35rem; }
-        .hero-text h1 { font-size: 1.2rem; }
-        .hero-actions { width: 100%; }
-        .hero-actions .btn { flex: 1; justify-content: center; }
+    /* ── Acknowledgement Alert Banner ─────────────────── */
+    .ack-banner {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 1.25rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25);
+        margin-bottom: 1.75rem;
+    }
+
+    .ack-banner-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .ack-banner-text {
+        flex-grow: 1;
+    }
+
+    .ack-banner-title {
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1.45;
+        margin-bottom: 0.35rem;
+    }
+
+    .ack-banner-link {
+        color: #fff;
+        font-weight: 700;
+        text-decoration: underline;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        transition: opacity 0.2s;
+    }
+
+    .ack-banner-link:hover {
+        color: #ffedd5;
+        opacity: 0.95;
+    }
+
+    /* ── Leadership Action Cards ──────────────────────── */
+    .leadership-action-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        transition: all 0.2s ease;
+    }
+
+    .leadership-action-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+        background: #fff;
+    }
+
+    .leadership-action-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .leadership-action-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .icon-ack {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .icon-leads {
+        background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    }
+
+    .leadership-action-info h5 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 0.25rem;
+    }
+
+    .leadership-action-info p {
+        font-size: 0.82rem;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.4;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid profile-wrapper">
+
+    <!-- ═══ Pending Acknowledgement Alert ═════════════════════════════ -->
+    {% if unack_count and unack_count > 0 and (user.role == 'MD' or user.is_team_lead) %}
+    <div class="ack-banner">
+        <div class="ack-banner-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="ack-banner-text">
+            <div class="ack-banner-title">
+                You have <strong>{{ unack_count }} report{{ 's' if unack_count != 1 else '' }}</strong> awaiting your acknowledgment. Please confirm once you've read them &mdash; otherwise, you'll be marked as having not reviewed the data.
+            </div>
+            {% if user.role == 'MD' %}
+            <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="ack-banner-link">
+                Click to acknowledge now <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+            {% else %}
+            <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="ack-banner-link">
+                Click to acknowledge now <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 
     <!-- ═══ Hero Banner ═══════════════════════════════════════════════ -->
     <div class="profile-hero">
@@ -385,6 +512,33 @@
                 </div>
             </div>
             <div class="hero-actions">
+                {% if user.role == 'MD' %}
+                    <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-users-cog me-1"></i> Team Leads Status
+                    </a>
+                    {% if unack_count and unack_count > 0 %}
+                    <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-warning btn-sm text-dark fw-bold">
+                        <i class="fas fa-bell me-1"></i> Acknowledge ({{ unack_count }})
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-check-double me-1"></i> Acknowledgements
+                    </a>
+                    {% endif %}
+                {% elif user.is_team_lead %}
+                    <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-clipboard-check me-1"></i> My Lead Status
+                    </a>
+                    {% if unack_count and unack_count > 0 %}
+                    <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-warning btn-sm text-dark fw-bold">
+                        <i class="fas fa-bell me-1"></i> Acknowledge ({{ unack_count }})
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-check-double me-1"></i> Acknowledgements
+                    </a>
+                    {% endif %}
+                {% endif %}
                 <a href="{{ url_for('my_history') }}" class="btn btn-outline-light btn-sm">
                     <i class="fas fa-history me-1"></i> Activity Log
                 </a>
@@ -560,6 +714,86 @@
                 </div>
             </div>
         </div>
+
+        {% if user.role == 'MD' or user.is_team_lead %}
+        <!-- ── Report Acknowledgements & Oversight ───────────────── -->
+        <div class="section-card full-width">
+            <div class="section-header">
+                <i class="fas fa-clipboard-check"></i>
+                <h3>Report Acknowledgements &amp; Oversight</h3>
+            </div>
+            <div class="section-body">
+                <div class="profile-grid" style="gap: 1.25rem;">
+                    <!-- Acknowledge Reports -->
+                    <div class="leadership-action-card">
+                        <div>
+                            <div class="leadership-action-top">
+                                <div class="leadership-action-icon icon-ack">
+                                    <i class="fas fa-file-signature"></i>
+                                </div>
+                                <div class="leadership-action-info">
+                                    <h5>Daily Report Acknowledgement</h5>
+                                    <p>Review and sign off on submitted daily operational forms across your jurisdiction.</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {% if unack_count and unack_count > 0 %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ unack_count }} Report{{ 's' if unack_count != 1 else '' }} Awaiting Acknowledgment
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
+                                        <i class="fas fa-check-circle me-1"></i>All Reports Up To Date
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            {% if user.role == 'MD' %}
+                            <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-sm btn-primary w-100">
+                                <i class="fas fa-check-double me-1"></i> Click to Acknowledge Reports
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-sm btn-primary w-100">
+                                <i class="fas fa-check-double me-1"></i> Click to Acknowledge Reports
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Team Lead Status -->
+                    <div class="leadership-action-card">
+                        <div>
+                            <div class="leadership-action-top">
+                                <div class="leadership-action-icon icon-leads">
+                                    <i class="fas fa-users-cog"></i>
+                                </div>
+                                <div class="leadership-action-info">
+                                    {% if user.role == 'MD' %}
+                                    <h5>Team Leads Acknowledgement Status</h5>
+                                    <p>Comprehensive oversight tracking sign-off compliance across Academic, Admin, and Audit leads.</p>
+                                    {% else %}
+                                    <h5>My Team Lead Status</h5>
+                                    <p>Track your department's report submission and acknowledgement status history.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
+                                    <i class="fas fa-shield-alt me-1"></i>{% if user.role == 'MD' %}All Departments Scope{% else %}{{ user.team.team_name if user.team else 'Department Scope' }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-chart-line me-1"></i> View Team Lead Status
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
     </div>
 </div>

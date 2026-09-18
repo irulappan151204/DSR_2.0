@@ -13,6 +13,36 @@ acknowledgements_bp = Blueprint('acknowledgements', __name__)
 def is_acknowledger(user):
     return user.role == 'MD' or user.is_team_lead
 
+
+def get_unack_count_for_user(user):
+    """Return number of reports awaiting acknowledgment for MD or Team Lead (cached)."""
+    if not user or not getattr(user, 'is_authenticated', False) or not is_acknowledger(user):
+        return 0
+    today = dt_date.today()
+    unack_cache_key = f"unack_count:{user.user_id}:{today.isoformat()}"
+    try:
+        cached_unack = cache.get(unack_cache_key)
+        if cached_unack is not None:
+            return cached_unack
+    except Exception:
+        pass
+
+    start_date = today - timedelta(days=30)
+    report_dates = get_report_dates_for_user(user, start_date, today)
+    try:
+        user_acks = {a.date: a for a in Acknowledgement.query.filter_by(user_id=user.user_id).all()}
+        pending_dates = [d for d in report_dates if not (user_acks.get(d) and user_acks.get(d).acknowledged_at)]
+        count = len(pending_dates)
+        try:
+            cache.set(unack_cache_key, count, timeout=300)
+        except Exception:
+            pass
+        return count
+    except Exception as e:
+        print(f"Error calculating unack count: {e}")
+        return 0
+
+
 def get_report_dates_for_user(user, start_date, end_date):
     """Get dates that have actual reports submitted for a user based on their role"""
     report_dates = set()
@@ -178,17 +208,21 @@ def view_acknowledgements():
 @acknowledgements_bp.route('/ack/team-leads', methods=['GET'])
 @login_required
 def view_team_leads_acknowledgements():
-    if current_user.role != 'MD':
-        return redirect(url_for('dashboard'))
+    # RBAC: Only MD and Team Leads are allowed
+    if current_user.role != 'MD' and not current_user.is_team_lead:
+        return redirect(url_for('profile'))
     
     # Get data for the last 30 days
     today = dt_date.today()
     start_date = today - timedelta(days=30)
     
-    # Get all team leads
-    team_leads = User.query.filter_by(role='Team Lead').all()
+    # MD sees all team leads; Team Lead sees strictly only themselves
+    if current_user.role == 'MD':
+        team_leads = User.query.filter_by(role='Team Lead').all()
+    else:
+        team_leads = [current_user]
     
-    # Get all dates that have actual reports submitted (for all teams)
+    # Get all dates that have actual reports submitted
     all_report_dates = set()
     
     # Helper function to get dates with reports for any model and team
@@ -246,13 +280,25 @@ def view_team_leads_acknowledgements():
     
     team3_models = [Team3Audit, Team3NewAudit]
     
-    # Add dates from all teams since MD can see all
-    for model in team1_models:
-        add_report_dates_from_model(model, 1)
-    for model in team2_models:
-        add_report_dates_from_model(model, 2)
-    for model in team3_models:
-        add_report_dates_from_model(model, 3)
+    # Add dates from models based on user role (MD = all teams, Team Lead = their team only)
+    if current_user.role == 'MD':
+        for model in team1_models:
+            add_report_dates_from_model(model, 1)
+        for model in team2_models:
+            add_report_dates_from_model(model, 2)
+        for model in team3_models:
+            add_report_dates_from_model(model, 3)
+    else:
+        lead_team_id = current_user.team_id
+        if lead_team_id == 1:
+            for model in team1_models:
+                add_report_dates_from_model(model, 1)
+        elif lead_team_id == 2:
+            for model in team2_models:
+                add_report_dates_from_model(model, 2)
+        elif lead_team_id == 3:
+            for model in team3_models:
+                add_report_dates_from_model(model, 3)
     
     # Calculate team summary statistics
     team_summary = {}
@@ -318,7 +364,7 @@ def view_team_leads_acknowledgements():
     
     rows.sort(key=get_sort_key)
     
-    return render_template('acknowledgements/team_leads_ack_list.html', rows=rows, team_summary=team_summary)
+    return render_template('acknowledgements/team_leads_ack_list.html', rows=rows, team_summary=team_summary, is_md=(current_user.role == 'MD'))
 
 @acknowledgements_bp.route('/ack', methods=['POST'])
 @login_required
