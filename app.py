@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 from config import Config
 from extensions import db, login_manager, bcrypt, socketio, cache
-from commands import create_admin_command
+from commands import create_admin_command, sync_tables_command
 from utils.filters import json_escape, ist_strftime
 from models import User
 
@@ -94,6 +94,7 @@ app.register_blueprint(critical_bp)
 
 # Register CLI commands
 app.cli.add_command(create_admin_command)
+app.cli.add_command(sync_tables_command)
 
 # Custom Jinja2 filters
 app.template_filter('json_escape')(json_escape)
