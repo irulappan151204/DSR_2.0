@@ -18,4 +18,20 @@ def create_admin_command():
     admin = User(username=username, password=hashed_password, role='Admin')
     db.session.add(admin)
     db.session.commit()
-    click.echo('Admin user created successfully.') 
+    click.echo('Admin user created successfully.')
+
+
+@click.command('sync-tables')
+@click.option('--dry-run', is_flag=True, help='Preview missing tables without creating them.')
+@with_appcontext
+def sync_tables_command(dry_run):
+    """Synchronise MySQL tables with SQLAlchemy models.
+
+    Compares every model defined in the codebase against the live
+    database and creates any missing tables.  Existing tables and
+    data are never modified or dropped.
+    """
+    from sync_tables import sync_tables
+    result = sync_tables(dry_run=dry_run)
+    if result.get('still_missing'):
+        raise SystemExit(1)
