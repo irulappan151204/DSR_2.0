@@ -44,6 +44,7 @@
      Team 3 Audit
 ========================= -->
  <!-- <form id="team3-audit-form" action="{{ url_for('submit_team3_audit') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="team3-audit">
     <h3>1. Team 3 Audit</h3>
     <div class="table-scroll-wrapper">
@@ -105,6 +106,7 @@
      New Audit
 ========================= -->
 <form id="new-audit-form" action="{{ url_for('submit_new_audit') }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="new-audit">
     <h3>1. Audit DSR</h3>
     <div class="table-scroll-wrapper">

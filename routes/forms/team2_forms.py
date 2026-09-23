@@ -136,7 +136,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Attendance data submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting attendance:", str(e))
+            app.logger.error("Error submitting attendance:", str(e))
             return jsonify({'error': 'Failed to submit attendance data. Please try again.'}), 500
 
     # team 2: 1 d Total HR Attendance
@@ -169,7 +169,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting HR Attendance:", str(e))
+            app.logger.error("Error submitting HR Attendance:", str(e))
             return jsonify({'error': 'Failed to submit HR Attendance. Please try again.'}), 500
 
 
@@ -204,7 +204,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Recruitment activity submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting recruitment activity:", str(e))
+            app.logger.error("Error submitting recruitment activity:", str(e))
             return jsonify({'error': 'Failed to submit recruitment activity. Please try again.'}), 500
 
     # team 2 pending recruitment
@@ -238,7 +238,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Pending recruitment submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting pending recruitment:", str(e))
+            app.logger.error("Error submitting pending recruitment:", str(e))
             return jsonify({'error': 'Failed to submit pending recruitment. Please try again.'}), 500
 
     @app.route('/submit_recruitment_pipeline', methods=['POST'])
@@ -269,7 +269,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting recruitment pipeline:", str(e))
+            app.logger.error("Error submitting recruitment pipeline:", str(e))
             return jsonify({'error': 'Failed to submit recruitment pipeline. Please try again.'}), 500
 
 
@@ -315,7 +315,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting staff status updates:", str(e))
+            app.logger.error("Error submitting staff status updates:", str(e))
             return jsonify({'error': 'Failed to submit staff status updates. Please try again.'}), 500
 
     # team 2 salary pending
@@ -351,7 +351,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Salary pending submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting salary pending:", str(e))
+            app.logger.error("Error submitting salary pending:", str(e))
             return jsonify({'error': 'Failed to submit salary pending. Please try again.'}), 500
 
 
@@ -392,7 +392,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting police verification:", str(e))
+            app.logger.error("Error submitting police verification:", str(e))
             return jsonify({'error': 'Failed to submit police verification. Please try again.'}), 500
 
     # team 2 interview schedule
@@ -430,7 +430,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting interview schedule:", str(e))
+            app.logger.error("Error submitting interview schedule:", str(e))
             return jsonify({'error': 'Failed to submit interview schedule. Please try again.'}), 500
 
 
@@ -474,7 +474,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting exit information:", str(e))
+            app.logger.error("Error submitting exit information:", str(e))
             return jsonify({'error': 'Failed to submit exit information. Please try again.'}), 500
 
     # team 2 issues staff concerns
@@ -526,7 +526,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting Issues / Staff Concerns:", str(e))
+            app.logger.error("Error submitting Issues / Staff Concerns:", str(e))
             return jsonify({'error': 'Failed to submit Issues / Staff Concerns. Please try again.'}), 500
 
 
@@ -554,7 +554,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Kural recitation submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting kural recitation:", str(e))
+            app.logger.error("Error submitting kural recitation:", str(e))
             return jsonify({'error': 'Failed to submit kural recitation. Please try again.'}), 500
 
     # team 2 Submit Front Office Phone Calls
@@ -590,7 +590,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Front Office Phone Calls submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting front office phone calls:", str(e))
+            app.logger.error("Error submitting front office phone calls:", str(e))
             return jsonify({'error': 'Failed to submit front office phone calls. Please try again.'}), 500
 
     # # team 2 Submit Visitor Log
@@ -628,7 +628,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting visitor log:", str(e))
+            app.logger.error("Error submitting visitor log:", str(e))
             return jsonify({'error': 'Failed to submit visitor log. Please try again.'}), 500
 
 
@@ -653,7 +653,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'BSNL Phone Status submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting BSNL phone status:", str(e))
+            app.logger.error("Error submitting BSNL phone status:", str(e))
             return jsonify({'error': 'Failed to submit BSNL phone status. Please try again.'}), 500
 
     # Submit Materials Inward
@@ -697,7 +697,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting materials inward:", str(e))
+            app.logger.error("Error submitting materials inward:", str(e))
             return jsonify({'error': 'Failed to submit materials inward. Please try again.'}), 500
     # team 2 materials outward
     from datetime import datetime
@@ -749,7 +749,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting materials outward:", str(e))
+            app.logger.error("Error submitting materials outward:", str(e))
             return jsonify({'error': 'Failed to submit materials outward. Please try again.'}), 500
 
 
@@ -786,7 +786,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting materials movement:", str(e))
+            app.logger.error("Error submitting materials movement:", str(e))
             return jsonify({'error': 'Failed to submit materials movement. Please try again.'}), 500
 
     # Submit Returnable Material Tracking
@@ -824,7 +824,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting returnable material tracking:", str(e))
+            app.logger.error("Error submitting returnable material tracking:", str(e))
             return jsonify({'error': 'Failed to submit returnable material tracking. Please try again.'}), 500
 
 
@@ -867,7 +867,7 @@ def register_team2_forms(app):
                 return jsonify({'error': 'No data to submit.'}), 400
         except Exception as e:
             db.session.rollback()
-            print("Error submitting returnable goods report:", str(e))
+            app.logger.error("Error submitting returnable goods report:", str(e))
             return jsonify({'error': 'Failed to submit returnable goods report. Please try again.'}), 500
 
     # team 2 campus_camera_status
@@ -917,7 +917,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting campus camera status:", str(e))
+            app.logger.error("Error submitting campus camera status:", str(e))
             return jsonify({'error': 'Failed to submit campus camera status. Please try again.'}), 500
 
     # team 2 vehicle_camera_status
@@ -971,7 +971,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting vehicle camera status:", str(e))
+            app.logger.error("Error submitting vehicle camera status:", str(e))
             return jsonify({'error': 'Failed to submit vehicle camera status. Please try again.'}), 500
 
     # team 2 
@@ -1011,7 +1011,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Bus AC Camera Status submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting bus AC camera status:", str(e))
+            app.logger.error("Error submitting bus AC camera status:", str(e))
             return jsonify({'error': 'Failed to submit bus AC camera status. Please try again.'}), 500
 
     # team 2 gps monitoring
@@ -1109,7 +1109,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting GPS monitoring:", str(e))
+            app.logger.error("Error submitting GPS monitoring:", str(e))
             return jsonify({'error': 'Failed to submit GPS monitoring. Please try again.'}), 500
 
 
@@ -1157,7 +1157,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting issues identified monitoring:", str(e))
+            app.logger.error("Error submitting issues identified monitoring:", str(e))
             return jsonify({'error': 'Failed to submit issues identified monitoring. Please try again.'}), 500
 
 
@@ -1207,7 +1207,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting teachers late reporting:", str(e))
+            app.logger.error("Error submitting teachers late reporting:", str(e))
             return jsonify({'error': 'Failed to submit teachers late reporting. Please try again.'}), 500
 
     # team 2 camera footage entry
@@ -1244,7 +1244,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting camera footage data:", str(e))
+            app.logger.error("Error submitting camera footage data:", str(e))
             return jsonify({'error': 'Failed to submit camera footage data. Please try again.'}), 500
 
 
@@ -1295,7 +1295,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting biometrics punching:", str(e))
+            app.logger.error("Error submitting biometrics punching:", str(e))
             return jsonify({'error': 'Failed to submit biometrics punching. Please try again.'}), 500
 
 
@@ -1340,7 +1340,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting Water TDS Deviation:", str(e))
+            app.logger.error("Error submitting Water TDS Deviation:", str(e))
             return jsonify({'error': 'Failed to submit Water TDS Deviation. Please try again.'}), 500
 
 
@@ -1369,7 +1369,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Testing & Cleaning details submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting testing & cleaning:", str(e))
+            app.logger.error("Error submitting testing & cleaning:", str(e))
             return jsonify({'error': 'Failed to submit testing & cleaning. Please try again.'}), 500
 
         # Water Level Checking
@@ -1421,7 +1421,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting water level:", str(e))
+            app.logger.error("Error submitting water level:", str(e))
             return jsonify({'error': 'Failed to submit water level details. Please try again.'}), 500
 
         # Housekeeping General
@@ -1466,7 +1466,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting housekeeping general:", str(e))
+            app.logger.error("Error submitting housekeeping general:", str(e))
             return jsonify({'error': 'Failed to submit housekeeping general details. Please try again.'}), 500
 
 
@@ -1495,7 +1495,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Pool Testing details submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting pool testing:", str(e))
+            app.logger.error("Error submitting pool testing:", str(e))
             return jsonify({'error': 'Failed to submit pool testing. Please try again.'}), 500
 
     # ============================
@@ -1551,7 +1551,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting washroom cleanliness:", str(e))
+            app.logger.error("Error submitting washroom cleanliness:", str(e))
             return jsonify({'error': 'Failed to submit washroom cleanliness. Please try again.'}), 500
 
     # ============================================
@@ -1580,7 +1580,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Transport attendance submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting transport attendance:", str(e))
+            app.logger.error("Error submitting transport attendance:", str(e))
             return jsonify({'error': 'Failed to submit transport attendance. Please try again.'}), 500
 
     # ================================================
@@ -1606,7 +1606,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'AC working status submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting AC working status:", str(e))
+            app.logger.error("Error submitting AC working status:", str(e))
             return jsonify({'error': 'Failed to submit AC working status. Please try again.'}), 500
 
     # =================================================
@@ -1632,7 +1632,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Late reporting submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting late reporting:", str(e))
+            app.logger.error("Error submitting late reporting:", str(e))
             return jsonify({'error': 'Failed to submit late reporting. Please try again.'}), 500
 
     # =====================================================================
@@ -1678,7 +1678,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting maintenance service:", str(e))
+            app.logger.error("Error submitting maintenance service:", str(e))
             return jsonify({'error': 'Failed to submit maintenance service. Please try again.'}), 500
 
 
@@ -1707,7 +1707,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Car maintenance submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting car maintenance:", str(e))
+            app.logger.error("Error submitting car maintenance:", str(e))
             return jsonify({'error': 'Failed to submit car maintenance. Please try again.'}), 500
 
     # ------------------- Part 13 - Transport - Part 6: Vehicle Renewals / Delays -------------------
@@ -1743,7 +1743,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Vehicle renewals submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting vehicle renewals:", str(e))
+            app.logger.error("Error submitting vehicle renewals:", str(e))
             return jsonify({'error': 'Failed to submit vehicle renewals. Please try again.'}), 500
 
     # ------------------- Part 13 - Transport - Part 7: Special Trip -------------------
@@ -1782,7 +1782,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting special trip:", str(e))
+            app.logger.error("Error submitting special trip:", str(e))
             return jsonify({'error': 'Failed to submit special trip. Please try again.'}), 500
 
     # ------------------- Part 13 - Transport - Part 8: Parent Concern Details -------------------
@@ -1813,10 +1813,10 @@ def register_team2_forms(app):
                     db.session.add(detail)
 
             db.session.commit()
-            return jsonify({'message': 'Parent Concern Details submitted successfully!'})
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+            app.logger.exception("Error submitting parent concern detail")
+            return jsonify({'error': 'An internal error occurred while submitting concern details.'}), 500
 
 
         # =========================
@@ -1829,8 +1829,8 @@ def register_team2_forms(app):
             floor = request.form.get('ac_floor')  # Dropdown applies to all rows
 
             # Debug: Print form data
-            print("Form data received:", dict(request.form))
-            print("Floor selected:", floor)
+            app.logger.debug("Form data received:", dict(request.form))
+            app.logger.debug("Floor selected:", floor)
 
             # Process 9 rows (CR1-CR8 + Others)
             entries_added = 0
@@ -1843,11 +1843,11 @@ def register_team2_forms(app):
                 comments = request.form.get(f'ac_comments_{i}')
 
                 # Debug: Print row data
-                print(f"Row {i} data: temp={temperature}, status={hot_cold_normal}, working={working_condition}, nature={nature_of_issue}, issue={issue_description}, comments={comments}")
+                app.logger.debug(f"Row {i} data: temp={temperature}, status={hot_cold_normal}, working={working_condition}, nature={nature_of_issue}, issue={issue_description}, comments={comments}")
 
                 # Skip row if all fields are empty
                 if not any([temperature, hot_cold_normal, working_condition, nature_of_issue, issue_description, comments]):
-                    print(f"Row {i} skipped - all fields empty")
+                    app.logger.debug(f"Row {i} skipped - all fields empty")
                     continue
 
                 # Map classroom names
@@ -1869,14 +1869,14 @@ def register_team2_forms(app):
                 )
                 db.session.add(entry)
                 entries_added += 1
-                print(f"Added entry for {classroom_name}")
+                app.logger.debug(f"Added entry for {classroom_name}")
 
             db.session.commit()
-            print(f"Successfully committed {entries_added} entries to database")
+            app.logger.debug(f"Successfully committed {entries_added} entries to database")
             return jsonify({'message': 'AC Temperature Check submitted successfully.'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting AC Temperature Check:", str(e))
+            app.logger.error("Error submitting AC Temperature Check:", str(e))
             return jsonify({'error': 'Failed to submit AC Temperature Check. Please try again.'}), 500
 
     # ============================
@@ -1919,7 +1919,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting labor, EB, Solar, Genset:", str(e))
+            app.logger.error("Error submitting labor, EB, Solar, Genset:", str(e))
             return jsonify({'error': 'Failed to submit labor, EB, Solar, Genset. Please try again.'}), 500
 
 
@@ -1955,7 +1955,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Motor Control submitted successfully.'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting Motor Control:", str(e))
+            app.logger.error("Error submitting Motor Control:", str(e))
             return jsonify({'error': 'Failed to submit Motor Control. Please try again.'}), 500
 
     # ============================
@@ -1992,7 +1992,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Pest Control submitted successfully.'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting Pest Control:", str(e))
+            app.logger.error("Error submitting Pest Control:", str(e))
             return jsonify({'error': 'Failed to submit Pest Control. Please try again.'}), 500
     # -----------------------------
     # FORM 15 PART 3: AC Temp Deviation (>27°C)
@@ -2037,7 +2037,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("[AC Temp Deviation] Error:", str(e))
+            app.logger.error("[AC Temp Deviation] Error:", str(e))
             return jsonify({'error': 'Failed to submit AC Temp deviation. Please try again.'}), 500
 
     # -----------------------------
@@ -2079,7 +2079,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting electricity consumption:", str(e))
+            app.logger.error("Error submitting electricity consumption:", str(e))
             return jsonify({'error': 'Failed to submit electricity consumption. Please try again.'}), 500
 
 
@@ -2111,7 +2111,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting EB details:", str(e))
+            app.logger.error("Error submitting EB details:", str(e))
             return jsonify({'error': 'Failed to submit EB details. Please try again.'}), 500
 
 
@@ -2162,7 +2162,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting solar details:", str(e))
+            app.logger.error("Error submitting solar details:", str(e))
             return jsonify({'error': 'Failed to submit solar details. Please try again.'}), 500
 
 
@@ -2194,7 +2194,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting genset details:", str(e))
+            app.logger.error("Error submitting genset details:", str(e))
             return jsonify({'error': 'Failed to submit genset details. Please try again.'}), 500
 
     # ---------------------------------------------------- #
@@ -2246,7 +2246,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting security count verification:", str(e))
+            app.logger.error("Error submitting security count verification:", str(e))
             return jsonify({'error': 'Failed to submit security count verification. Please try again.'}), 500
 
 
@@ -2301,7 +2301,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting attendance replacement:", str(e))
+            app.logger.error("Error submitting attendance replacement:", str(e))
             return jsonify({'error': 'Failed to submit attendance replacement. Please try again.'}), 500
 
 
@@ -2350,7 +2350,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting security info note:", str(e))
+            app.logger.error("Error submitting security info note:", str(e))
             return jsonify({'error': 'Failed to submit security info note. Please try again.'}), 500
 
 
@@ -2394,7 +2394,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting govt in/out:", str(e))
+            app.logger.error("Error submitting govt in/out:", str(e))
             return jsonify({'error': 'Failed to submit govt in/out. Please try again.'}), 500
 
 
@@ -2438,7 +2438,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting alcohol test:", str(e))
+            app.logger.error("Error submitting alcohol test:", str(e))
             return jsonify({'error': 'Failed to submit alcohol test. Please try again.'}), 500
 
 
@@ -2486,7 +2486,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting materials inward:", str(e))
+            app.logger.error("Error submitting materials inward:", str(e))
             return jsonify({'error': 'Failed to submit security materials inward. Please try again.'}), 500
 
     # ---------------------------------------------------- #
@@ -2533,7 +2533,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting materials outward:", str(e))
+            app.logger.error("Error submitting materials outward:", str(e))
             return jsonify({'error': 'Failed to submit security materials outward. Please try again.'}), 500
 
 
@@ -2576,7 +2576,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Transport verification submitted successfully.'})
         except Exception as e:
             db.session.rollback()
-            print("Error submitting transport verification:", str(e))
+            app.logger.error("Error submitting transport verification:", str(e))
             return jsonify({'error': 'Failed to submit transport verification. Please try again.'}), 500
 
     # ------------------------------------------------------------ #
@@ -2652,7 +2652,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting document movement:", str(e))
+            app.logger.error("Error submitting document movement:", str(e))
             return jsonify({'error': 'Failed to submit document movement. Please try again.'}), 500
 
 
@@ -2695,7 +2695,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting govt official documents:", str(e))
+            app.logger.error("Error submitting govt official documents:", str(e))
             return jsonify({'error': 'Failed to submit govt official documents. Please try again.'}), 500
 
 
@@ -2744,7 +2744,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting thoorigai social media:", str(e))
+            app.logger.error("Error submitting thoorigai social media:", str(e))
             return jsonify({'error': 'Failed to submit thoorigai social media. Please try again.'}), 500
 
 
@@ -2791,7 +2791,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting thoorigai website updates:", str(e))
+            app.logger.error("Error submitting thoorigai website updates:", str(e))
             return jsonify({'error': 'Failed to submit thoorigai website updates. Please try again.'}), 500
 
     # ------------------------------------------------------------ #
@@ -2840,7 +2840,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting md social media:", str(e))
+            app.logger.error("Error submitting md social media:", str(e))
             return jsonify({'error': 'Failed to submit md social media. Please try again.'}), 500
 
 
@@ -2892,7 +2892,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting intercom maintenance:", str(e))
+            app.logger.error("Error submitting intercom maintenance:", str(e))
             return jsonify({'error': 'Failed to submit intercom maintenance. Please try again.'}), 500
 
     # ------------------------------------------------------------ #
@@ -2945,7 +2945,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting health check up:", str(e))
+            app.logger.error("Error submitting health check up:", str(e))
             return jsonify({'error': 'Failed to submit health check up. Please try again.'}), 500
 
 
@@ -3005,7 +3005,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print(f"[Net Connectivity] Error: {str(e)}")
+            app.logger.error(f"[Net Connectivity] Error: {str(e)}")
             return jsonify({'error': 'Failed to submit net connectivity & print details.'}), 500
 
 
@@ -3058,7 +3058,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print(f"[IT Maintenance] Error: {str(e)}")
+            app.logger.error(f"[IT Maintenance] Error: {str(e)}")
             return jsonify({'error': 'Failed to submit general maintenance – IT products.'}), 500
 
 
@@ -3116,7 +3116,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print(f"[Calendar Schedule] Error: {str(e)}")
+            app.logger.error(f"[Calendar Schedule] Error: {str(e)}")
             return jsonify({'error': 'Failed to submit calendar schedule.'}), 500
 
     # =====================================================
@@ -3127,7 +3127,7 @@ def register_team2_forms(app):
     def submit_training_attendance():
         try:
             # Debug: Print received form data
-            print(f"[Training Attendance] Received form data: {dict(request.form)}")
+            app.logger.debug(f"[Training Attendance] Received form data: {dict(request.form)}")
 
             rows = [
                 ('trn_att_acad_jr', 'Academics', 'Academics - Jr.School'),
@@ -3198,7 +3198,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print(f"[Training Attendance] Error: {str(e)}")
+            app.logger.error(f"[Training Attendance] Error: {str(e)}")
             return jsonify({'error': 'Failed to submit training attendance.'}), 500
 
     # =====================================================
@@ -3252,7 +3252,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print(f"[Training Details] Error: {str(e)}")
+            app.logger.error(f"[Training Details] Error: {str(e)}")
             return jsonify({'error': 'Failed to submit training details.'}), 500
 
 
@@ -3295,7 +3295,7 @@ def register_team2_forms(app):
 
         except Exception as e:
             db.session.rollback()
-            print("Error submitting manpower planning data:", str(e))
+            app.logger.error("Error submitting manpower planning data:", str(e))
             return jsonify({'error': 'Failed to submit manpower planning data. Please try again.'}), 500
 
     # =====================================================
@@ -3334,7 +3334,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Overall Consolidation data submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print(f'Error submitting overall consolidation: {str(e)}')
+            app.logger.error(f'Error submitting overall consolidation: {str(e)}')
             return jsonify({'error': 'Failed to submit overall consolidation.'}), 500
 
         # =====================================================
@@ -3378,7 +3378,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Uniform Details submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print(f'Error submitting uniform details: {str(e)}')
+            app.logger.error(f'Error submitting uniform details: {str(e)}')
             return jsonify({'error': 'Failed to submit uniform details.'}), 500
 
 
@@ -3420,7 +3420,7 @@ def register_team2_forms(app):
             return jsonify({'message': 'Department Wise Uniform Details submitted successfully!'})
         except Exception as e:
             db.session.rollback()
-            print(f'Error submitting department wise uniform details: {str(e)}')
+            app.logger.error(f'Error submitting department wise uniform details: {str(e)}')
             return jsonify({'error': 'Failed to submit department wise uniform details.'}), 500
 
 

@@ -383,6 +383,7 @@
                 <div id="login-loader" class="hide"><div class="login-loader-anim"></div></div>
 
                 <form method="POST" action="{{ url_for('login') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <input type="text" class="form-control" name="username" placeholder="User ID" required>
                         <i class="fas fa-user form-icon"></i>

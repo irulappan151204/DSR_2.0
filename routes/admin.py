@@ -1,3 +1,4 @@
+import logging
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from sqlalchemy import text
@@ -6,6 +7,8 @@ from models import User, Team, Action, Issue, Acknowledgement, FileStorage
 from cache_utils import bust_user_dashboard_cache
 from services.capa_service import bust_team_lead_cache
 from utils.admin_audit import log_admin_action
+
+logger = logging.getLogger(__name__)
 
 ALL_FORM_TABLES = [
     'team1_calendar_schedule', 'team1_asa_activities', 'team1_asa_sports', 'team1_student_attendance',
@@ -251,9 +254,10 @@ def register_admin_routes(app):
                 )
                 flash('User updated successfully.', 'success')
                 return redirect(url_for('manage_users'))
-            except Exception as e:
+            except Exception:
                 db.session.rollback()
-                flash(f'Error updating user: {str(e)}', 'error')
+                logger.exception("Error updating user %s", user_id)
+                flash('An error occurred while updating the user. Please try again or check system logs.', 'error')
                 return redirect(url_for('edit_user', user_id=user_id))
 
         teams = Team.query.all()
@@ -293,9 +297,10 @@ def register_admin_routes(app):
                 ip_address=request.remote_addr
             )
             flash(f"User '{user.username}' has been deactivated. Login is now blocked while all historical records and audit logs are preserved.", 'success')
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f"Error deactivating user: {str(e)}", 'error')
+            logger.exception("Error deactivating user %s", user_id)
+            flash("An error occurred while deactivating the user.", 'error')
 
         return redirect(url_for('manage_users'))
 
@@ -321,9 +326,10 @@ def register_admin_routes(app):
                 ip_address=request.remote_addr
             )
             flash(f"User '{user.username}' has been reactivated successfully. They may now log in with their existing credentials.", 'success')
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f"Error reactivating user: {str(e)}", 'error')
+            logger.exception("Error reactivating user %s", user_id)
+            flash("An error occurred while reactivating the user.", 'error')
 
         return redirect(url_for('manage_users'))
 
@@ -373,9 +379,10 @@ def register_admin_routes(app):
                 ip_address=request.remote_addr
             )
             flash(f"User '{username}' was deleted successfully (0 historical records existed).", 'success')
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error deleting user: {str(e)}', 'error')
+            logger.exception("Error deleting user %s", user_id)
+            flash('An error occurred while deleting the user.', 'error')
 
         return redirect(url_for('manage_users'))
 

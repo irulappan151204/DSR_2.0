@@ -63,3 +63,18 @@ class Config:
         else:
             CACHE_TYPE = 'SimpleCache'
 
+    # URL Scheme and Rate Limiting
+    PREFERRED_URL_SCHEME = os.getenv('PREFERRED_URL_SCHEME', 'https' if SESSION_COOKIE_SECURE else 'http')
+    RATELIMIT_DEFAULT = os.getenv('RATELIMIT_DEFAULT', '200 per day;50 per hour')
+
+    ratelimit_storage = os.getenv('RATELIMIT_STORAGE_URI')
+    if not ratelimit_storage:
+        if is_windows or not redis_url_env:
+            ratelimit_storage = 'memory://'
+        else:
+            ratelimit_storage = redis_url_env
+    RATELIMIT_STORAGE_URI = ratelimit_storage
+    RATELIMIT_IN_MEMORY_FALLBACK_ENABLED = True
+
+
+

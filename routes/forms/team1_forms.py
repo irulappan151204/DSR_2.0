@@ -1036,9 +1036,10 @@ def register_team1_forms(app):
 
             db.session.commit()
             return jsonify({'message': 'Parent Concern Summary submitted successfully!'})
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+            app.logger.exception("Error submitting parent concern summary")
+            return jsonify({'error': 'An internal error occurred while submitting the summary.'}), 500
 
     #S.No 18b: Parent Concern Detail
     @app.route('/submit_parent_concern_detail', methods=['POST'])
@@ -1069,9 +1070,10 @@ def register_team1_forms(app):
 
             db.session.commit()
             return jsonify({'message': 'Parent Concern Details submitted successfully!'})
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 500
+            app.logger.exception("Error submitting parent concern detail")
+            return jsonify({'error': 'An internal error occurred while submitting concern details.'}), 500
 
 
     #S.No 19: AEP Attendance

@@ -8,8 +8,8 @@ from services.history_service import get_user_history_rows
 def register_history_routes(app):
     """Register /my_history route on the Flask app."""
     @app.route('/my_history')
-    @cache.cached(timeout=300, key_prefix=per_user_cache_key)
     @login_required
+    @cache.cached(timeout=300, key_prefix=per_user_cache_key)
     def my_history():
         start = request.args.get('start') or ''
         end = request.args.get('end') or ''

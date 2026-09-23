@@ -3,9 +3,15 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_socketio import SocketIO
 from flask_caching import Cache
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 bcrypt = Bcrypt()
 socketio = SocketIO() 
 cache = Cache()
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address)
+

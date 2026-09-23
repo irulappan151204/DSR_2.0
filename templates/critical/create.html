@@ -34,6 +34,7 @@
 
 <form method="post" action="{{ url_for('critical.create_finding') }}"
       enctype="multipart/form-data" id="capa-create-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <div class="capa-card">
         <h2>Audit Finding Information</h2>

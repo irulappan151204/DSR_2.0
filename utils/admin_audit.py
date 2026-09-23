@@ -1,5 +1,8 @@
 import os
+import logging
 from timezone_utils import now_ist
+
+logger = logging.getLogger(__name__)
 
 LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs')
 AUDIT_LOG_FILE = os.path.join(LOG_DIR, 'admin_audit.log')
@@ -18,4 +21,5 @@ def log_admin_action(admin, action, target_user_id, target_username, reason=None
         with open(AUDIT_LOG_FILE, 'a', encoding='utf-8') as f:
             f.write(log_line)
     except Exception as e:
-        print(f"Failed to write admin audit log: {e}")
+        logger.error(f"Failed to write admin audit log: {e}")
+

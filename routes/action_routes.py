@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from flask import Blueprint, render_template, request, redirect, url_for, flash
@@ -6,6 +7,8 @@ from extensions import db
 from models import Action, User
 from repositories.action_repository import get_action_or_404
 from services.action_service import prepare_actions_dashboard
+
+logger = logging.getLogger(__name__)
 
 actions_bp = Blueprint('actions', __name__, template_folder='templates/actions')
 
@@ -100,9 +103,10 @@ def create_action():
             db.session.add(action)
         db.session.commit()
         flash('Action(s) created successfully!', 'success')
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(f'Error creating action(s): {str(e)}', 'danger')
+        logger.exception("Error creating action(s)")
+        flash('An error occurred while creating action(s). Please try again.', 'danger')
 
     redirect_to = request.form.get('redirect_to', url_for('actions.action_home'))
     return redirect(redirect_to)
@@ -167,8 +171,9 @@ def loop_action(action_id):
             flash('Follow-up action created successfully!', 'success')
             redirect_to = request.form.get('redirect_to', url_for('actions.action_home'))
             return redirect(redirect_to)
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            flash(f'Error creating follow-up action: {str(e)}', 'danger')
+            logger.exception("Error creating follow-up action")
+            flash('An error occurred while creating follow-up action. Please try again.', 'danger')
 
     return render_template('actions/action_form.html', users=users, parent_action=target_action, loop_mode=True)

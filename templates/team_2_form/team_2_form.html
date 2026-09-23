@@ -80,6 +80,7 @@
      Section 1: HR Attendance
 ========================= -->
 <form id="hrAttendanceForm" action="{{ url_for('submit_hr_attendance') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="hr-attendance">
       <h3>1. HR Attendance</h3>
       <div class="table-scroll-wrapper">
@@ -175,6 +176,7 @@
      Section 1: Total HR Attendance
 ========================= -->
 <form id="totalHRAttendanceForm" action="{{ url_for('submit_total_hr_attendance') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="total-hr-attendance">
       <h3>1 b. Overall HR Attendance</h3>
       <div class="table-scroll-wrapper">
@@ -234,6 +236,7 @@
      2a. Recruitment Activity
 ========================= -->
 <form id="recruitmentActivityForm" action="{{ url_for('submit_recruitment_activity') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="recruitment-activity">
       <h3>2a. Recruitment Activity</h3>
       <div class="table-scroll-wrapper">
@@ -301,6 +304,7 @@
      2b. Pending Recruitments
 ========================= -->
 <form id="pendingRecruitmentForm" action="{{ url_for('submit_pending_recruitment') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="pending-recruitments">
       <h3>2b. Pending Recruitments</h3>
       <div class="table-scroll-wrapper">
@@ -369,6 +373,7 @@
      Recruitment Pipeline
 ========================= -->
 <form id="recruitmentPipelineForm" action="{{ url_for('submit_recruitment_pipeline') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="recruitment-pipeline">
     <h3>Recruitment Pipeline Status</h3>
     <div class="table-scroll-wrapper">
@@ -419,6 +424,7 @@
      Members under Observation
 ========================= -->
 <form id="staffStatusUpdatesForm" action="{{ url_for('submit_staff_status_updates') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="members-under-observation">
     <h3>Members under Observation</h3>
     <div class="table-scroll-wrapper">
@@ -464,6 +470,7 @@
      Salary Not Dispersed [Pending]
 ========================= -->
 <form id="salaryPendingForm" action="{{ url_for('submit_salary_pending') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="salary-pending">
     <h3>Salary Not Dispersed [Pending]</h3>
 
@@ -503,6 +510,7 @@
      Police Verification Status
 ========================= -->
 <form id="policeVerificationForm" action="{{ url_for('submit_police_verification') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="police-verification-status">
     <h3>Police Verification Status</h3>
 
@@ -549,6 +557,7 @@
      Interview Schedule
 ========================= -->
 <form id="interviewScheduleForm" action="{{ url_for('submit_interview_schedule') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="interview-schedule">
     <h3>Interview Schedule</h3>
     <div class="table-scroll-wrapper">
@@ -619,6 +628,7 @@
      Exit Information
 ========================= -->
 <form id="exitInformationForm" action="{{ url_for('submit_exit_information') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="exit-information">
     <h3>Exit Information</h3>
     <div class="table-scroll-wrapper">
@@ -691,6 +701,7 @@
      Issues / Staff Concerns
 ========================= -->
 <form id="staffConcernsForm" action="{{ url_for('submit_issues_staff_concerns') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="staff-concerns">
     <h3>Issues / Staff Concerns</h3>
     <div class="table-scroll-wrapper">
@@ -767,6 +778,7 @@ function addStaffConcernRow() {
      5b. Kural Recitation
 ========================= -->
 <form id="kuralRecitationForm" action="{{ url_for('submit_kural_recitation') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="kural-recitation">
     <h3>5b. Kural Recitation</h3>
     <div class="table-scroll-wrapper">
@@ -832,6 +844,7 @@ function addStaffConcernRow() {
      6. Front Office Phone Calls
 ========================= -->
 <form id="form6PhoneCallsForm" action="{{ url_for('submit_front_office_phone_calls') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="front-office-phone-calls">
       <h3>6. Front Office Phone Calls</h3>
       <div class="table-scroll-wrapper">
@@ -917,6 +930,7 @@ function addStaffConcernRow() {
      6. Visitor Log
 ========================= -->
 <form id="form6VisitorLogForm" action="{{ url_for('submit_visitor_log') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="visitor-log">
     <h3>6. Visitor Log</h3>
 
@@ -970,6 +984,7 @@ function addStaffConcernRow() {
      6. BSNL Phone Status
 ========================= -->
 <form id="form6BSNLStatusForm" action="{{ url_for('submit_bsnl_phone_status') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="bsnl-phone-status">
       <h3>6. Front Office BSNL Phone Status</h3>
       <div class="table-scroll-wrapper">
@@ -1050,6 +1065,7 @@ function addStaffConcernRow() {
      7a. Materials Inward
 ========================= -->
 <form id="form7a-inward" action="{{ url_for('submit_materials_inward') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="materials-inward">
     <h3>7a. Materials Inward</h3>
 
@@ -1106,6 +1122,7 @@ function addStaffConcernRow() {
      7b. Materials Outward
 ========================= -->
 <form id="form7b-outward" action="{{ url_for('submit_materials_outward') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="materials-outward">
     <h3>7b. Materials Outward</h3>
 
@@ -1169,6 +1186,7 @@ function addStaffConcernRow() {
      7c. Materials Movement
 ========================= -->
 <form id="form7c-movement" action="{{ url_for('submit_materials_movement') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="materials-movement">
     <h3>7c. Materials Movement</h3>
 
@@ -1223,6 +1241,7 @@ function addStaffConcernRow() {
      7d. Returnable Materials
 ========================= -->
 <form id="form7d-returnable" action="{{ url_for('submit_returnable_material_tracking') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="returnable-materials">
     <h3>7d. Returnable Material Tracking</h3>
     <div class="table-scroll-wrapper">
@@ -1281,6 +1300,7 @@ function addStaffConcernRow() {
 <!-- 7c. Returnable Goods – Overall Report -->
 <!--
 <form id="form7c-report" class="mb-8" action="{{ url_for('submit_returnable_goods_report') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <h3 class="ignore-row">7c. Returnable Goods – Overall Report</h3>
     <h4 class="font-semibold text-base mt-4 mb-2 ignore-row">7 e. Returnable Goods Report</h4>
     <div class="overflow-x-auto">
@@ -1350,6 +1370,7 @@ function addStaffConcernRow() {
      8a. Campus Camera Status
 ========================= -->
 <form id="form-8a-campus-form" action="{{ url_for('submit_campus_camera_status') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="campus-camera-status">
     <h3>8a. Campus Camera Status</h3>
     <div class="table-scroll-wrapper">
@@ -1416,6 +1437,7 @@ function addStaffConcernRow() {
      8b. Vehicle Camera Status
 ========================= -->
 <form id="form-8b-vehicle-form" action="{{ url_for('submit_vehicle_camera_status') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="vehicle-camera-status">
     <h3>8b. Vehicle Camera Status</h3>
     <div class="table-scroll-wrapper">
@@ -1482,6 +1504,7 @@ function addStaffConcernRow() {
 ========================= -->
 <!--
 <form id="form-8c-busac-form" action="{{ url_for('submit_bus_ac_camera_status') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="bus-ac-camera-status">
       <h3>8c. Bus AC Camera Status</h3>
       <div class="table-scroll-wrapper">
@@ -1571,6 +1594,7 @@ function addStaffConcernRow() {
      8d. GPS Monitoring
 ========================= -->
 <form id="gpsMonitoringForm" action="{{ url_for('submit_gps_monitoring') }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="gps-monitoring">
     <h3>8c. GPS Monitoring</h3>
     <div class="table-scroll-wrapper">
@@ -1630,6 +1654,7 @@ function addStaffConcernRow() {
      8e. Issues Identified (Monitoring)
 ========================= -->
 <form id="issuesMonitoringForm" action="{{ url_for('submit_issues_identified_monitoring') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="issues-identified-monitoring">
     <h3>8d. Issues Identified (Monitoring)</h3>
     <div class="table-scroll-wrapper">
@@ -1688,6 +1713,7 @@ function addStaffConcernRow() {
      8f. Teachers Late Reporting
 ========================= -->
 <form id="lateTeachersForm" action="{{ url_for('submit_teachers_late_reporting') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="teachers-late-reporting">
     <h3>8e. Teachers Late Reporting to Class</h3>
     <div class="table-scroll-wrapper">
@@ -1750,6 +1776,7 @@ function addStaffConcernRow() {
      8g. Camera & Monitoring – Footage Data Entry
 ========================= -->
 <form id="cameraFootageForm" action="{{ url_for('submit_camera_footage') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="camera-footage-entry">
     <h3>8f. Camera & Monitoring – Footage Data Entry</h3>
     <div class="table-scroll-wrapper">
@@ -1790,6 +1817,7 @@ function addStaffConcernRow() {
      9. Biometrics Access Card Punching
 ========================= -->
 <form id="biometricsForm" action="{{ url_for('submit_biometrics_punching') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="biometrics-punching">
     <h3>9. Biometrics Access Card Punching</h3>
 
@@ -1860,6 +1888,7 @@ function addStaffConcernRow() {
      10. Water TDS Deviation
 ========================= -->
 <form id="waterTdsForm" action="{{ url_for('submit_water_tds_deviation') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="water-tds">
     <h3>10. Water TDS Deviation</h3>
     <div class="table-scroll-wrapper">
@@ -1931,6 +1960,7 @@ function addStaffConcernRow() {
      11. Testing & Cleaning - General
 ========================= -->
 <form id="testingCleaningForm" action="{{ url_for('submit_testing_cleaning') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="testing-cleaning">
       <h3>11. Testing & Cleaning - General</h3>
       <div class="table-scroll-wrapper">
@@ -1989,6 +2019,7 @@ function addStaffConcernRow() {
      11. Water Level Checking
 ========================= -->
   <form id="waterLevelForm" action="{{ url_for('submit_water_level') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="water-level-checking">
       <h3>11b. Water Level Checking</h3>
       <div class="table-scroll-wrapper">
@@ -2041,6 +2072,7 @@ function addStaffConcernRow() {
      11c. Housekeeping General
 ========================= -->
 <form id="housekeepingGeneralForm" action="{{ url_for('submit_housekeeping_general') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="housekeeping-general">
     <h3>11c. Housekeeping General</h3>
     <div class="table-scroll-wrapper">
@@ -2085,6 +2117,7 @@ function addStaffConcernRow() {
 ========================= -->
 <!--
 <form id="poolTestingForm" action="{{ url_for('submit_pool_testing') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="testing-cleaning-pool">
       <h3>11. Testing & Cleaning - Pool</h3>
       <div class="table-scroll-wrapper">
@@ -2144,6 +2177,7 @@ function addStaffConcernRow() {
      Section 12: Washroom Cleanliness – Overall Report
 ========================= -->
 <form id="washroomCleanlinessForm" action="{{ url_for('submit_washroom_cleanliness') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="washroom-cleanliness">
     <h3>12. Washroom Cleanliness</h3>
     <div class="table-scroll-wrapper">
@@ -2255,6 +2289,7 @@ function addStaffConcernRow() {
      Section 13: Transport Attendance
 ========================= -->
 <form id="transportAttendanceForm" action="{{ url_for('submit_transport_attendance') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="transport-attendance">
       <h3>13. Transport Attendance</h3>
       <div class="table-scroll-wrapper">
@@ -2320,6 +2355,7 @@ function addStaffConcernRow() {
      Section 13b: Transport AC Status
 ========================= -->
 <form id="transportAcStatusForm" action="{{ url_for('submit_transport_ac_status') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="transport-ac-status">
       <h3>13b. Transport AC Working Status</h3>
       <div class="table-scroll-wrapper">
@@ -2368,6 +2404,7 @@ function addStaffConcernRow() {
      Section 13c: Late Reporting (>8:40 AM)
 ========================= -->
 <form id="lateReportingForm" action="{{ url_for('submit_late_reporting') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="late-reporting">
       <h3>13c. Late Reporting (After 8:40 AM)</h3>
       <div class="table-scroll-wrapper">
@@ -2415,6 +2452,7 @@ function addStaffConcernRow() {
      Section 13d: Maintenance / Service / Issues
 ========================= -->
 <form id="maintenanceServiceForm" action="{{ url_for('submit_maintenance_service') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="maintenance-service-issues">
       <h3>13d. Maintenance / Service / Issues</h3>
       <div class="table-scroll-wrapper">
@@ -2478,6 +2516,7 @@ function addStaffConcernRow() {
      Section 13e: Car Maintenance / Cleaning
 ========================= -->
 <form id="carMaintenanceForm" action="{{ url_for('submit_car_maintenance') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="car-maintenance">
       <h3>13e. Car Maintenance / Cleaning</h3>
       <div class="table-scroll-wrapper">
@@ -2536,6 +2575,7 @@ function addStaffConcernRow() {
      Section 13f: Vehicle Renewals / Delays
 ========================= -->
 <form id="renewalsForm" action="{{ url_for('submit_renewals') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="vehicle-renewals">
       <h3>13f. Vehicle Renewals / Delays</h3>
       <div class="table-scroll-wrapper">
@@ -2594,6 +2634,7 @@ function addStaffConcernRow() {
      Section 13g: Special Trip
 ========================= -->
 <form id="specialTripForm" action="{{ url_for('submit_special_trip') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="special-trip">
     <h3>13g. Special Trip</h3>
     <div class="table-scroll-wrapper">
@@ -2642,6 +2683,7 @@ function addStaffConcernRow() {
   
 <!-- Parent Concern Details -->
 <form id="parent-concern-detail-form" class="dsr-form" action="{{ url_for('team_2_submit_parent_concern_detail') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="parent-concern-detail">
     <h3>13h. Parent Concern Details</h3>
     <div class="table-scroll-wrapper">
@@ -2692,6 +2734,7 @@ function addStaffConcernRow() {
      Section 14: AC Temperature Check
 ========================= -->
 <form id="acTempForm" action="{{ url_for('submit_ac_temp') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="ac-temp">
       <h3>14. AC Temperature</h3>
       <div class="table-scroll-wrapper">
@@ -2783,6 +2826,7 @@ function addStaffConcernRow() {
      Section 15: Maintenance Labor / EB / Solar / Genset
 ========================= -->
 <form id="laborEbSolarGensetForm" action="{{ url_for('submit_labor_eb_solar_genset') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="labor-eb-solar-genset">
         <h3>15. Maintenance Labor / EB / Solar / Genset</h3>
 
@@ -2856,6 +2900,7 @@ function addStaffConcernRow() {
      Section 15: Motor Control
 ========================= -->
 <form id="motorForm" action="{{ url_for('submit_motor') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="motor-control">
       <h3>Motor Control</h3>
       <div class="table-scroll-wrapper">
@@ -2904,6 +2949,7 @@ function addStaffConcernRow() {
 ========================= -->
 <!--
 <form id="pestControlForm" action="{{ url_for('submit_pest_control') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="pest-control">
       <h3>Pest Control</h3>
       <div class="table-scroll-wrapper">
@@ -2963,6 +3009,7 @@ function addStaffConcernRow() {
      Section: AC Temp Deviation (>27°C)
 ========================= -->
 <form id="acTempDeviationForm" action="{{ url_for('submit_ac_temp_deviation') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="ac-temp-deviation">
     <h3>AC Temp Deviation (&gt;27°C)</h3>
     <div class="table-scroll-wrapper">
@@ -3015,6 +3062,7 @@ function addStaffConcernRow() {
      Section: Electricity Consumption
 ========================= -->
 <form id="electricityConsumptionForm" action="{{ url_for('submit_electricity_consumption') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="electricity-consumption">
       <h3>Electricity Consumption</h3>
       <div class="table-scroll-wrapper">
@@ -3083,6 +3131,7 @@ function addStaffConcernRow() {
      Section: EB Details
 ========================= -->
 <form id="ebDetailsForm" action="{{ url_for('submit_eb_details') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="eb-details">
       <h3>EB Details</h3>
       <div class="table-scroll-wrapper">
@@ -3133,6 +3182,7 @@ function addStaffConcernRow() {
      Section: Solar Details
 ========================= -->
 <form id="solarDetailsForm" action="{{ url_for('submit_solar_details') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="solar-details">
       <h3>Solar Details</h3>
       <div class="table-scroll-wrapper">
@@ -3217,6 +3267,7 @@ function addStaffConcernRow() {
      Section: Genset Details
 ========================= -->
 <form id="gensetDetailsForm" action="{{ url_for('submit_genset_details') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="genset-details">
       <h3>Genset Details</h3>
       <div class="table-scroll-wrapper">
@@ -3271,6 +3322,7 @@ function addStaffConcernRow() {
      Section: Security Count Verification
 ========================= -->
 <form id="securityCountVerificationForm" method="post" action="{{ url_for('submit_security_count_verification') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="security-count-verification">
       <h3>16.a Count Verification</h3>
       <div class="table-scroll-wrapper">
@@ -3335,6 +3387,7 @@ function addStaffConcernRow() {
      Section: Security Attendance Replacement
 ========================= -->
 <form id="securityAttendanceReplacementForm" method="post" action="{{ url_for('submit_security_attendance_replacement') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="security-attendance-replacement">
       <h3>Attendance Replacement</h3>
       <div class="table-scroll-wrapper">
@@ -3393,6 +3446,7 @@ function addStaffConcernRow() {
      Section: Security Info Note Details
 ========================= -->
 <form id="securityInfoNoteForm" method="post" action="{{ url_for('submit_security_info_note') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="security-info-note">
     <h3>Security Info Note Details</h3>
     <div class="table-scroll-wrapper">
@@ -3445,6 +3499,7 @@ function addStaffConcernRow() {
      Section: Govt In/Out (Officials)
 ========================= -->
 <form id="securityGovtInoutForm" method="post" action="{{ url_for('submit_govt_inout') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="security-govt-inout">
       <h3>Inward and Outward (Government Officials)</h3>
 
@@ -3497,6 +3552,7 @@ function addStaffConcernRow() {
      Section: Alcohol Test
 ========================= -->
 <form id="alcoholTestForm" method="post" action="{{ url_for('submit_alcohol_test') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="security-alcohol-test">
       <h3>Alcohol Test</h3>
 
@@ -3540,6 +3596,7 @@ function addStaffConcernRow() {
      Section: Materials Inward
 ========================= -->
 <form id="materialsInwardForm" method="post" action="{{ url_for('submit_security_materials_inward') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="security-materials-inward">
       <h3>Materials Inward</h3>
 
@@ -3608,6 +3665,7 @@ function addStaffConcernRow() {
      Section: Materials Outward
 ========================= -->
 <form id="securityMaterialsOutwardForm" method="post" action="{{ url_for('submit_security_materials_outward') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="security-materials-outward">
       <h3>Materials Outward</h3>
 
@@ -3673,6 +3731,7 @@ function addStaffConcernRow() {
      Section: Transport Verification
 ========================= -->
 <form id="transportVerificationForm" method="post" action="{{ url_for('submit_transport_verification') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="transport-verification">
       <h3>Transport Verification</h3>
 
@@ -3737,6 +3796,7 @@ function addStaffConcernRow() {
      Section: Documents Movement
 ========================= -->
 <form id="documentsMovementForm" method="post" action="{{ url_for('submit_document_movement') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="documents-movement">
       <h3>Documents Movement</h3>
   
@@ -3819,6 +3879,7 @@ function addStaffConcernRow() {
      Section: Govt Official Documents Expiry
 ========================= -->
 <form id="govtOfficialDocumentsForm" method="post" action="{{ url_for('submit_govt_official_documents') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="govt-documents-expiry">
         <h3>Govt Official Documents Expiry</h3>
 
@@ -3891,6 +3952,7 @@ function addStaffConcernRow() {
      Section 19.a: Thoorigai Team Social Media
 ========================= -->
 <form id="thoorigaiFbForm" method="post" action="{{ url_for('submit_thoorigai_social_media') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="thoorigai-team-social">
       <h3>19.a Thoorigai Team Social Media</h3>
   
@@ -3962,6 +4024,7 @@ function addStaffConcernRow() {
      Section 19.b: Thoorigai Website Updates
 ========================= -->
 <form id="websiteUpdatesForm" method="post" action="{{ url_for('submit_thoorigai_website_updates') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="thoorigai-website-updates">
       <h3>19.b Thoorigai Website Updates</h3>
 
@@ -4016,6 +4079,7 @@ function addStaffConcernRow() {
        Section 19.c: MD Social Media
   ========================= -->
   <form id="mdSocialMediaForm" method="post" action="{{ url_for('submit_md_social_media') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="md-social-media">
       <h3>19.c MD Social Media</h3>
   
@@ -4091,6 +4155,7 @@ function addStaffConcernRow() {
      Section 20: Intercom Maintenance
 ========================= -->
 <form id="intercomMaintenanceForm" method="post" action="{{ url_for('submit_intercom_maintenance') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="intercom-maintenance">
       <h3>Intercom Maintenance</h3>
 
@@ -4150,6 +4215,7 @@ function addStaffConcernRow() {
      Section 21: Health Check Up
 ========================= -->
 <form id="healthCheckUpForm" method="post" action="{{ url_for('submit_health_check_up') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="health-check-up">
       <h3>Health Check Up</h3>
 
@@ -4213,6 +4279,7 @@ function addStaffConcernRow() {
      Section 22: Net Connectivity / Prints
 ========================= -->
 <form id="netConnectivityPrintsForm" method="post" action="{{ url_for('submit_net_connectivity') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="net-connectivity">
       <h3>Net Connectivity / Prints</h3>
 
@@ -4280,6 +4347,7 @@ function addStaffConcernRow() {
      Section 23: General Maintenance – IT Products
 ========================= -->
 <form id="generalMaintenanceItForm" method="post" action="{{ url_for('submit_it_maintenance') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="it-maintenance">
       <h3>General Maintenance – IT Products</h3>
 
@@ -4344,6 +4412,7 @@ function addStaffConcernRow() {
      Section 24: Calendar Schedule
 ========================= -->
 <form id="calendarScheduleForm" method="post" action="{{ url_for('submit_calendar_schedule') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="calendar-schedule">
       <h3>Calendar Schedule</h3>
   
@@ -4434,6 +4503,7 @@ function addStaffConcernRow() {
      Section 25: Training Attendance
 ========================= -->
 <form id="trainingAttendanceForm" method="post" action="{{ url_for('submit_training_attendance') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="training-attendance">
       <h3>Training Attendance</h3>
   
@@ -4535,6 +4605,7 @@ function addStaffConcernRow() {
      Section 26: Training Details
 ========================= -->
 <form id="trainingDetailsForm" method="post" action="{{ url_for('submit_training_details') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="training-details">
       <h3>Training Details</h3>
 
@@ -4599,6 +4670,7 @@ function addStaffConcernRow() {
 ========================= -->
 
 <form id="manpowerPlanningForm" action="{{ url_for('submit_manpower_planning') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="manpower-planning">
     <h3>Manpower Planning</h3>
     <div class="table-scroll-wrapper">
@@ -4652,6 +4724,7 @@ function addStaffConcernRow() {
 <h3 class="text-xl font-bold mb-4" data-form="formOverallConsolidation">28. Overall Consolidation</h3>
 
 <form id="overallConsolidationForm" action="{{ url_for('submit_overall_consolidation') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="overall-consolidation">
     <h3>Overall Consolidation</h3>
     <div class="table-scroll-wrapper">
@@ -4709,6 +4782,7 @@ function addStaffConcernRow() {
 <h3 class="text-xl font-bold mb-4" data-form="formUniformDetails">29. Uniform Details</h3>
 
 <form id="uniformDetailsForm" method="post" action="{{ url_for('submit_uniform_details') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="uniform-details">
       <h3>Uniform Details</h3>
 
@@ -4751,6 +4825,7 @@ function addStaffConcernRow() {
 ========================= -->
 
 <form id="deptWiseUniformDetailsForm" method="post" action="{{ url_for('submit_department_wise_uniform_details') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="department-wise-uniform-details">
       <h3>Department Wise Uniform Details</h3>
 

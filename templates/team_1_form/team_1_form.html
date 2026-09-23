@@ -69,7 +69,8 @@
     </nav>
   
   <!-- Calendar Schedule -->
-  <form id="calendar-form" action="{{ url_for('submit_team1_calendar') }}" method="post">  
+  <form id="calendar-form" action="{{ url_for('submit_team1_calendar') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  
     <section class="dsr-section" id="calendar-schedule">
       <h3>1. Calendar Schedule</h3>
       <div class="table-scroll-wrapper">
@@ -160,6 +161,7 @@
 
   <!-- ASA / Activities Attendance -->
   <form id="asa-form" action="{{ url_for('submit_team1_asa') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="asa-activities">
       <h3>2a. ASA / Activities Attendance</h3>
        <div class="table-scroll-wrapper">
@@ -232,6 +234,7 @@
   </form>
 <!-- ASA Sports Attendance -->
 <form id="asa-sports-form" action="{{ url_for('submit_team1_asa_sports') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="asa-sports">
     <h3>2b. ASA Sports Attendance</h3>
     <div class="table-scroll-wrapper">
@@ -312,6 +315,7 @@
 
   <!-- ASA General Attendance -->
   <form id="asa-general-form" action="{{ url_for('submit_team1_asa_general') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="asa-general">
       <h3>2c. ASA General Attendance</h3>
        <div class="table-scroll-wrapper">
@@ -473,6 +477,7 @@
 
 <!-- S.No 3: Students Attendance -->
 <form id="student-attendance-form" class="dsr-form" action="{{ url_for('submit_student_attendance') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="student-attendance">
         <h3>3. Students Attendance</h3>
         <table>
@@ -591,6 +596,7 @@
 
 <!-- S.No 4: Students Grooming -->
 <form id="grooming-form" class="dsr-form" action="{{ url_for('submit_grooming') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="student-grooming">
         <h3>4. Students Grooming</h3>
         <div class="table-scroll-wrapper">
@@ -644,6 +650,7 @@
 
 <!-- S.No 5: Students Late Coming -->
 <form id="latecoming-form" class="dsr-form" action="{{ url_for('submit_latecoming') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="student-latecoming">
         <h3>5. Students Late Coming</h3>
         <div class="table-scroll-wrapper">
@@ -697,6 +704,7 @@
 
 <!-- S.No 6: Admission Status -->
 <form id="admission-status-form" action="{{ url_for('submit_admission_status') }}" method="post" class="dsr-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="admission-status">
     <h3>6. Admission Status</h3>
     <table>
@@ -790,6 +798,7 @@
 <!-- S.No 7: Transfer Certificate -->
 <!-- Transfer Certificate Form -->
 <form id="tc-form" action="{{ url_for('submit_transfer_certificate') }}" method="post" class="dsr-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="transfer-certificate">
     <h3>7. Transfer Certificate (MLM)</h3>
     
@@ -850,6 +859,7 @@ function addTcRow() {
 
 <!-- S.No 8: Parent Activity -->
 <form id="parent-activity-form" action="{{ url_for('submit_parent_activity') }}" method="post" class="dsr-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="parent-activity">
     <h3>8. Parent Activity</h3>
     <div class="table-scroll-wrapper">
@@ -909,6 +919,7 @@ function addTcRow() {
 
 <!-- S.No 9: Parent Visit -->
 <form id="parent-visit-form" class="dsr-form" action="{{ url_for('submit_team1_parent_visit') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="parent-visit">
         <h3>9. Parent Visit</h3>
         <div class="table-scroll-wrapper"> 
@@ -963,6 +974,7 @@ function addTcRow() {
 
 <!-- S.No 10: Exam Schedule -->
 <form id="exam-schedule-form" class="dsr-form" action="{{ url_for('submit_team1_exam_schedule') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="exam-schedule">
       <h3>10. Exam Schedule</h3>
       <table>
@@ -1090,6 +1102,7 @@ function addTcRow() {
 
 <!-- S.No 11: External Agency Info -->
 <form id="external-info-form" class="dsr-form" action="{{ url_for('submit_team1_external_info') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="external-info">
       <h3>11. Information from External Agencies</h3>
       <table>
@@ -1265,6 +1278,7 @@ function addTcRow() {
 
 <!-- S.No 12: Sick Bay -->
 <form id="sick-bay-form" class="dsr-form" action="{{ url_for('submit_team1_sick_bay') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="sick-bay">
       <h3>12. Health Centre</h3>
       <div class="table-scroll-wrapper">
@@ -1318,6 +1332,7 @@ function addTcRow() {
 
 <!-- S.No 13: Home School Communications -->
 <form id="home-school-form" class="dsr-form" action="{{ url_for('submit_team1_home_school_comm') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="home-school-comm">
       <h3>13. Home School Communications (MLM)</h3>
       <div class="table-scroll-wrapper">
@@ -1377,6 +1392,7 @@ function addTcRow() {
 
 <!-- S.No 14: Disciplinary Measures -->
 <form id="disciplinary-form" class="dsr-form" action="{{ url_for('submit_team1_disciplinary') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="disciplinary-measures">
       <h3>14. Disciplinary Measures (MLM)</h3>
       <table>
@@ -1417,6 +1433,7 @@ function addTcRow() {
 
 <!-- S.No 15: Logistics -->
 <form id="logistics-form" class="dsr-form" action="{{ url_for('submit_team1_logistics') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="logistics">
       <h3>15. Logistics (Logistics Team)</h3>
       <div class="table-scroll-wrapper">
@@ -1466,6 +1483,7 @@ function addTcRow() {
 
 <!-- S.No 16: Intra Grade Competition Certificate -->
 <form id="competition-cert-form" class="dsr-form" action="{{ url_for('submit_competition_cert') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="competition-certificates">
     <h3>16. Intra Grade Competition Certificate (Certificates Team)</h3>
     <div class="table-scroll-wrapper">
@@ -1510,6 +1528,7 @@ function addTcRow() {
 
 <!-- S.No 17: Staff Concern -->
 <form id="staff-concern-form" class="dsr-form" action="{{ url_for('submit_staff_concern') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="staff-concern">
     <h3>17. Staff Concern</h3>
     <div class="table-scroll-wrapper">
@@ -1558,6 +1577,7 @@ function addTcRow() {
 
 <!-- S.No 17:b Student Concern -->
 <form id="student-concern-form" class="dsr-form" action="{{ url_for('submit_student_concern') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="student-concern">
     <h3>17b. Student Concern</h3>
     <div class="table-scroll-wrapper">
@@ -1608,6 +1628,7 @@ function addTcRow() {
 <!-- S.No 18: Parent Concern -->
 <!-- 18a. Parent Concern Summary -->
 <form id="parent-concern-summary-form" class="dsr-form" action="{{ url_for('submit_parent_concern_summary') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="parent-concern-summary">
     <h3>18a. Parent Concern Summary</h3>
     <div class="table-scroll-wrapper">
@@ -1662,6 +1683,7 @@ function addTcRow() {
 
 <!-- 18b. Parent Concern Details -->
 <form id="parent-concern-detail-form" class="dsr-form" action="{{ url_for('submit_parent_concern_detail') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="parent-concern-detail">
     <h3>18b. Parent Concern Details</h3>
     <div class="table-scroll-wrapper">
@@ -1705,6 +1727,7 @@ function addTcRow() {
 
 <!-- S.No 19: AEP Attendance -->
 <form id="aep-form" class="dsr-form" action="{{ url_for('submit_aep') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="aep-attendance">
     <h3>19. AEP Attendance</h3>
     <table>
@@ -1757,6 +1780,7 @@ function addTcRow() {
 
 <!-- S.No 20: Extended Class Attendance -->
 <form id="extended-class-form" class="dsr-form" action="{{ url_for('submit_extended_class') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="extended-attendance">
     <h3>20. Extended Class Attendance</h3>
     <table>
@@ -1829,6 +1853,7 @@ function addTcRow() {
 
 <!-- S.No 21: Training Session -->
 <form id="training-form" class="dsr-form" action="{{ url_for('submit_training_session') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="training-session">
         <h3>21. Training Session</h3>
 
@@ -1871,6 +1896,7 @@ function addTcRow() {
 <!-- S.No 22: Team Weekly Meeting -->
 
 <form id="weekly-meeting-form" class="dsr-form" action="{{ url_for('submit_team_meeting') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="dsr-section" id="team-meeting">
         <h3>22. Team Weekly Meeting</h3>
 
@@ -1950,6 +1976,7 @@ function addTcRow() {
 
 <!-- DSR - Special Education Form -->
 <form id="special-education-form" class="dsr-form" action="{{ url_for('submit_special_education') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="special-education">
       <h3>23.Special Education</h3>
       <table>
@@ -2009,6 +2036,7 @@ function addTcRow() {
 </form>
 <!-- S.No 24: Hostel -->
 <form id="hostel-form" class="dsr-form" action="{{ url_for('submit_hostel') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="hostel-section">
       <h3>24. Hostel</h3>
 
@@ -2063,6 +2091,7 @@ function addTcRow() {
 
  <!-- S.No 25: SEC -->
 <form id="sec-form" class="dsr-form" action="{{ url_for('submit_sec') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="sec-section">
       <h3>25. SEC</h3>
 
@@ -2120,6 +2149,7 @@ function addTcRow() {
 
 <!-- S.No 26: School Counsellor Tracking -->
 <form id="school-counsellor-form" class="dsr-form" action="{{ url_for('submit_school_counsellor') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="school-counsellor">
       <h3>26. School Counsellor</h3>
 
@@ -2208,6 +2238,7 @@ function addTcRow() {
 
 <!-- Scholorius / Smart Tail Form -->
 <form id="scholorius-form" class="dsr-form" action="{{ url_for('submit_scholorius') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <section class="dsr-section" id="scholorius-section">
       <h3>27. Scholorius / Smart Tail</h3>
 
