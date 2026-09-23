@@ -42,9 +42,9 @@ def register_team3_forms(app):
 
             db.session.commit()
             return jsonify({'message': 'Team 3 audit data submitted successfully!'})
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f'Error submitting audit: {str(e)}')
+            app.logger.exception('Error submitting audit')
             return jsonify({'error': 'Failed to submit audit.'}), 500
 
 
@@ -121,9 +121,9 @@ def register_team3_forms(app):
 
             db.session.commit()
             return jsonify({'message': 'New audit data submitted successfully!'})
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            print(f'Error submitting new audit: {str(e)}')
+            app.logger.exception('Error submitting new audit')
             return jsonify({'error': 'Failed to submit new audit.'}), 500
 
 

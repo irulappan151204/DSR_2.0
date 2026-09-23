@@ -12,6 +12,10 @@ class Acknowledgement(db.Model):
 
     user = db.relationship('User', backref='acknowledgements')
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         return f'<Acknowledgement {self.user_id} {self.date} {self.acknowledged_at}>'
+
 

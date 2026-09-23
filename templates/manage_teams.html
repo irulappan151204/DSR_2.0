@@ -10,6 +10,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Add New Team</h5>
                     <form method="POST" action="{{ url_for('manage_teams') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
                             <label for="team_name" class="form-label">Team Name</label>
                             <input type="text" class="form-control" id="team_name" name="team_name" required>

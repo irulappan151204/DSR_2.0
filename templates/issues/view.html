@@ -12,6 +12,7 @@
                 </a>
                 {% if current_user.role == 'Admin' %}
                 <form action="{{ url_for('delete_issue', issue_id=issue.issue_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this issue?')">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash"></i> Delete Issue
                     </button>
@@ -36,6 +37,7 @@
                     <div class="mt-4">
                         <h6>Resolve Issue</h6>
                         <form method="POST" action="{{ url_for('resolve_issue', issue_id=issue.issue_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <div class="mb-3">
                                 <label for="solved_description" class="form-label">Solution Description</label>
                                 <textarea class="form-control" id="solved_description" name="solved_description" rows="3" required></textarea>

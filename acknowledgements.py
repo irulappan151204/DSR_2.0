@@ -1,3 +1,4 @@
+import logging
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta, date as dt_date
@@ -5,6 +6,8 @@ from extensions import db, cache
 from cache_utils import bust_user_dashboard_cache
 from models import Acknowledgement, User, Team1CalendarSchedule, Team1ASAActivities, Team1ASASports, Team1ASAGeneral, Team1StudentAttendance, Team1StudentGrooming, Team1StudentLateComing, Team1AdmissionStatus, Team1TransferCertificate, Team1ParentActivity, Team1ParentVisit, Team1ExamSchedule, Team1ExternalInfo, Team1SickBay, Team1HomeSchoolComm, Team1Disciplinary, Team1Logistics, Team1CompetitionCert, Team1StaffConcern, Team1StudentConcern, Team1ParentConcern, Team1ParentConcernDetail, Team1AEPAttendance, Team1ExtendedClassAttendance, Team1TrainingSession, Team1WeeklyMeeting, Team1SpecialEducation, Team1Hostel, Team1SEC, Team1SchoolCounsellor, Team1Scholorius, Team2HRAttendance, Team2TotalHRAttendance, Team2AdminAttendance, Team2RecruitmentActivity, Team2PendingRecruitment, Team2RecruitmentPipeline, Team2StaffStatusUpdates, Team2SalaryPending, Team2PoliceVerification, Team2InterviewSchedule, Team2ExitInformation, Team2IssuesStaffConcerns, Team2KuralRecitation, Team2FrontOfficePhoneCalls, Team2VisitorLog, Team2BSNLPhoneStatus, Team2MaterialsInward, Team2MaterialsOutward, Team2MaterialsMovement, Team2ReturnableMaterialTracking, Team2ReturnableGoodsReport, Team2CampusCameraStatus, Team2VehicleCameraStatus, Team2BusACCameraStatus, Team2GPSMonitoring, Team2IssuesIdentifiedMonitoring, Team2IssuesIdentifiedControlRoom, Team2CameraFootageEntry, Team2BiometricsAccessCardPunching, Team2WaterTDSDeviation, Team2TestingCleaning, Team2PoolTesting, Team2WashroomCleanliness, Team2TransportAttendance, Team2ACWorkingStatus, Team2LateReporting, Team2MaintenanceServiceIssues, Team2CarMaintenanceCleaning, Team2VehicleRenewalsDelays, Team2SpecialTrip, Team2ParentConcernDetail, Team2ACTemperatureCheck, Team2LaborEbSolarGenset, Team2Motor, Team2PestControl, Team2ACTempDeviation, Team2ElectricityConsumption, Team2EBDetails, Team2SolarDetails, Team2GensetDetails, Team2CountVerification, Team2AttendanceReplacement, Team2SecurityInfoNote, Team2SecurityGovtInout, Team2AlcoholTest, Team2SecurityMaterialsInout, Team2SecurityMaterialsOutward, Team2TransportVerification, Team2DocumentsMovement, Team2GovtOfficialDocuments, Team2ThoorigaiTeamSocialMedia, Team2WebsiteUpdates, Team2MDSocialMedia, Team2IntercomMaintenance, Team2HealthCheckUp, Team2NetConnectivityPrintDetails, Team2GeneralMaintenanceITProducts, Team2CalendarSchedule, Team2TrainingAttendance, Team2TrainingDetails, Team2ManpowerPlanning, Team2OverallConsolidation, Team2WaterLevel, Team2HousekeepingGeneral, Team2UniformDetails, Team2DepartmentWiseUniformDetails, Team3Audit, Team3NewAudit
 from sqlalchemy import func
+
+logger = logging.getLogger(__name__)
 
 acknowledgements_bp = Blueprint('acknowledgements', __name__)
 
@@ -39,7 +42,7 @@ def get_unack_count_for_user(user):
             pass
         return count
     except Exception as e:
-        print(f"Error calculating unack count: {e}")
+        logger.error(f"Error calculating unack count: {e}")
         return 0
 
 
@@ -402,9 +405,9 @@ def acknowledge_report():
         except Exception:
             pass
 
-        return jsonify({'success': True, 'date': date_str})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        logger.exception("Failed to acknowledge date")
+        return jsonify({'error': 'Failed to acknowledge date'}), 500
 
 @acknowledgements_bp.route('/ack/md', methods=['GET'])
 @login_required

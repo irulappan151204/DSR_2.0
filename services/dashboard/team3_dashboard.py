@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime, timedelta, date as dt_date
 from flask import url_for
 from sqlalchemy import func
 from extensions import db, cache
 from models import *
+
+logger = logging.getLogger(__name__)
 
 def get_team3_data(selected_date_obj, start_of_day, end_of_day, show_all_dates, current_user):
     team3_audit_data = []
@@ -210,7 +213,7 @@ def get_team3_data(selected_date_obj, start_of_day, end_of_day, show_all_dates, 
                 for row in rows:
                     report_dates.add(row[0])
             except Exception as e:
-                print(f"Error processing model {model.__name__}: {e}")
+                logger.error(f"Error processing model {model.__name__}: {e}")
 
         if current_user.role == 'MD':
             for model in team1_models:
@@ -239,7 +242,7 @@ def get_team3_data(selected_date_obj, start_of_day, end_of_day, show_all_dates, 
             except Exception:
                 pass
         except Exception as e:
-            print(f"Error calculating unacknowledged count: {e}")
+            logger.error(f"Error calculating unacknowledged count: {e}")
             unack_count = 0
 
     return {

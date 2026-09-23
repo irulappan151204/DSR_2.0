@@ -189,6 +189,7 @@
 {% if can_respond %}
 <form method="post" action="{{ url_for('critical.submit_response', finding_id=finding.form_id) }}"
       enctype="multipart/form-data" id="capa-response-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="capa-card">
         <h2>
             {% if finding.status == 'CAPA_REVISION_REQUIRED' %}Revise Your CAPA Response{% else %}Your CAPA Response{% endif %}
@@ -282,6 +283,7 @@
 {% if can_review %}
 <form method="post" action="{{ url_for('critical.submit_review', finding_id=finding.form_id) }}"
       enctype="multipart/form-data" id="capa-review-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="capa-card">
         <h2>Audit CAPA Review</h2>
 

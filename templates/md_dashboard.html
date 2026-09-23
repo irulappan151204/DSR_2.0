@@ -6797,6 +6797,7 @@ Team 3: Audit
         </div>
         <div class="modal-body-custom">
             <form id="createActionForm" method="post" action="{{ url_for('actions.create_action') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="redirect_to" value="{{ request.url }}">
                 <div class="form-group-custom">
                     <label for="modalTitleSelect" class="form-label-custom">Title/Description</label>

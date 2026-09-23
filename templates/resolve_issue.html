@@ -22,6 +22,7 @@
                     </div>
                     
                     <form method="POST" action="{{ url_for('resolve_issue', issue_id=issue.issue_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
                             <label for="resolution" class="form-label">Resolution Description</label>
                             <textarea class="form-control" id="resolution" name="resolution" rows="5" required

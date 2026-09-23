@@ -415,6 +415,7 @@
                                         <button class="ack-btn mb-1" onclick="acknowledgeDate(this, '{{ row.pending_date_strs[i] }}')">Acknowledge</button><br/>
                                         <!-- Fallback form for direct submission -->
                                         <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ row.pending_date_strs[i] }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <input type="hidden" name="date" value="{{ row.pending_date_strs[i] }}">
                                         </form>
                                     {% endfor %}
@@ -452,6 +453,7 @@
                             <td>
                                 <button class="ack-btn" onclick="acknowledgeDate(this, '{{ self_row.pending_date_strs[i] }}')">Acknowledge</button>
                                 <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ self_row.pending_date_strs[i] }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="date" value="{{ self_row.pending_date_strs[i] }}">
                                 </form>
                             </td>

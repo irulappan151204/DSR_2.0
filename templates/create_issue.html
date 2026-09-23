@@ -10,6 +10,7 @@
                 <div class="card-body">
                     <h3 class="card-title text-center mb-4">Create New Issue</h3>
                     <form method="POST" action="{{ url_for('create_issue') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
                             <label for="title" class="form-label">Issue Title</label>
                             <input type="text" class="form-control" id="title" name="title" required>

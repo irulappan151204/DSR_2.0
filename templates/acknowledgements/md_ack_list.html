@@ -189,6 +189,7 @@
                             {% if row.status == 'Pending' %}
                                 <button class="ack-btn" onclick="acknowledgeDate(this, '{{ row.date_str }}')">Acknowledge</button>
                                 <form method="POST" action="/ack" style="display:none;" id="ack-form-{{ row.date_str }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="date" value="{{ row.date_str }}">
                                 </form>
                             {% else %}

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}Issue Tracking System{% endblock %}</title>
     
     <!-- Favicon -->
@@ -1047,6 +1048,50 @@
 
             // Additional safety: hide loader after a timeout
             setTimeout(hideLoader, 2000);
+        });
+
+        // Setup CSRF protection for AJAX requests
+        document.addEventListener('DOMContentLoaded', function() {
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const token = csrfMeta ? csrfMeta.getAttribute('content') : '';
+            if (!token) return;
+
+            // Configure jQuery AJAX if present
+            if (window.jQuery) {
+                window.jQuery.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", token);
+                        }
+                    }
+                });
+            }
+
+            // Configure native Fetch API
+            if (window.fetch) {
+                const originalFetch = window.fetch;
+                window.fetch = function(resource, init) {
+                    init = init || {};
+                    const method = (init.method || 'GET').toUpperCase();
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(method)) {
+                        init.headers = init.headers || {};
+                        if (init.headers instanceof Headers) {
+                            if (!init.headers.has('X-CSRFToken')) {
+                                init.headers.set('X-CSRFToken', token);
+                            }
+                        } else if (Array.isArray(init.headers)) {
+                            if (!init.headers.some(h => h[0].toLowerCase() === 'x-csrftoken')) {
+                                init.headers.push(['X-CSRFToken', token]);
+                            }
+                        } else if (typeof init.headers === 'object') {
+                            if (!init.headers['X-CSRFToken'] && !init.headers['x-csrftoken']) {
+                                init.headers['X-CSRFToken'] = token;
+                            }
+                        }
+                    }
+                    return originalFetch(resource, init);
+                };
+            }
         });
     </script>
     {% block extra_js %}{% endblock %}

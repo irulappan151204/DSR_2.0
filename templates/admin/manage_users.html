@@ -353,6 +353,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="deactivateForm" method="POST" action="">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-body py-4">
           <p class="mb-3">
             Are you sure you want to deactivate <strong id="deactivateUsernameDisplay" class="text-primary"></strong>?
@@ -403,6 +404,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="reactivateForm" method="POST" action="">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-body py-4">
           <p class="mb-2">
             Reactivate <strong id="reactivateUsernameDisplay" class="text-primary"></strong>?
@@ -435,6 +437,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="deleteForm" method="POST" action="">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-body py-4">
           <p class="mb-2">
             Are you sure you want to permanently delete <strong id="deleteUsernameDisplay" class="text-danger"></strong>?
