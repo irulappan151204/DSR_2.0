@@ -32,18 +32,21 @@ def populate_team3_issue_nature(team3, date_filter_fn):
                 team3_issue_nature['audit_issue_nature']['critical'] += 1
                 team3_issue_nature['overall']['critical'] += 1
 
-    # Team 3 new audit form data
+    # Team 3 audit form data
     query_filters_new = [Team3NewAudit.team_id == team3.team_id] + date_filter_fn(Team3NewAudit)
     for item in Team3NewAudit.query.filter(*query_filters_new).all():
         if item.issue_nature:
             nature = item.issue_nature.lower()
             if ('all_well' in nature or 'all well' in nature):
+                team3_issue_nature['audit_issue_nature']['all_well'] += 1
                 team3_issue_nature['new_audit_issue_nature']['all_well'] += 1
                 team3_issue_nature['overall']['all_well'] += 1
             elif ('manageable' in nature):
+                team3_issue_nature['audit_issue_nature']['manageable'] += 1
                 team3_issue_nature['new_audit_issue_nature']['manageable'] += 1
                 team3_issue_nature['overall']['manageable'] += 1
             elif ('critical' in nature):
+                team3_issue_nature['audit_issue_nature']['critical'] += 1
                 team3_issue_nature['new_audit_issue_nature']['critical'] += 1
                 team3_issue_nature['overall']['critical'] += 1
 

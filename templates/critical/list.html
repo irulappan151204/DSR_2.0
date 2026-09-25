@@ -29,42 +29,42 @@
 
 <!-- KPI Summary Cards -->
 <div class="capa-kpi-grid">
-    <a href="{{ url_for('critical.critical_home') }}"
+    <a href="{{ url_for('critical.critical_home', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-total {% if not status_filter %}active{% endif %}"
        title="Show all visible critical findings">
         <div class="capa-kpi-title">Total Critical</div>
         <div class="capa-kpi-value">{{ total }}</div>
         <div class="capa-kpi-desc">All visible findings</div>
     </a>
-    <a href="{{ url_for('critical.critical_home', status='OPEN') }}"
+    <a href="{{ url_for('critical.critical_home', status='OPEN', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-open {% if status_filter == 'OPEN' %}active{% endif %}"
        title="Show open findings">
         <div class="capa-kpi-title">Open</div>
         <div class="capa-kpi-value">{{ counts.get('OPEN', 0) }}</div>
         <div class="capa-kpi-desc">Draft / newly logged</div>
     </a>
-    <a href="{{ url_for('critical.critical_home', status='PENDING_RECIPIENT_RESPONSE') }}"
+    <a href="{{ url_for('critical.critical_home', status='PENDING_RECIPIENT_RESPONSE', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-pending-r {% if status_filter == 'PENDING_RECIPIENT_RESPONSE' %}active{% endif %}"
        title="Show findings awaiting recipient response">
         <div class="capa-kpi-title">Pending Response</div>
         <div class="capa-kpi-value">{{ counts.get('PENDING_RECIPIENT_RESPONSE', 0) }}</div>
         <div class="capa-kpi-desc">Awaiting recipient action</div>
     </a>
-    <a href="{{ url_for('critical.critical_home', status='PENDING_AUDIT_REVIEW') }}"
+    <a href="{{ url_for('critical.critical_home', status='PENDING_AUDIT_REVIEW', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-pending-a {% if status_filter == 'PENDING_AUDIT_REVIEW' %}active{% endif %}"
        title="Show findings awaiting audit review">
         <div class="capa-kpi-title">Pending Review</div>
         <div class="capa-kpi-value">{{ counts.get('PENDING_AUDIT_REVIEW', 0) }}</div>
         <div class="capa-kpi-desc">Awaiting audit review</div>
     </a>
-    <a href="{{ url_for('critical.critical_home', status='CAPA_REVISION_REQUIRED') }}"
+    <a href="{{ url_for('critical.critical_home', status='CAPA_REVISION_REQUIRED', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-revision {% if status_filter == 'CAPA_REVISION_REQUIRED' %}active{% endif %}"
        title="Show findings requiring CAPA revision">
         <div class="capa-kpi-title">Revision Required</div>
         <div class="capa-kpi-value">{{ counts.get('CAPA_REVISION_REQUIRED', 0) }}</div>
         <div class="capa-kpi-desc">Sent back for revision</div>
     </a>
-    <a href="{{ url_for('critical.critical_home', status='CLOSED') }}"
+    <a href="{{ url_for('critical.critical_home', status='CLOSED', per_page=pagination.per_page, q=q or None) }}"
        class="capa-kpi-card kpi-closed {% if status_filter == 'CLOSED' %}active{% endif %}"
        title="Show closed findings">
         <div class="capa-kpi-title">Closed</div>
@@ -74,12 +74,12 @@
 </div>
 
 <div class="capa-filters">
-    <a href="{{ url_for('critical.critical_home') }}"
+    <a href="{{ url_for('critical.critical_home', per_page=pagination.per_page, q=q or None) }}"
        class="{% if not status_filter %}active{% endif %}">
         All <span class="count">{{ total }}</span>
     </a>
     {% for status in statuses %}
-    <a href="{{ url_for('critical.critical_home', status=status) }}"
+    <a href="{{ url_for('critical.critical_home', status=status, per_page=pagination.per_page, q=q or None) }}"
        class="{% if status_filter == status %}active{% endif %}">
         {{ status_labels[status] }} <span class="count">{{ counts[status] }}</span>
     </a>
@@ -87,6 +87,37 @@
 </div>
 
 <div class="capa-card">
+    <!-- Toolbar with search & records per page -->
+    <div class="capa-toolbar">
+        <form method="GET" action="{{ url_for('critical.critical_home') }}" class="capa-search-form">
+            {% if status_filter %}
+            <input type="hidden" name="status" value="{{ status_filter }}">
+            {% endif %}
+            <input type="hidden" name="per_page" value="{{ pagination.per_page }}">
+            <div class="capa-search-input-wrap">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" name="q" class="capa-search-input" value="{{ q or '' }}" placeholder="Search reference, title, nature, staff...">
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-primary">Search</button>
+            {% if q %}
+            <a href="{{ url_for('critical.critical_home', status=status_filter or None, per_page=pagination.per_page) }}" class="btn btn-sm btn-outline-secondary" title="Clear search">
+                <i class="fas fa-times"></i>
+            </a>
+            {% endif %}
+        </form>
+
+        <div class="capa-per-page-wrap">
+            <span class="text-muted">Showing <strong>{{ pagination.start_index }}</strong>&ndash;<strong>{{ pagination.end_index }}</strong> of <strong>{{ pagination.total_records }}</strong></span>
+            <label for="critical_per_page" class="ms-2">Per page:</label>
+            <select id="critical_per_page" class="capa-per-page-select" onchange="location.href='{{ url_for('critical.critical_home', status=status_filter or None, q=q or None) }}' + (('{{ url_for('critical.critical_home', status=status_filter or None, q=q or None) }}'.indexOf('?') !== -1 ? '&' : '?') + 'per_page=' + this.value + '&page=1')">
+                <option value="10" {% if pagination.per_page == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if pagination.per_page == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if pagination.per_page == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if pagination.per_page == 100 %}selected{% endif %}>100</option>
+            </select>
+        </div>
+    </div>
+
     {% if findings %}
     <div class="table-wrap">
         <table class="capa-table">
@@ -148,10 +179,54 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination bar -->
+    {% if pagination.total_records > 0 %}
+    <div class="capa-pagination-container">
+        <div class="capa-pagination-info">
+            Showing <strong>{{ pagination.start_index }}</strong> to <strong>{{ pagination.end_index }}</strong> of <strong>{{ pagination.total_records }}</strong> findings &middot; Page <strong>{{ pagination.page }}</strong> of <strong>{{ pagination.total_pages }}</strong>
+        </div>
+        <ul class="capa-pagination-nav">
+            <!-- Previous Button -->
+            <li>
+                <a class="page-btn {% if not pagination.has_prev %}disabled{% endif %}"
+                   href="{% if pagination.has_prev %}{{ url_for('critical.critical_home', page=pagination.prev_page, per_page=pagination.per_page, status=status_filter or None, q=q or None) }}{% else %}#{% endif %}"
+                   aria-label="Previous">
+                    <i class="fas fa-chevron-left me-1"></i> Prev
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            {% for p in pagination.pages %}
+                {% if p == '...' %}
+                    <li><span class="page-ellipsis">&hellip;</span></li>
+                {% elif p == pagination.page %}
+                    <li><span class="page-btn active">{{ p }}</span></li>
+                {% else %}
+                    <li>
+                        <a class="page-btn" href="{{ url_for('critical.critical_home', page=p, per_page=pagination.per_page, status=status_filter or None, q=q or None) }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Next Button -->
+            <li>
+                <a class="page-btn {% if not pagination.has_next %}disabled{% endif %}"
+                   href="{% if pagination.has_next %}{{ url_for('critical.critical_home', page=pagination.next_page, per_page=pagination.per_page, status=status_filter or None, q=q or None) }}{% else %}#{% endif %}"
+                   aria-label="Next">
+                    Next <i class="fas fa-chevron-right ms-1"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+
     {% else %}
     <div class="capa-empty">
         <i class="fas fa-clipboard-check"></i>
-        {% if status_filter %}
+        {% if q %}
+            No findings matching &ldquo;{{ q }}&rdquo;.
+        {% elif status_filter %}
             No findings with status &ldquo;{{ status_labels[status_filter] }}&rdquo;.
         {% elif is_auditor %}
             No audit findings yet. Use <strong>New Audit Finding</strong> to raise one.

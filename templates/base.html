@@ -665,6 +665,95 @@
             100% { box-shadow: 0 0 0 2px #fff, 0 0 0 0 #ef4444; }
         }
 
+        /* ── Global Reminder Bell & Dropdown Styles ───────── */
+        @keyframes bell-ring-anim {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(-14deg); }
+            30% { transform: rotate(14deg); }
+            45% { transform: rotate(-8deg); }
+            60% { transform: rotate(8deg); }
+            75% { transform: rotate(0deg); }
+        }
+        .bell-ring {
+            display: inline-block;
+            animation: bell-ring-anim 2s infinite ease-in-out;
+        }
+
+        .reminder-dropdown-menu {
+            min-width: 320px;
+            max-width: 380px;
+            border-radius: 14px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.15) !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        .reminder-dropdown-header {
+            background: #f8fafc;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .reminder-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.15s ease;
+        }
+
+        .reminder-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .reminder-item.due {
+            background-color: #fff1f2;
+            border-left: 3px solid #ef4444;
+        }
+
+        .reminder-item.due:hover {
+            background-color: #ffe4e6;
+        }
+
+        .reminder-dropdown-footer {
+            padding: 0.65rem 1rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        /* Global Floating Toast Container (available across all pages) */
+        .global-reminder-toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1099;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            pointer-events: none;
+        }
+
+        .global-reminder-toast {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 0.95rem 1.25rem;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+            border-left: 5px solid #ef4444;
+            min-width: 300px;
+            max-width: 400px;
+            pointer-events: auto;
+            animation: toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes toast-slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         /* Stylish Loader Animation */
         #global-loader {
             position: fixed;
@@ -858,7 +947,7 @@
                 </li>
                 {% elif current_user.role == 'MD' %}
                 <li class="nav-item">
-                    <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('md_dashboard.md_dashboard', team='team1') }}" class="nav-link {% if request.endpoint in ['dashboard', 'md_dashboard.md_dashboard'] %}active{% endif %}">
                         <i class="fas fa-layer-group"></i> Dashboard
                     </a>
                 </li>
@@ -928,6 +1017,39 @@
                 </li>
                 {% endif %}
 
+                <!-- Reminder Bell Dropdown (Global across all pages) -->
+                <li class="nav-item dropdown reminder-dropdown-container">
+                    <button class="nav-link reminder-nav-btn dropdown-toggle border-0 bg-transparent position-relative d-flex align-items-center" id="navbarReminderDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="My Reminders &amp; Notes">
+                        <i class="fas fa-bell {% if has_pending_reminders %}bell-ring text-danger{% endif %}" id="navGlobalBellIcon" style="font-size: 1.15rem;"></i>
+                        <span class="d-none d-lg-inline ms-1 fw-semibold">Reminders</span>
+                        <span class="badge rounded-pill bg-danger ms-1 {% if not (has_pending_reminders and pending_reminders_count > 0) %}d-none{% endif %}" id="navGlobalDueBadge">
+                            {{ pending_reminders_count }}
+                        </span>
+                    </button>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end reminder-dropdown-menu shadow-lg" aria-labelledby="navbarReminderDropdown">
+                        <li class="reminder-dropdown-header">
+                            <span class="fw-bold text-dark d-flex align-items-center gap-2" style="font-size: 0.88rem;">
+                                <i class="fas fa-clock text-primary"></i> Reminders &amp; Tasks
+                            </span>
+                            <a href="{{ url_for('profile') }}#notes" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 fw-semibold" style="font-size: 0.74rem;">
+                                <i class="fas fa-plus me-1"></i> New Note
+                            </a>
+                        </li>
+                        <div id="reminderDropdownList" style="max-height: 320px; overflow-y: auto;">
+                            <div class="p-3 text-center text-muted small" id="reminderDropdownEmpty">
+                                <i class="fas fa-check-circle text-success mb-1" style="font-size: 1.25rem;"></i>
+                                <div>No pending reminders</div>
+                            </div>
+                        </div>
+                        <li class="reminder-dropdown-footer">
+                            <a href="{{ url_for('profile') }}#notes" class="small fw-bold text-primary text-decoration-none d-flex align-items-center justify-content-center gap-1">
+                                Open Notes &amp; Reminders Board <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <!-- User Account Dropdown -->
                 <li class="nav-item dropdown user-dropdown-container">
                     <button class="user-profile-btn dropdown-toggle" id="userProfileDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -949,7 +1071,15 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item {% if request.endpoint == 'profile' %}active{% endif %}" href="{{ url_for('profile') }}">
-                                <i class="fas fa-user"></i> Profile
+                                <i class="fas fa-user"></i> Profile Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('profile') }}#notes">
+                                <i class="fas fa-sticky-note"></i> Notes &amp; Reminders
+                                {% if has_pending_reminders %}
+                                    <span class="badge bg-warning text-dark ms-auto">{{ pending_reminders_count }}</span>
+                                {% endif %}
                             </a>
                         </li>
                         <li>
@@ -1094,6 +1224,255 @@
             }
         });
     </script>
+
+    {% if current_user.is_authenticated %}
+    <!-- ═══ Global Real-Time Reminders & Notification Engine ═══════ -->
+    <script>
+    (function() {
+        'use strict';
+        const notifiedNoteIds = new Set();
+
+        function escapeText(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function playReminderChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+                // Harmonic notification chime (C5 -> E5 -> G5)
+                const notes = [523.25, 659.25, 783.99];
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.55);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.55);
+                });
+            } catch(e) {}
+        }
+
+        function showGlobalReminderToast(note) {
+            if (notifiedNoteIds.has(note.id)) return;
+            notifiedNoteIds.add(note.id);
+
+            let container = document.getElementById('globalRemindersToastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'globalRemindersToastContainer';
+                container.className = 'global-reminder-toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'global-reminder-toast';
+            toast.id = `global-toast-${note.id}`;
+
+            const title = note.title ? note.title : 'Reminder';
+            const snippet = (note.content || '').substring(0, 95) + ((note.content || '').length > 95 ? '...' : '');
+
+            toast.innerHTML = `
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size: 0.7rem;"><i class="fas fa-bell bell-ring"></i> DUE NOW</span>
+                        <strong class="text-white small">${escapeText(title)}</strong>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white small" onclick="this.closest('.global-reminder-toast').remove()" title="Close alert"></button>
+                </div>
+                <div class="small text-light opacity-75 mb-3" style="font-size: 0.82rem; line-height: 1.4;">${escapeText(snippet)}</div>
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold" style="font-size: 0.76rem;" onclick="globalMarkNoteDone(${note.id})">
+                        <i class="fas fa-check me-1"></i> Mark as Done
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-2 py-1" style="font-size: 0.76rem;" onclick="globalSnoozeNote(${note.id}, 15)">
+                        <i class="fas fa-clock me-1"></i> +15m
+                    </button>
+                    <a href="/profile#notes" class="btn btn-sm btn-link text-white text-decoration-none p-0 ms-auto small" style="font-size: 0.76rem;">
+                        View Notes Board →
+                    </a>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            playReminderChime();
+
+            // Browser push notification if supported & permitted
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    new Notification(`Reminder: ${title}`, {
+                        body: snippet,
+                        icon: '/static/images/favicon-32x32.png'
+                    });
+                } catch(e) {}
+            }
+        }
+
+        window.pollGlobalReminders = function() {
+            fetch('/api/notes/summary', { credentials: 'same-origin' })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data || !data.success) return;
+
+                    const counts = data.counts || {};
+                    const dueList = data.due_reminders || [];
+                    const upcomingList = data.upcoming_reminders || [];
+
+                    // Update Bell Icon & Badge
+                    const bellIcon = document.getElementById('navGlobalBellIcon');
+                    const dueBadge = document.getElementById('navGlobalDueBadge');
+
+                    if (counts.due_reminders > 0) {
+                        if (bellIcon) bellIcon.classList.add('bell-ring', 'text-danger');
+                        if (dueBadge) {
+                            dueBadge.textContent = counts.due_reminders;
+                            dueBadge.classList.remove('d-none');
+                        }
+                        // Pop toast for due reminders
+                        dueList.forEach(n => showGlobalReminderToast(n));
+                    } else {
+                        if (bellIcon) bellIcon.classList.remove('bell-ring', 'text-danger');
+                        if (dueBadge) dueBadge.classList.add('d-none');
+                    }
+
+                    // Render Dropdown List
+                    const listEl = document.getElementById('reminderDropdownList');
+                    if (listEl) {
+                        renderNavbarDropdown(listEl, dueList, upcomingList);
+                    }
+                })
+                .catch(() => {});
+        };
+
+        function renderNavbarDropdown(listEl, dueList, upcomingList) {
+            if (dueList.length === 0 && upcomingList.length === 0) {
+                listEl.innerHTML = `
+                    <div class="p-3 text-center text-muted small">
+                        <i class="fas fa-check-circle text-success mb-1" style="font-size: 1.25rem;"></i>
+                        <div>No pending reminders</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            if (dueList.length > 0) {
+                html += `<div class="px-3 pt-2 pb-1 text-danger fw-bold small text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;"><i class="fas fa-exclamation-circle me-1"></i> Due Reminders (${dueList.length})</div>`;
+                dueList.forEach(note => {
+                    html += `
+                        <div class="reminder-item due">
+                            <div class="d-flex align-items-start justify-content-between gap-1 mb-1">
+                                <strong class="text-dark small">${escapeText(note.title || 'Untitled Note')}</strong>
+                                <span class="badge bg-danger rounded-pill" style="font-size: 0.68rem;">Due</span>
+                            </div>
+                            <div class="text-muted small text-truncate mb-2" style="font-size: 0.78rem;">${escapeText(note.content)}</div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="text-danger small fw-semibold" style="font-size: 0.72rem;"><i class="fas fa-clock me-1"></i>${escapeText(note.reminder_at_display || '')}</span>
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-xs btn-success rounded-pill px-2 py-0" style="font-size: 0.72rem;" onclick="globalMarkNoteDone(${note.id})" title="Mark Done">
+                                        <i class="fas fa-check"></i> Done
+                                    </button>
+                                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2 py-0" style="font-size: 0.72rem;" onclick="globalSnoozeNote(${note.id}, 15)" title="Snooze 15m">
+                                        +15m
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (upcomingList.length > 0) {
+                html += `<div class="px-3 pt-2 pb-1 text-primary fw-bold small text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;"><i class="fas fa-calendar-alt me-1"></i> Upcoming</div>`;
+                upcomingList.forEach(note => {
+                    html += `
+                        <div class="reminder-item">
+                            <div class="d-flex align-items-start justify-content-between gap-1 mb-1">
+                                <strong class="text-dark small">${escapeText(note.title || 'Untitled Note')}</strong>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill" style="font-size: 0.68rem;">${escapeText(note.reminder_relative || 'Scheduled')}</span>
+                            </div>
+                            <div class="text-muted small text-truncate mb-1" style="font-size: 0.78rem;">${escapeText(note.content)}</div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="text-muted small" style="font-size: 0.72rem;"><i class="fas fa-clock me-1"></i>${escapeText(note.reminder_at_display || '')}</span>
+                                <button type="button" class="btn btn-xs btn-outline-success rounded-pill px-2 py-0" style="font-size: 0.72rem;" onclick="globalMarkNoteDone(${note.id})" title="Mark Done">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            listEl.innerHTML = html;
+        }
+
+        window.globalMarkNoteDone = function(noteId) {
+            fetch(`/api/notes/${noteId}/toggle-done`, {
+                method: 'POST',
+                credentials: 'same-origin'
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    const toast = document.getElementById(`global-toast-${noteId}`);
+                    if (toast) toast.remove();
+                    pollGlobalReminders();
+                    if (typeof window.loadNotes === 'function') {
+                        window.loadNotes();
+                    }
+                }
+            });
+        };
+
+        window.globalSnoozeNote = function(noteId, mins = 15) {
+            fetch(`/api/notes/${noteId}/snooze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ minutes: mins }),
+                credentials: 'same-origin'
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    const toast = document.getElementById(`global-toast-${noteId}`);
+                    if (toast) toast.remove();
+                    notifiedNoteIds.delete(noteId);
+                    pollGlobalReminders();
+                    if (typeof window.loadNotes === 'function') {
+                        window.loadNotes();
+                    }
+                }
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            pollGlobalReminders();
+            setInterval(pollGlobalReminders, 30000);
+
+            // Request browser notification permission when user clicks bell
+            const bellBtn = document.getElementById('navbarReminderDropdown');
+            if (bellBtn && "Notification" in window && Notification.permission === "default") {
+                bellBtn.addEventListener('click', function() {
+                    Notification.requestPermission();
+                }, { once: true });
+            }
+        });
+    })();
+    </script>
+    {% endif %}
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -42,13 +42,6 @@
                     </div>
                     <div class="team-selector">
                         <div class="btn-group" role="group" aria-label="Team selection">
-                            {% if current_user.role == 'MD' %}
-                            <a href="{{ url_for('md_dashboard.md_dashboard', team='all', date=selected_date) }}" 
-                               class="btn btn-selector {% if selected_team == 'all' %}active{% endif %}" aria-label="View all teams">
-                                <i class="fas fa-users"></i>
-                                <span class="btn-text">All Teams</span>
-                            </a>
-                            {% endif %}
                             {% for t in authorized_teams %}
                             <a href="{{ url_for('md_dashboard.md_dashboard', team=t.key, date=selected_date) }}" 
                                class="btn btn-selector {% if selected_team == t.key %}active{% endif %}" aria-label="View {{ t.name }} team">
@@ -69,16 +62,9 @@
                             <i class="fas fa-chevron-down nav-dropdown-arrow"></i>
                         </button>
                         <div class="nav-dropdown-content" id="quickNavContent">
-                            {% if current_user.role == 'MD' and selected_team == 'all' %}
-                                {# MD viewing all: show everything #}
-                                {% set show_team1 = True %}
-                                {% set show_team2 = True %}
-                                {% set show_team3 = True %}
-                            {% else %}
-                                {% set show_team1 = (selected_team == 'team1') %}
-                                {% set show_team2 = (selected_team == 'team2') %}
-                                {% set show_team3 = (selected_team == 'team3') %}
-                            {% endif %}
+                            {% set show_team1 = (selected_team == 'team1') %}
+                            {% set show_team2 = (selected_team == 'team2') %}
+                            {% set show_team3 = (selected_team == 'team3') %}
 
                             {% if show_team1 %}
                             <a href="#calendar-schedule" class="nav-dropdown-item no-loader" data-target="calendar-schedule">

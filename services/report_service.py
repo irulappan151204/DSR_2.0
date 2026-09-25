@@ -935,10 +935,10 @@ def generate_pdf_report(user, args):
     plt.close('all')
 
     # Team 3 Chart - Premium styling with slim bars
-    team3_departments = ['Legacy Audit', 'New Audit']
-    team3_all_well = [team3_issue_nature['audit_issue_nature']['all_well'], team3_issue_nature['new_audit_issue_nature']['all_well']]
-    team3_manageable = [team3_issue_nature['audit_issue_nature']['manageable'], team3_issue_nature['new_audit_issue_nature']['manageable']]
-    team3_critical = [team3_issue_nature['audit_issue_nature']['critical'], team3_issue_nature['new_audit_issue_nature']['critical']]
+    team3_departments = ['Audit']
+    team3_all_well = [team3_issue_nature['audit_issue_nature']['all_well']]
+    team3_manageable = [team3_issue_nature['audit_issue_nature']['manageable']]
+    team3_critical = [team3_issue_nature['audit_issue_nature']['critical']]
     x = np.arange(len(team3_departments))
     width = 0.15  # Reduced width for slimmer bars
     

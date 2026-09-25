@@ -4,340 +4,566 @@
 
 {% block extra_css %}
 <style>
+    :root {
+        --history-bg: #F7F7F5;
+        --history-surface: #FFFFFF;
+        --history-border: #E6E6E3;
+        --history-border-subtle: #F0F0ED;
+        --history-text-primary: #17191C;
+        --history-text-secondary: #6B6F76;
+        --history-text-muted: #8B9098;
+        --history-accent: #16805C;
+    }
+
+    body {
+        background-color: var(--history-bg) !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
     .history-wrapper {
         max-width: 1250px;
         margin: 0 auto;
-        padding: 1rem 0 3rem;
+        padding: 1.25rem 0 3.5rem;
     }
 
-    /* ── Hero Banner ─────────────────────────────────── */
-    .history-hero {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #1a1a2e 100%);
-        border-radius: 20px;
-        padding: 2rem 2.25rem;
-        color: #fff;
+    /* ── Enterprise Header (No Gradients, Minimal, High-end) ── */
+    .history-header {
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        border-radius: 12px;
+        padding: 1.35rem 1.6rem;
         margin-bottom: 1.5rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
-    }
-
-    .history-hero::before {
-        content: "";
-        position: absolute;
-        top: -60%;
-        right: -8%;
-        width: 320px;
-        height: 320px;
-        background: radial-gradient(circle, rgba(67, 97, 238, 0.25) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    .history-hero-inner {
-        position: relative;
-        z-index: 1;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 1.25rem;
     }
 
-    .hero-title-area h1 {
-        font-size: 1.55rem;
-        font-weight: 700;
-        margin: 0 0 .35rem;
-        letter-spacing: -0.02em;
-    }
-
-    .hero-title-area p {
-        margin: 0;
-        font-size: .85rem;
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .hero-stat-chips {
+    .history-header-left {
         display: flex;
-        gap: .75rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .history-header-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--history-text-primary);
+        margin: 0;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+
+    .history-header-title i {
+        color: var(--history-text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .history-header-desc {
+        font-size: 0.84rem;
+        color: var(--history-text-secondary);
+        margin: 0;
+    }
+
+    .history-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
         flex-wrap: wrap;
     }
 
-    .hero-chip {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        padding: .45rem .95rem;
-        border-radius: 12px;
+    .header-stat-chips {
         display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .header-chip {
+        background: var(--history-bg);
+        border: 1px solid var(--history-border);
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        display: inline-flex;
         align-items: center;
-        gap: .55rem;
-        font-size: .82rem;
-        backdrop-filter: blur(8px);
+        gap: 0.45rem;
+        font-size: 0.8rem;
     }
 
-    .hero-chip strong {
-        font-size: 1rem;
-        color: #fff;
+    .header-chip strong {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--history-text-primary);
     }
 
-    .hero-chip span {
-        color: rgba(255, 255, 255, 0.65);
+    .header-chip span {
+        color: var(--history-text-secondary);
     }
 
-    /* ── Category Pill Filter ─────────────────────────── */
+    .btn-enterprise {
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        color: var(--history-text-primary);
+        font-size: 0.82rem;
+        font-weight: 500;
+        padding: 0.42rem 0.85rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s ease-out;
+        text-decoration: none;
+        line-height: 1.4;
+    }
+
+    .btn-enterprise i {
+        color: var(--history-text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .btn-enterprise:hover {
+        background: #F7F7F5;
+        border-color: #D6D6D2;
+        color: var(--history-text-primary);
+    }
+
+    /* ── Category Pill Filter (Minimal Underline or Neutral Pills) ── */
     .filter-pills-bar {
         display: flex;
         align-items: center;
-        gap: .5rem;
+        gap: 0.45rem;
         margin-bottom: 1.25rem;
         flex-wrap: wrap;
     }
 
     .category-pill {
-        padding: .45rem 1.1rem;
-        border-radius: 30px;
-        font-size: .84rem;
-        font-weight: 600;
+        padding: 0.4rem 0.85rem;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 500;
         text-decoration: none;
-        transition: all .2s ease;
-        border: 1px solid #e2e8f0;
-        background: #fff;
-        color: #475569;
+        transition: all 0.15s ease-out;
+        border: 1px solid var(--history-border);
+        background: var(--history-surface);
+        color: var(--history-text-secondary);
         display: inline-flex;
         align-items: center;
-        gap: .4rem;
+        gap: 0.45rem;
     }
 
     .category-pill:hover {
-        background: #f8fafc;
-        color: #1e293b;
-        border-color: #cbd5e1;
+        background: var(--history-bg);
+        color: var(--history-text-primary);
+        border-color: #D6D6D2;
     }
 
     .category-pill.active {
-        background: #4361ee;
-        color: #fff;
-        border-color: #4361ee;
-        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+        background: var(--history-text-primary);
+        color: #FFFFFF;
+        border-color: var(--history-text-primary);
     }
 
     .category-pill .pill-count {
-        background: rgba(0, 0, 0, 0.07);
-        padding: .15rem .5rem;
-        border-radius: 20px;
-        font-size: .75rem;
+        background: #F0F0ED;
+        color: var(--history-text-secondary);
+        padding: 0.1rem 0.45rem;
+        border-radius: 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
     }
 
     .category-pill.active .pill-count {
-        background: rgba(255, 255, 255, 0.25);
-        color: #fff;
+        background: rgba(255, 255, 255, 0.2);
+        color: #FFFFFF;
     }
 
-    /* ── Filter Form Card ─────────────────────────────── */
+    /* ── Filter Form Card ── */
     .filter-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 1.25rem 1.5rem;
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        border-radius: 12px;
+        padding: 1.15rem 1.35rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+        box-shadow: none;
     }
 
     .filter-card label {
-        font-size: .78rem;
+        font-size: 0.76rem;
         font-weight: 600;
-        color: #475569;
+        color: var(--history-text-secondary);
         text-transform: uppercase;
-        letter-spacing: .03em;
-        margin-bottom: .35rem;
+        letter-spacing: 0.03em;
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
     }
 
-    /* ── Table Card ───────────────────────────────────── */
+    .filter-card label i {
+        color: var(--history-text-muted);
+    }
+
+    .filter-input {
+        border: 1px solid var(--history-border) !important;
+        border-radius: 8px !important;
+        background-color: var(--history-bg) !important;
+        color: var(--history-text-primary) !important;
+        font-size: 0.84rem !important;
+        transition: all 0.15s ease-out !important;
+    }
+
+    .filter-input:focus {
+        background-color: #FFFFFF !important;
+        border-color: var(--history-text-primary) !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    .btn-filter-submit {
+        background: var(--history-text-primary);
+        color: #FFFFFF;
+        border: 1px solid var(--history-text-primary);
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        padding: 0.42rem 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        transition: all 0.15s ease-out;
+        cursor: pointer;
+    }
+
+    .btn-filter-submit:hover {
+        background: #2C2F35;
+        color: #FFFFFF;
+    }
+
+    .btn-filter-reset {
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        color: var(--history-text-secondary);
+        border-radius: 8px;
+        padding: 0.42rem 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease-out;
+        text-decoration: none;
+    }
+
+    .btn-filter-reset:hover {
+        background: var(--history-bg);
+        color: var(--history-text-primary);
+    }
+
+    /* ── Table Card ── */
     .history-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        box-shadow: none;
     }
 
     .history-table {
+        width: 100%;
+        border-collapse: collapse;
         margin-bottom: 0;
     }
 
     .history-table thead th {
-        background: #f8fafc;
-        color: #475569;
-        font-size: .76rem;
-        font-weight: 700;
+        background: var(--history-bg);
+        color: var(--history-text-secondary);
+        font-size: 0.75rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: .04em;
-        padding: .95rem 1.25rem;
-        border-bottom: 1px solid #e2e8f0;
+        letter-spacing: 0.04em;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--history-border);
         white-space: nowrap;
     }
 
     .history-table tbody td {
-        padding: 1rem 1.25rem;
+        padding: 0.85rem 1rem;
         vertical-align: middle;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: .86rem;
-        color: #1e293b;
+        border-bottom: 1px solid var(--history-border-subtle);
+        font-size: 0.85rem;
+        color: var(--history-text-primary);
+    }
+
+    .history-table tbody tr:last-child td {
+        border-bottom: none;
     }
 
     .history-table tbody tr:hover {
-        background: #fbfcfe;
+        background: #FAFAFA;
     }
 
     .date-main {
-        font-weight: 600;
-        color: #0f172a;
+        font-weight: 500;
+        color: var(--history-text-primary);
     }
 
     .date-sub {
-        font-size: .75rem;
-        color: #64748b;
-    }
-
-    .badge-capa {
-        background: rgba(245, 158, 11, 0.12);
-        color: #b45309;
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        font-weight: 600;
-        padding: .35rem .65rem;
-        border-radius: 8px;
-        font-size: .74rem;
-    }
-
-    .badge-team1 {
-        background: rgba(67, 97, 238, 0.12);
-        color: #314ecc;
-        border: 1px solid rgba(67, 97, 238, 0.25);
-        font-weight: 600;
-        padding: .35rem .65rem;
-        border-radius: 8px;
-        font-size: .74rem;
-    }
-
-    .badge-team2 {
-        background: rgba(16, 185, 129, 0.12);
-        color: #047857;
-        border: 1px solid rgba(16, 185, 129, 0.25);
-        font-weight: 600;
-        padding: .35rem .65rem;
-        border-radius: 8px;
-        font-size: .74rem;
-    }
-
-    .badge-team3 {
-        background: rgba(139, 92, 246, 0.12);
-        color: #6d28d9;
-        border: 1px solid rgba(139, 92, 246, 0.25);
-        font-weight: 600;
-        padding: .35rem .65rem;
-        border-radius: 8px;
-        font-size: .74rem;
+        font-size: 0.74rem;
+        color: var(--history-text-muted);
     }
 
     .ref-tag {
-        font-family: monospace;
-        font-size: .78rem;
-        background: #f1f5f9;
-        color: #334155;
-        padding: .2rem .5rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.74rem;
+        background: var(--history-bg);
+        color: var(--history-text-secondary);
+        padding: 0.2rem 0.45rem;
         border-radius: 6px;
-        border: 1px solid #e2e8f0;
-        font-weight: 600;
+        border: 1px solid var(--history-border);
+        font-weight: 500;
     }
 
-    /* ── Detail Modal ─────────────────────────────────── */
+    /* Badges: Minimal, Neutral & Subtle Tints */
+    .badge-category-neutral {
+        background: #F0F0ED;
+        color: var(--history-text-primary);
+        border: 1px solid var(--history-border);
+        font-weight: 500;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .badge-capa {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+        font-weight: 500;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .badge-team1, .badge-team2, .badge-team3 {
+        background: #F0F0ED;
+        color: var(--history-text-primary);
+        border: 1px solid var(--history-border);
+        font-weight: 500;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .badge-priority-critical {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+    }
+
+    .badge-priority-high {
+        background: #FEF6EE;
+        color: #B54708;
+        border: 1px solid #F9DBAF;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+    }
+
+    .badge-priority-medium {
+        background: #F0F9FF;
+        color: #026AA2;
+        border: 1px solid #B9E6FE;
+        font-size: 0.72rem;
+        font-weight: 500;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+    }
+
+    .badge-priority-low {
+        background: #F0F0ED;
+        color: var(--history-text-secondary);
+        border: 1px solid var(--history-border);
+        font-size: 0.72rem;
+        font-weight: 500;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+    }
+
+    .badge-status-submitted {
+        background: #ECFDF3;
+        color: #027A48;
+        border: 1px solid #A6F4C5;
+        font-size: 0.74rem;
+        font-weight: 500;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .btn-table-action {
+        background: var(--history-surface);
+        border: 1px solid var(--history-border);
+        color: var(--history-text-primary);
+        font-size: 0.78rem;
+        font-weight: 500;
+        padding: 0.32rem 0.65rem;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        text-decoration: none;
+        transition: all 0.15s ease-out;
+        cursor: pointer;
+    }
+
+    .btn-table-action:hover {
+        background: var(--history-bg);
+        border-color: #D6D6D2;
+        color: var(--history-text-primary);
+    }
+
+    .btn-table-action.btn-action-primary {
+        background: var(--history-text-primary);
+        color: #FFFFFF;
+        border-color: var(--history-text-primary);
+    }
+
+    .btn-table-action.btn-action-primary:hover {
+        background: #2C2F35;
+        color: #FFFFFF;
+    }
+
+    /* ── Modal Styling ── */
     .modal-content {
-        border-radius: 18px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+        border-radius: 12px;
+        border: 1px solid var(--history-border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: var(--history-surface);
     }
 
     .modal-header {
-        border-bottom: 1px solid #f1f5f9;
-        padding: 1.25rem 1.5rem;
-        background: #f8fafc;
-        border-top-left-radius: 18px;
-        border-top-right-radius: 18px;
+        border-bottom: 1px solid var(--history-border-subtle);
+        padding: 1.15rem 1.4rem;
+        background: var(--history-surface);
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
     }
 
     .modal-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #0f172a;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--history-text-primary);
     }
 
     .modal-body {
-        padding: 1.5rem;
+        padding: 1.25rem 1.4rem;
         max-height: 70vh;
         overflow-y: auto;
     }
 
     .field-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: .75rem .95rem;
+        background: var(--history-bg);
+        border: 1px solid var(--history-border);
+        border-radius: 8px;
+        padding: 0.7rem 0.85rem;
         height: 100%;
-        transition: border-color 0.15s ease, background-color 0.15s ease;
+        transition: border-color 0.15s ease;
     }
 
     .field-card:hover {
-        border-color: #cbd5e1;
+        border-color: #D6D6D2;
     }
 
     .field-label {
-        font-size: .72rem;
-        font-weight: 700;
+        font-size: 0.72rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: .04em;
-        color: #64748b;
-        margin-bottom: .25rem;
+        letter-spacing: 0.04em;
+        color: var(--history-text-secondary);
+        margin-bottom: 0.25rem;
     }
 
     .field-value {
-        font-size: .88rem;
-        color: #0f172a;
+        font-size: 0.86rem;
+        color: var(--history-text-primary);
         word-break: break-word;
         white-space: pre-wrap;
         font-weight: 500;
     }
 
-    /* ── Empty State ──────────────────────────────────── */
+    .modal-footer {
+        border-top: 1px solid var(--history-border-subtle);
+        padding: 0.85rem 1.4rem;
+        background: var(--history-surface);
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    /* ── Empty State ── */
     .empty-history {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 3.5rem 1.5rem;
     }
 
     .empty-icon {
-        width: 72px;
-        height: 72px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
-        background: #f1f5f9;
+        background: var(--history-bg);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: #94a3b8;
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
+        color: var(--history-text-secondary);
+        font-size: 1.25rem;
+        margin-bottom: 0.85rem;
     }
 
     .empty-history h4 {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: .4rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--history-text-primary);
+        margin-bottom: 0.35rem;
     }
 
     .empty-history p {
-        font-size: .86rem;
-        color: #64748b;
-        max-width: 420px;
+        font-size: 0.82rem;
+        color: var(--history-text-secondary);
+        max-width: 400px;
         margin: 0 auto 1.25rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        .history-wrapper {
+            padding: 1rem 0.5rem 2.5rem;
+        }
+        .history-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.15rem 1.25rem;
+            gap: 1rem;
+        }
+        .history-header-right {
+            width: 100%;
+            justify-content: space-between;
+        }
     }
 </style>
 {% endblock %}
@@ -345,36 +571,38 @@
 {% block content %}
 <div class="container-fluid history-wrapper">
 
-    <!-- ═══ Hero Banner ═══════════════════════════════════════════════ -->
-    <div class="history-hero">
-        <div class="history-hero-inner">
-            <div class="hero-title-area">
-                <h1><i class="fas fa-history me-2"></i>My Activity &amp; Submission History</h1>
-                <p>Track your operational DSR reports, academic logs, and CAPA audit findings</p>
+    <!-- ═══ Enterprise Header (No Gradients, Lightweight) ════════════ -->
+    <div class="history-header">
+        <div class="history-header-left">
+            <h1 class="history-header-title">
+                <i class="fas fa-history"></i> My Activity &amp; Submission History
+            </h1>
+            <p class="history-header-desc">
+                Track your operational DSR reports, academic logs, and CAPA audit findings
+            </p>
+        </div>
+        <div class="history-header-right">
+            <div class="header-stat-chips">
+                <div class="header-chip">
+                    <strong>{{ total_count }}</strong>
+                    <span>Total Records</span>
+                </div>
+                <div class="header-chip">
+                    <strong>{{ forms_count }}</strong>
+                    <span>DSR Forms</span>
+                </div>
+                <div class="header-chip">
+                    <strong>{{ capa_count }}</strong>
+                    <span>CAPA Items</span>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-                <div class="hero-stat-chips">
-                    <div class="hero-chip">
-                        <strong>{{ total_count }}</strong>
-                        <span>Total Records</span>
-                    </div>
-                    <div class="hero-chip">
-                        <strong>{{ forms_count }}</strong>
-                        <span>DSR Forms</span>
-                    </div>
-                    <div class="hero-chip">
-                        <strong>{{ capa_count }}</strong>
-                        <span>CAPA Items</span>
-                    </div>
-                </div>
-                <div class="ms-md-3">
-                    <a href="{{ url_for('profile') }}" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-user me-1"></i> Profile
-                    </a>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-sm ms-1" style="color: #1e293b;">
-                        <i class="fas fa-arrow-left me-1"></i> Dashboard
-                    </a>
-                </div>
+            <div class="d-flex align-items-center gap-2 ms-lg-2">
+                <a href="{{ url_for('profile') }}" class="btn-enterprise">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn-enterprise">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
             </div>
         </div>
     </div>
@@ -404,18 +632,18 @@
             <input type="hidden" name="category" value="{{ category }}">
 
             <div class="col-lg-2 col-md-4 col-sm-6">
-                <label><i class="fas fa-calendar-alt me-1"></i> Start Date</label>
-                <input type="date" name="start" value="{{ start }}" class="form-control form-control-sm">
+                <label><i class="far fa-calendar-alt"></i> Start Date</label>
+                <input type="date" name="start" value="{{ start }}" class="form-control form-control-sm filter-input">
             </div>
 
             <div class="col-lg-2 col-md-4 col-sm-6">
-                <label><i class="fas fa-calendar-alt me-1"></i> End Date</label>
-                <input type="date" name="end" value="{{ end }}" class="form-control form-control-sm">
+                <label><i class="far fa-calendar-alt"></i> End Date</label>
+                <input type="date" name="end" value="{{ end }}" class="form-control form-control-sm filter-input">
             </div>
 
             <div class="col-lg-4 col-md-4 col-sm-6">
-                <label><i class="fas fa-clipboard-list me-1"></i> Form / Module</label>
-                <select name="form" class="form-select form-select-sm">
+                <label><i class="far fa-clipboard"></i> Form / Module</label>
+                <select name="form" class="form-select form-select-sm filter-input">
                     <option value="">-- All Forms &amp; CAPA --</option>
                     <option value="CapaFinding" {% if form_query == 'CapaFinding' %}selected{% endif %}>
                         ★ CAPA Audit Findings
@@ -433,16 +661,16 @@
             </div>
 
             <div class="col-lg-2 col-md-8 col-sm-6">
-                <label><i class="fas fa-search me-1"></i> Keyword</label>
-                <input type="text" name="q" value="{{ search_query }}" placeholder="Search ref or title..." class="form-control form-control-sm">
+                <label><i class="fas fa-search"></i> Keyword</label>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search ref or title..." class="form-control form-control-sm filter-input">
             </div>
 
             <div class="col-lg-2 col-md-4 col-sm-12 d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm flex-grow-1">
-                    <i class="fas fa-filter me-1"></i> Filter
+                <button type="submit" class="btn-filter-submit flex-grow-1">
+                    <i class="fas fa-filter"></i> Filter
                 </button>
                 {% if start or end or form_query or search_query or category != 'all' %}
-                    <a href="{{ url_for('my_history') }}" class="btn btn-outline-secondary btn-sm" title="Clear all filters">
+                    <a href="{{ url_for('my_history') }}" class="btn-filter-reset" title="Clear all filters">
                         <i class="fas fa-undo"></i>
                     </a>
                 {% endif %}
@@ -480,11 +708,11 @@
 
                                 <!-- Category -->
                                 <td>
-                                    <span class="badge {{ r.badge_class }}">
+                                    <span class="{% if r.type == 'capa' %}badge-capa{% else %}badge-category-neutral{% endif %}">
                                         {% if r.type == 'capa' %}
-                                            <i class="fas fa-shield-alt me-1"></i>CAPA Audit
+                                            <i class="fas fa-shield-alt"></i> CAPA Audit
                                         {% else %}
-                                            <i class="fas fa-file-alt me-1"></i>{{ r.category }}
+                                            <i class="fas fa-file-alt"></i> {{ r.category }}
                                         {% endif %}
                                     </span>
                                 </td>
@@ -493,16 +721,16 @@
                                 <td>
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
                                         <span class="ref-tag">{{ r.reference }}</span>
-                                        <strong>{{ r.title }}</strong>
+                                        <strong style="color: var(--history-text-primary); font-size: 0.88rem;">{{ r.title }}</strong>
                                         {% if r.priority %}
                                             {% if r.priority == 'Critical' %}
-                                                <span class="badge bg-danger">Critical</span>
+                                                <span class="badge-priority-critical">Critical</span>
                                             {% elif r.priority == 'High' %}
-                                                <span class="badge bg-warning text-dark">High</span>
+                                                <span class="badge-priority-high">High</span>
                                             {% elif r.priority == 'Medium' %}
-                                                <span class="badge bg-info text-dark">Medium</span>
+                                                <span class="badge-priority-medium">Medium</span>
                                             {% else %}
-                                                <span class="badge bg-secondary">Low</span>
+                                                <span class="badge-priority-low">Low</span>
                                             {% endif %}
                                         {% endif %}
                                     </div>
@@ -511,26 +739,26 @@
                                 <!-- Your Role -->
                                 <td>
                                     <span class="text-muted small">
-                                        <i class="fas fa-user-tag me-1 text-primary"></i>{{ r.user_relation }}
+                                        <i class="far fa-user me-1 text-muted"></i>{{ r.user_relation }}
                                     </span>
                                 </td>
 
                                 <!-- Status -->
                                 <td>
                                     {% if r.type == 'capa' %}
-                                        <span class="badge {{ r.status_css }}">{{ r.status_label }}</span>
+                                        <span class="badge-category-neutral">{{ r.status_label }}</span>
                                     {% else %}
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
-                                            <i class="fas fa-check-circle me-1"></i>Submitted
+                                        <span class="badge-status-submitted">
+                                            <i class="fas fa-check-circle"></i> Submitted
                                         </span>
                                     {% endif %}
                                 </td>
 
                                 <!-- Actions -->
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="d-inline-flex align-items-center gap-1">
                                         <button type="button" 
-                                                class="btn btn-outline-primary"
+                                                class="btn-table-action"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#detailModal"
                                                 data-title="{{ r.title }}"
@@ -544,10 +772,10 @@
                                                 data-col-count="{{ r.column_count }}"
                                                 data-groups='{{ r.data_groups | tojson }}'
                                                 data-fields='{{ r.data_fields | tojson }}'>
-                                            <i class="fas fa-eye me-1"></i> Details
+                                            <i class="fas fa-eye"></i> Details
                                         </button>
                                         {% if r.type == 'capa' and r.detail_url %}
-                                            <a href="{{ r.detail_url }}" class="btn btn-primary" title="Open in CAPA Workflow">
+                                            <a href="{{ r.detail_url }}" class="btn-table-action btn-action-primary" title="Open in CAPA Workflow">
                                                 <i class="fas fa-external-link-alt"></i>
                                             </a>
                                         {% endif %}
@@ -567,8 +795,8 @@
                 <h4>No Submissions Found</h4>
                 <p>There are no operational forms or CAPA records matching your current filter criteria.</p>
                 {% if start or end or form_query or search_query or category != 'all' %}
-                    <a href="{{ url_for('my_history') }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-undo me-1"></i> Clear Filters
+                    <a href="{{ url_for('my_history') }}" class="btn-filter-submit">
+                        <i class="fas fa-undo"></i> Clear Filters
                     </a>
                 {% endif %}
             </div>
@@ -586,20 +814,20 @@
                     <h5 class="modal-title" id="modalDetailTitle">Record Details</h5>
                     <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                         <span class="ref-tag" id="modalDetailRef"></span>
-                        <span class="badge" id="modalDetailBadge"></span>
-                        <span class="badge bg-secondary bg-opacity-10 text-secondary border" id="modalDetailCols"></span>
+                        <span class="badge-category-neutral" id="modalDetailBadge"></span>
+                        <span class="ref-tag" id="modalDetailCols"></span>
                         <span class="text-muted small" id="modalDetailDate"></span>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="modalCapaBanner" class="alert alert-primary d-none align-items-center justify-content-between p-2 mb-3">
+                <div id="modalCapaBanner" class="alert d-none align-items-center justify-content-between p-2 mb-3" style="background: #F0F9FF; border: 1px solid #B9E6FE; color: #026AA2; border-radius: 8px;">
                     <div class="small">
                         <i class="fas fa-shield-alt me-1"></i>
                         <strong>Audit Status:</strong> <span id="modalCapaStatus"></span>
                     </div>
-                    <a href="#" id="modalCapaLink" class="btn btn-sm btn-primary">
+                    <a href="#" id="modalCapaLink" class="btn-table-action btn-action-primary">
                         Open Full CAPA Workflow <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -608,11 +836,11 @@
                     <!-- Javascript populates field cards here -->
                 </div>
             </div>
-            <div class="modal-footer bg-light border-0 py-2">
-                <a href="#" id="modalFooterCapaLink" class="btn btn-primary btn-sm d-none">
+            <div class="modal-footer d-flex justify-content-end gap-2">
+                <a href="#" id="modalFooterCapaLink" class="btn-table-action btn-action-primary d-none">
                     <i class="fas fa-external-link-alt me-1"></i> View in CAPA System
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn-enterprise" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -632,7 +860,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const title = btn.getAttribute('data-title') || 'Record Details';
         const ref = btn.getAttribute('data-ref') || '';
         const category = btn.getAttribute('data-category') || '';
-        const badge = btn.getAttribute('data-badge') || 'badge-team1';
         const date = btn.getAttribute('data-date') || '';
         const isCapa = btn.getAttribute('data-type') === 'capa';
         const status = btn.getAttribute('data-status') || '';
@@ -644,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const badgeEl = document.getElementById('modalDetailBadge');
         badgeEl.textContent = category;
-        badgeEl.className = 'badge ' + badge;
+        badgeEl.className = isCapa ? 'badge-capa' : 'badge-category-neutral';
 
         const colsEl = document.getElementById('modalDetailCols');
         if (colCount) {
@@ -654,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function () {
             colsEl.classList.add('d-none');
         }
 
-        document.getElementById('modalDetailDate').innerHTML = date ? `<i class="fas fa-clock me-1"></i>${date}` : '';
+        document.getElementById('modalDetailDate').innerHTML = date ? `<i class="far fa-clock me-1"></i>${date}` : '';
 
         // CAPA Banner handling
         const capaBanner = document.getElementById('modalCapaBanner');
@@ -717,8 +944,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     groupHeader.className = 'col-12 mt-2 mb-1';
                     groupHeader.innerHTML = `
                         <div class="d-flex align-items-center gap-2 pb-1 border-bottom">
-                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.8rem;">
-                                <i class="fas fa-layer-group me-1"></i>${escapeHtml(grp.group_title)}
+                            <span class="badge-category-neutral fw-semibold" style="font-size: 0.78rem;">
+                                <i class="fas fa-layer-group me-1 text-muted"></i>${escapeHtml(grp.group_title)}
                             </span>
                             <small class="text-muted">(${grp.fields.length} columns)</small>
                         </div>
@@ -738,15 +965,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     let valueHtml = '';
                     if (field.link_url) {
-                        valueHtml = `<a href="${field.link_url}" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-3 fw-semibold"><i class="fas fa-paperclip me-1"></i>${escapeHtml(field.value)}</a>`;
+                        valueHtml = `<a href="${field.link_url}" target="_blank" class="btn-table-action py-1 px-3"><i class="fas fa-paperclip me-1"></i>${escapeHtml(field.value)}</a>`;
                     } else if (field.is_empty) {
                         valueHtml = `<span class="text-muted fst-italic">—</span>`;
                     } else {
-                        valueHtml = `<span class="text-dark fw-semibold">${escapeHtml(valStr)}</span>`;
+                        valueHtml = `<span style="color: var(--history-text-primary); font-weight: 500;">${escapeHtml(valStr)}</span>`;
                     }
 
                     col.innerHTML = `
-                        <div class="field-card ${field.is_empty ? 'bg-light bg-opacity-50' : ''}">
+                        <div class="field-card ${field.is_empty ? 'opacity-75' : ''}">
                             <div class="field-label">${escapeHtml(field.label)}</div>
                             <div class="field-value">${valueHtml}</div>
                         </div>

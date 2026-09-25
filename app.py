@@ -17,6 +17,7 @@ from models import User
 # Services
 from services.action_service import get_pending_actions_context
 from services.capa_service import get_pending_critical_context
+from services.notes_service import get_pending_reminders_context
 
 # Blueprints
 from statistics_routes import statistics_bp
@@ -25,6 +26,7 @@ from report_routes import report_bp
 from actions import actions_bp
 from acknowledgements import acknowledgements_bp
 from critical import critical_bp
+from routes.notes import notes_bp
 
 # Domain route registration functions
 from routes.auth import register_auth_routes
@@ -121,6 +123,7 @@ app.register_blueprint(report_bp)
 app.register_blueprint(actions_bp)
 app.register_blueprint(acknowledgements_bp)
 app.register_blueprint(critical_bp)
+app.register_blueprint(notes_bp)
 
 # Register CLI commands
 app.cli.add_command(create_admin_command)
@@ -140,6 +143,11 @@ def inject_pending_actions():
 def inject_pending_critical():
     """Inject the Critical/CAPA pending count into all templates."""
     return get_pending_critical_context(current_user)
+
+@app.context_processor
+def inject_pending_reminders():
+    """Inject the pending Notes reminders count into all templates."""
+    return get_pending_reminders_context(current_user)
 
 @login_manager.user_loader
 def load_user(user_id):

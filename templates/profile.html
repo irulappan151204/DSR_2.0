@@ -4,459 +4,1002 @@
 
 {% block extra_css %}
 <style>
-    /* ═══════════════════════════════════════════════════
-       Profile Page — Clean, Professional Design System
-       ═══════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════════
+       Enterprise SaaS Profile Design System (Linear / Vercel Aesthetic)
+       Neutral Palette: #F7F7F5, #FFFFFF, #17191C, #6B6F76, #E6E6E3
+       Restrained Accent: #16805C
+       ═══════════════════════════════════════════════════════════════ */
+
+    :root {
+        --profile-bg: #F7F7F5;
+        --profile-surface: #FFFFFF;
+        --profile-text-primary: #17191C;
+        --profile-text-secondary: #6B6F76;
+        --profile-text-muted: #8B9098;
+        --profile-border: #E6E6E3;
+        --profile-border-subtle: #F0F0ED;
+        --profile-accent: #16805C;
+        --profile-accent-subtle: #E8F5E9;
+    }
+
+    body {
+        background-color: var(--profile-bg) !important;
+        color: var(--profile-text-primary);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
     .profile-wrapper {
-        max-width: 1200px;
+        max-width: 1040px;
         margin: 0 auto;
-        padding: 1rem 0 3rem;
+        padding: 1.5rem 1rem 3.5rem;
     }
 
-    /* ── Hero Banner ──────────────────────────────────── */
-    .profile-hero {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #1a1a2e 100%);
-        border-radius: 20px;
-        padding: 2.25rem 2.5rem;
-        color: #fff;
+    /* ── Acknowledgement Alert (Minimal Enterprise Notice) ── */
+    .ack-banner {
+        background: #FEF3F2;
+        border: 1px solid #FECDCA;
+        border-radius: 10px;
+        padding: 0.85rem 1.15rem;
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        margin-bottom: 1.5rem;
+        color: #912018;
+    }
+    .ack-banner-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #FEE4E2;
+        color: #D92D20;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+    }
+    .ack-banner-text {
+        flex: 1;
+        font-size: 0.86rem;
+        line-height: 1.45;
+    }
+    .ack-banner-title {
+        color: #912018;
+        margin: 0;
+    }
+    .ack-banner-link {
+        color: #B42318;
+        font-weight: 600;
+        text-decoration: underline;
+        margin-left: 0.5rem;
+        font-size: 0.86rem;
+    }
+    .ack-banner-link:hover {
+        color: #7A271A;
+    }
+
+    /* ── Enterprise Header (No Gradients, Lightweight) ── */
+    .profile-header {
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
         margin-bottom: 1.75rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .profile-hero::before {
-        content: "";
-        position: absolute;
-        top: -60%;
-        right: -8%;
-        width: 340px;
-        height: 340px;
-        background: radial-gradient(circle, rgba(67,97,238,.3) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    .profile-hero::after {
-        content: "";
-        position: absolute;
-        bottom: -50%;
-        left: 15%;
-        width: 260px;
-        height: 260px;
-        background: radial-gradient(circle, rgba(76,201,240,.15) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    .profile-hero-inner {
-        position: relative;
-        z-index: 1;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
+        gap: 1.25rem;
+    }
+
+    .profile-header-left {
+        display: flex;
+        align-items: center;
         gap: 1rem;
     }
 
-    .hero-left {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .hero-avatar {
-        width: 72px;
-        height: 72px;
+    .profile-avatar {
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #4361ee 0%, #7c3aed 100%);
+        background: #F0F0ED;
+        color: var(--profile-text-primary);
+        border: 1px solid var(--profile-border);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #fff;
-        border: 3px solid rgba(255,255,255,.25);
-        box-shadow: 0 4px 20px rgba(67,97,238,.35);
-        flex-shrink: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
         user-select: none;
+        flex-shrink: 0;
     }
 
-    .hero-text h1 {
-        font-size: 1.6rem;
-        font-weight: 700;
-        margin: 0 0 .25rem;
+    .profile-header-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .profile-header-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--profile-text-primary);
         letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.25;
     }
 
-    .hero-meta {
+    .profile-header-meta {
         display: flex;
         align-items: center;
-        gap: .75rem;
+        gap: 0.5rem;
+        font-size: 0.82rem;
+        color: var(--profile-text-secondary);
         flex-wrap: wrap;
     }
 
-    .hero-role-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        padding: .25rem .75rem;
-        border-radius: 20px;
-        font-size: .78rem;
-        font-weight: 600;
-        letter-spacing: .02em;
+    .meta-separator {
+        color: var(--profile-text-muted);
+        font-size: 0.75rem;
     }
 
-    .badge-admin  { background: rgba(139,92,246,.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,.3); }
-    .badge-md     { background: rgba(251,191,36,.2); color: #fcd34d; border: 1px solid rgba(251,191,36,.3); }
-    .badge-lead   { background: rgba(52,211,153,.2); color: #6ee7b7; border: 1px solid rgba(52,211,153,.3); }
-    .badge-member { background: rgba(96,165,250,.2); color: #93c5fd; border: 1px solid rgba(96,165,250,.3); }
-
-    .hero-uid {
-        font-size: .8rem;
-        color: rgba(255,255,255,.5);
+    .profile-status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: var(--profile-accent);
         font-weight: 500;
     }
 
-    .hero-status {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        font-size: .78rem;
-        color: #6ee7b7;
-        font-weight: 600;
-    }
-
-    .status-dot-live {
-        width: 8px;
-        height: 8px;
-        background: #34d399;
+    .status-dot {
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
-        box-shadow: 0 0 0 3px rgba(52,211,153,.2);
-        animation: pulse-live 2s infinite;
+        background-color: var(--profile-accent);
+        display: inline-block;
     }
 
-    @keyframes pulse-live {
-        0%,100% { box-shadow: 0 0 0 3px rgba(52,211,153,.2); }
-        50%     { box-shadow: 0 0 0 6px rgba(52,211,153,.1); }
-    }
-
-    .hero-actions {
+    .profile-header-actions {
         display: flex;
-        gap: .6rem;
+        align-items: center;
+        gap: 0.5rem;
         flex-wrap: wrap;
     }
 
-    .hero-actions .btn {
-        font-size: .82rem;
-        font-weight: 600;
-        padding: .45rem 1.1rem;
+    .btn-enterprise {
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
+        color: var(--profile-text-primary);
+        font-size: 0.82rem;
+        font-weight: 500;
+        padding: 0.42rem 0.85rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s ease-out;
+        text-decoration: none;
+        line-height: 1.4;
+    }
+
+    .btn-enterprise i {
+        color: var(--profile-text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .btn-enterprise:hover {
+        background: #F7F7F5;
+        border-color: #D6D6D2;
+        color: var(--profile-text-primary);
+    }
+
+    .btn-enterprise.btn-accent-indicator {
+        border-color: #FECDCA;
+        background: #FEF3F2;
+        color: #B42318;
+    }
+    .btn-enterprise.btn-accent-indicator i {
+        color: #B42318;
+    }
+    .btn-enterprise.btn-accent-indicator:hover {
+        background: #FEE4E2;
+        color: #912018;
+    }
+
+    .header-badge-count {
+        background: #D92D20;
+        color: #FFFFFF;
+        font-size: 0.7rem;
+        padding: 0.1rem 0.4rem;
         border-radius: 10px;
+        font-weight: 600;
     }
 
-    /* ── Content Grid ─────────────────────────────────── */
-    .profile-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-    }
-
-    /* ── Section Card ─────────────────────────────────── */
-    .section-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        overflow: hidden;
-        transition: box-shadow .25s ease;
-    }
-
-    .section-card:hover {
-        box-shadow: 0 8px 28px rgba(15,23,42,.06);
-    }
-
-    .section-header {
-        padding: 1.15rem 1.5rem;
-        border-bottom: 1px solid #f1f5f9;
+    /* ── Profile Tabs (Minimal Underline Navigation) ── */
+    .profile-tabs-bar {
+        border-bottom: 1px solid var(--profile-border);
         display: flex;
         align-items: center;
-        gap: .65rem;
+        justify-content: space-between;
+        margin-bottom: 1.75rem;
+        padding: 0 0.25rem;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
 
-    .section-header i {
-        color: #4361ee;
-        font-size: 1rem;
-    }
-
-    .section-header h3 {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 0;
-    }
-
-    .section-body {
-        padding: 1.35rem 1.5rem;
-    }
-
-    /* ── Info Row List ─────────────────────────────────── */
-    .info-rows {
+    .profile-tab-pills {
+        display: flex;
+        gap: 1.75rem;
         list-style: none;
         padding: 0;
         margin: 0;
     }
 
-    .info-rows li {
-        display: flex;
-        justify-content: space-between;
+    .profile-tab-pills .nav-link {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 2px solid transparent !important;
+        border-radius: 0 !important;
+        color: var(--profile-text-secondary) !important;
+        font-size: 0.88rem !important;
+        font-weight: 500 !important;
+        padding: 0.75rem 0.25rem !important;
+        display: inline-flex;
         align-items: center;
-        padding: .7rem 0;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: .88rem;
+        gap: 0.45rem;
+        cursor: pointer;
+        transition: color 0.15s ease-out, border-color 0.15s ease-out;
+        margin-bottom: -1px;
     }
 
-    .info-rows li:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
+    .profile-tab-pills .nav-link:hover {
+        color: var(--profile-text-primary) !important;
     }
 
-    .info-rows li:first-child {
-        padding-top: 0;
+    .profile-tab-pills .nav-link.active {
+        color: var(--profile-text-primary) !important;
+        font-weight: 600 !important;
+        border-bottom: 2px solid var(--profile-text-primary) !important;
+        box-shadow: none !important;
     }
 
-    .info-label {
-        color: #64748b;
+    .tab-counter-badge {
+        background: #F0F0ED;
+        color: var(--profile-text-secondary);
+        border: 1px solid var(--profile-border);
+        font-size: 0.72rem;
+        padding: 0.1rem 0.45rem;
+        border-radius: 12px;
         font-weight: 500;
+    }
+
+    .tab-due-badge {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+        font-size: 0.72rem;
+        padding: 0.1rem 0.45rem;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .btn-new-note-trigger {
+        background: var(--profile-text-primary);
+        color: #FFFFFF;
+        border: 1px solid var(--profile-text-primary);
+        font-size: 0.82rem;
+        font-weight: 500;
+        padding: 0.4rem 0.85rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.15s ease-out;
+        cursor: pointer;
+    }
+    .btn-new-note-trigger:hover {
+        background: #2C2F35;
+        color: #FFFFFF;
+    }
+
+    /* ── Account Information Card (Single Refined Section) ── */
+    .account-card-wrap {
+        max-width: 620px;
+    }
+
+    .account-info-card {
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
+        border-radius: 12px;
+        padding: 1.35rem 1.5rem;
+        box-shadow: none;
+    }
+
+    .account-card-header {
         display: flex;
         align-items: center;
-        gap: .5rem;
+        gap: 0.6rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--profile-border-subtle);
+        margin-bottom: 0.25rem;
     }
 
-    .info-label i {
-        width: 16px;
-        text-align: center;
-        color: #94a3b8;
-        font-size: .85rem;
+    .account-card-header i {
+        color: var(--profile-text-secondary);
+        font-size: 0.92rem;
     }
 
-    .info-value {
+    .account-card-header h3 {
+        font-size: 0.98rem;
         font-weight: 600;
-        color: #1e293b;
+        color: var(--profile-text-primary);
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .account-info-rows {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .account-info-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid var(--profile-border-subtle);
+        font-size: 0.88rem;
+    }
+
+    .account-info-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0.25rem;
+    }
+
+    .account-label {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--profile-text-secondary);
+    }
+
+    .account-value {
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--profile-text-primary);
         text-align: right;
     }
 
-    /* ── Inline Badge ─────────────────────────────────── */
-    .inline-badge {
+    .account-status-badge {
         display: inline-flex;
         align-items: center;
-        gap: .3rem;
-        padding: .2rem .6rem;
-        border-radius: 6px;
-        font-size: .78rem;
-        font-weight: 600;
+        gap: 0.35rem;
+        color: var(--profile-accent);
+        font-weight: 500;
+        font-size: 0.85rem;
     }
 
-    .inline-badge.success { background: rgba(16,185,129,.1); color: #059669; }
-    .inline-badge.primary { background: rgba(67,97,238,.1);  color: #4361ee; }
-    .inline-badge.warning { background: rgba(245,158,11,.1); color: #d97706; }
-
-    /* ── Security Visual ──────────────────────────────── */
-    .security-shield {
+    /* ── Reminders Due Banner ── */
+    .reminders-alert-banner {
+        background: #FEF3F2;
+        border: 1px solid #FECDCA;
+        border-radius: 10px;
+        padding: 0.85rem 1.25rem;
+        margin-bottom: 1.25rem;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 1rem;
-        padding: 1rem 1.15rem;
-        background: linear-gradient(135deg, rgba(67,97,238,.04) 0%, rgba(76,201,240,.04) 100%);
-        border: 1px solid rgba(67,97,238,.12);
-        border-radius: 12px;
-        margin-bottom: 1.25rem;
+    }
+    .reminders-alert-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .reminders-alert-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #FEE4E2;
+        color: #D92D20;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+    }
+    .reminders-alert-text h5 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #912018;
+        margin: 0 0 0.1rem;
+    }
+    .reminders-alert-text p {
+        font-size: 0.78rem;
+        color: #B42318;
+        margin: 0;
     }
 
-    .shield-icon {
+    /* ── Notes Toolbar & Quick Add ── */
+    .quick-add-card {
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
+        border-radius: 10px;
+        margin-bottom: 1.25rem;
+        transition: border-color 0.15s ease-out;
+        overflow: hidden;
+    }
+    .quick-add-card:focus-within {
+        border-color: var(--profile-text-primary);
+    }
+    .quick-add-collapsed {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--profile-surface);
+        transition: background 0.15s ease-out;
+    }
+    .quick-add-collapsed:hover {
+        background: #F7F7F5;
+    }
+    .quick-add-placeholder {
+        color: var(--profile-text-secondary);
+        font-size: 0.86rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .quick-add-placeholder i {
+        color: var(--profile-text-muted);
+    }
+    .quick-add-expanded {
+        padding: 1rem 1.15rem 0.85rem;
+    }
+    .quick-add-title-input {
+        width: 100%;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--profile-text-primary);
+        background: transparent;
+        margin-bottom: 0.4rem;
+        outline: none;
+    }
+    .quick-add-title-input::placeholder { color: var(--profile-text-muted); }
+    .quick-add-content-input {
+        width: 100%;
+        border: none;
+        font-size: 0.88rem;
+        color: var(--profile-text-primary);
+        background: transparent;
+        resize: vertical;
+        outline: none;
+        min-height: 60px;
+        line-height: 1.5;
+    }
+    .quick-add-content-input::placeholder { color: var(--profile-text-muted); }
+    .quick-add-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid var(--profile-border-subtle);
+        margin-top: 0.5rem;
+    }
+
+    .notes-toolbar {
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .notes-search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 220px;
+        max-width: 320px;
+    }
+    .notes-search-wrap i.search-icon {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--profile-text-muted);
+        font-size: 0.82rem;
+        pointer-events: none;
+    }
+    .notes-search-input {
+        width: 100%;
+        padding: 0.45rem 2rem 0.45rem 2.1rem;
+        border-radius: 8px;
+        border: 1px solid var(--profile-border);
+        font-size: 0.84rem;
+        background-color: var(--profile-bg);
+        color: var(--profile-text-primary);
+        transition: all 0.15s ease-out;
+    }
+    .notes-search-input:focus {
+        background-color: #FFFFFF;
+        border-color: var(--profile-text-primary);
+        outline: none;
+    }
+    .notes-search-clear {
+        position: absolute;
+        right: 0.65rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: var(--profile-text-muted);
+        cursor: pointer;
+        padding: 0.2rem;
+        font-size: 0.75rem;
+    }
+
+    .notes-filter-pills {
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-pill-btn {
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        border: 1px solid var(--profile-border);
+        background: var(--profile-surface);
+        color: var(--profile-text-secondary);
+        cursor: pointer;
+        transition: all 0.15s ease-out;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .filter-pill-btn:hover {
+        background: #F7F7F5;
+        color: var(--profile-text-primary);
+    }
+    .filter-pill-btn.active {
+        background: var(--profile-text-primary);
+        color: #FFFFFF;
+        border-color: var(--profile-text-primary);
+    }
+    .filter-pill-btn.active .badge {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: #FFFFFF !important;
+    }
+
+    .btn-view-toggle {
+        border-radius: 6px !important;
+        padding: 0.32rem 0.6rem;
+        border: 1px solid var(--profile-border);
+        color: var(--profile-text-secondary);
+        background: var(--profile-surface);
+        font-size: 0.78rem;
+        transition: all 0.15s ease-out;
+    }
+    .btn-view-toggle:hover {
+        background: #F7F7F5;
+        color: var(--profile-text-primary);
+    }
+    .btn-view-toggle.active {
+        background: var(--profile-text-primary) !important;
+        border-color: var(--profile-text-primary) !important;
+        color: #FFFFFF !important;
+    }
+
+    /* ── Notes Grid & Cards ── */
+    .notes-section-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--profile-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .note-card {
+        background: var(--profile-surface);
+        border-radius: 10px;
+        border: 1px solid var(--profile-border);
+        padding: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        transition: border-color 0.15s ease-out;
+        min-height: 160px;
+    }
+    .note-card:hover {
+        border-color: #C8CACF;
+    }
+    .note-card.pinned {
+        border-top: 3px solid #D97706;
+    }
+    .note-card.is-done {
+        opacity: 0.7;
+        background: #FAF9F7 !important;
+    }
+    .note-card.is-done .note-title,
+    .notes-list-row.is-done .list-note-title {
+        text-decoration: line-through;
+        color: var(--profile-text-muted);
+    }
+    .note-card.is-done .note-content-preview,
+    .notes-list-row.is-done .list-note-snippet {
+        text-decoration: line-through;
+        color: var(--profile-text-muted);
+    }
+
+    /* Task Checkbox */
+    .task-checkbox-custom {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: 1.5px solid var(--profile-border);
+        background: var(--profile-surface);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease-out;
+        flex-shrink: 0;
+        font-size: 0.68rem;
+        color: transparent;
+        user-select: none;
+    }
+    .task-checkbox-custom:hover {
+        border-color: var(--profile-accent);
+        background: #F0FDF4;
+        color: var(--profile-accent);
+    }
+    .task-checkbox-custom.checked {
+        background: var(--profile-accent);
+        border-color: var(--profile-accent);
+        color: #FFFFFF !important;
+    }
+
+    /* Subtle Card Colors (Restrained) */
+    .note-theme-default { background: #FFFFFF; }
+    .note-theme-yellow  { background: #FCFDF7; border-color: #EAEBD9; }
+    .note-theme-blue    { background: #F8FBFC; border-color: #DDE5EB; }
+    .note-theme-green   { background: #F7FAF8; border-color: #DBE8DD; }
+    .note-theme-red     { background: #FCF8F8; border-color: #EBDDDE; }
+    .note-theme-purple  { background: #FAF8FC; border-color: #E5DEEC; }
+
+    .note-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.65rem;
+    }
+    .note-badges-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+    }
+    .note-priority-badge {
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .priority-high   { background: #FEF3F2; color: #B42318; border: 1px solid #FECDCA; }
+    .priority-medium { background: #FEF6EE; color: #B54708; border: 1px solid #FEDF89; }
+    .priority-low    { background: #ECFDF3; color: #027A48; border: 1px solid #A6F4C5; }
+
+    .badge-done {
+        background: #F0FDF4;
+        color: #16805C;
+        border: 1px solid #BBF7D0;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .note-pin-btn {
+        background: transparent;
+        border: none;
+        color: var(--profile-text-muted);
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 0.2rem;
+        border-radius: 4px;
+        transition: color 0.15s ease-out;
+    }
+    .note-pin-btn:hover { color: #D97706; }
+    .note-pin-btn.is-pinned { color: #D97706; }
+
+    .note-title {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--profile-text-primary);
+        margin: 0 0 0.4rem;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+    .note-content-preview {
+        font-size: 0.84rem;
+        color: var(--profile-text-secondary);
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin-bottom: 0.75rem;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+    .note-reminder-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.74rem;
+        font-weight: 500;
+        margin-bottom: 0.65rem;
+        width: fit-content;
+    }
+    .reminder-due {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+    }
+    .reminder-upcoming {
+        background: #F0F9FF;
+        color: #026AA2;
+        border: 1px solid #B9E6FE;
+    }
+
+    .note-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--profile-border-subtle);
+        margin-top: auto;
+    }
+    .note-date-text {
+        font-size: 0.72rem;
+        color: var(--profile-text-muted);
+    }
+    .note-card-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .note-action-icon-btn {
+        background: transparent;
+        border: none;
+        color: var(--profile-text-muted);
+        font-size: 0.78rem;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease-out;
+    }
+    .note-action-icon-btn:hover {
+        background: #F0F0ED;
+        color: var(--profile-text-primary);
+    }
+    .note-action-icon-btn.btn-delete:hover {
+        background: #FEF3F2;
+        color: #D92D20;
+    }
+
+    /* ── Table View ── */
+    .notes-table-wrap {
+        background: var(--profile-surface);
+        border-radius: 10px;
+        border: 1px solid var(--profile-border);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .notes-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+    .notes-list-table th {
+        background: var(--profile-bg);
+        color: var(--profile-text-secondary);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 0.7rem 0.85rem;
+        border-bottom: 1px solid var(--profile-border);
+    }
+    .notes-list-row {
+        transition: background-color 0.1s ease-out;
+        border-bottom: 1px solid var(--profile-border-subtle);
+    }
+    .notes-list-row:last-child { border-bottom: none; }
+    .notes-list-row:hover { background: #FAFAFA; }
+    .notes-list-row td {
+        padding: 0.75rem 0.85rem;
+        vertical-align: middle;
+        font-size: 0.84rem;
+    }
+
+    /* ── Empty State ── */
+    .notes-empty-state {
+        background: var(--profile-surface);
+        border: 1px dashed var(--profile-border);
+        border-radius: 10px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        margin: 1.25rem 0;
+    }
+    .notes-empty-icon {
         width: 44px;
         height: 44px;
-        background: linear-gradient(135deg, #4361ee, #7c3aed);
-        color: #fff;
-        border-radius: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    .shield-text h6 {
-        margin: 0 0 .15rem;
-        font-size: .88rem;
-        font-weight: 700;
-        color: #0f172a;
-    }
-
-    .shield-text p {
-        margin: 0;
-        font-size: .78rem;
-        color: #64748b;
-    }
-
-    /* ── Workspace Card ───────────────────────────────── */
-    .workspace-highlight {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem 1.15rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-    }
-
-    .workspace-icon {
-        width: 46px;
-        height: 46px;
-        background: linear-gradient(135deg, #4361ee, #4895ef);
-        color: #fff;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.15rem;
-        flex-shrink: 0;
-    }
-
-    .workspace-info h5 {
-        font-size: .95rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 0 0 .2rem;
-    }
-
-    .workspace-info p {
-        font-size: .8rem;
-        color: #64748b;
-        margin: 0;
-    }
-
-    /* ── Full-width card override ─────────────────────── */
-    .full-width {
-        grid-column: 1 / -1;
-    }
-
-    /* ── Responsive ───────────────────────────────────── */
-    @media (max-width: 991px) {
-        .profile-wrapper { padding: 1rem .5rem 2rem; }
-        .profile-hero { padding: 1.5rem 1.25rem; border-radius: 14px; }
-        .hero-text h1 { font-size: 1.35rem; }
-        .profile-grid { grid-template-columns: 1fr; }
-        .hero-left { gap: 1rem; }
-    }
-
-    /* ── Acknowledgement Alert Banner ─────────────────── */
-    .ack-banner {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-        border-radius: 16px;
-        padding: 1.25rem 1.75rem;
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.25);
-        margin-bottom: 1.75rem;
-    }
-
-    .ack-banner-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(255, 255, 255, 0.2);
+        background: #F0F0ED;
+        color: var(--profile-text-secondary);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        flex-shrink: 0;
+        font-size: 1.15rem;
+        margin: 0 auto 0.85rem;
+    }
+    .notes-empty-state h4 {
+        font-size: 0.98rem;
+        font-weight: 600;
+        color: var(--profile-text-primary);
+        margin: 0 0 0.35rem;
+    }
+    .notes-empty-state p {
+        font-size: 0.82rem;
+        color: var(--profile-text-secondary);
+        max-width: 380px;
+        margin: 0 auto 1.15rem;
     }
 
-    .ack-banner-text {
-        flex-grow: 1;
+    /* ── Modal Form Inputs (Crisp, Bordered, Enterprise) ── */
+    .modal-note-input {
+        border: 1px solid var(--profile-border) !important;
+        border-radius: 8px !important;
+        background-color: var(--profile-surface) !important;
+        padding: 0.55rem 0.75rem !important;
+        font-size: 0.88rem !important;
+        color: var(--profile-text-primary) !important;
+        transition: border-color 0.15s ease-out !important;
+    }
+    .modal-note-input:focus {
+        border-color: var(--profile-text-primary) !important;
+        box-shadow: none !important;
+        outline: none !important;
     }
 
-    .ack-banner-title {
-        font-size: 0.95rem;
-        font-weight: 500;
-        line-height: 1.45;
-        margin-bottom: 0.35rem;
-    }
-
-    .ack-banner-link {
-        color: #fff;
-        font-weight: 700;
-        text-decoration: underline;
-        font-size: 0.9rem;
-        display: inline-flex;
+    .color-swatch-list {
+        display: flex;
+        gap: 0.5rem;
         align-items: center;
-        transition: opacity 0.2s;
     }
-
-    .ack-banner-link:hover {
-        color: #ffedd5;
-        opacity: 0.95;
-    }
-
-    /* ── Leadership Action Cards ──────────────────────── */
-    .leadership-action-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 1.25rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100%;
-        transition: all 0.2s ease;
-    }
-
-    .leadership-action-card:hover {
-        border-color: #cbd5e1;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
-        background: #fff;
-    }
-
-    .leadership-action-top {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .leadership-action-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
+    .color-swatch-opt {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 1.5px solid transparent;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.15rem;
-        color: #fff;
-        flex-shrink: 0;
+        font-size: 0.7rem;
+    }
+    .color-swatch-opt.selected {
+        border-color: var(--profile-text-primary);
+    }
+    .swatch-default { background: #FFFFFF; border: 1px solid var(--profile-border); }
+    .swatch-yellow  { background: #FEF9C3; border: 1px solid #FDE047; }
+    .swatch-blue    { background: #E0F2FE; border: 1px solid #7DD3FC; }
+    .swatch-green   { background: #DCFCE7; border: 1px solid #86EFAC; }
+    .swatch-red     { background: #FEE2E2; border: 1px solid #FCA5A5; }
+    .swatch-purple  { background: #F3E8FF; border: 1px solid #D8B4FE; }
+
+    .quick-preset-badge {
+        cursor: pointer;
+        font-size: 0.74rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        background: #F0F0ED;
+        color: var(--profile-text-secondary);
+        border: 1px solid var(--profile-border);
+        font-weight: 500;
+        transition: all 0.15s ease-out;
+    }
+    .quick-preset-badge:hover {
+        background: var(--profile-text-primary);
+        color: #FFFFFF;
+        border-color: var(--profile-text-primary);
     }
 
-    .icon-ack {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
+    /* ── Floating Toasts ── */
+    .notes-toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1090;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        pointer-events: none;
     }
-
-    .icon-leads {
-        background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    .notes-toast {
+        background: #17191C;
+        color: #FFFFFF;
+        border-radius: 8px;
+        padding: 0.75rem 1.15rem;
+        font-size: 0.84rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        pointer-events: auto;
+        min-width: 240px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
     }
+    .notes-toast.success { border-left: 3px solid #16805C; }
+    .notes-toast.warning { border-left: 3px solid #D97706; }
+    .notes-toast.danger  { border-left: 3px solid #D92D20; }
+    .notes-toast.info    { border-left: 3px solid #026AA2; }
 
-    .leadership-action-info h5 {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 0 0 0.25rem;
-    }
-
-    .leadership-action-info p {
-        font-size: 0.82rem;
-        color: #64748b;
-        margin: 0;
-        line-height: 1.4;
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        .profile-wrapper { padding: 1rem 0.5rem 2rem; }
+        .profile-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1rem 1.15rem;
+            gap: 1rem;
+        }
+        .profile-header-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .account-card-wrap {
+            max-width: 100%;
+        }
+        .profile-tabs-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
     }
 </style>
 {% endblock %}
@@ -487,317 +1030,1504 @@
     </div>
     {% endif %}
 
-    <!-- ═══ Hero Banner ═══════════════════════════════════════════════ -->
-    <div class="profile-hero">
-        <div class="profile-hero-inner">
-            <div class="hero-left">
-                <div class="hero-avatar" title="{{ user.username }}">
-                    {{ user.username[0]|upper }}
-                </div>
-                <div class="hero-text">
-                    <h1>{{ user.username }}</h1>
-                    <div class="hero-meta">
-                        {% if user.role == 'Admin' %}
-                            <span class="hero-role-badge badge-admin"><i class="fas fa-shield-alt"></i> Administrator</span>
-                        {% elif user.role == 'MD' %}
-                            <span class="hero-role-badge badge-md"><i class="fas fa-crown"></i> Managing Director</span>
-                        {% elif user.is_team_lead %}
-                            <span class="hero-role-badge badge-lead"><i class="fas fa-user-tie"></i> Team Lead</span>
-                        {% else %}
-                            <span class="hero-role-badge badge-member"><i class="fas fa-user"></i> Team Member</span>
-                        {% endif %}
-                        <span class="hero-uid">ID #{{ user.user_id }}</span>
-                        <span class="hero-status"><span class="status-dot-live"></span> Active</span>
-                    </div>
+    <!-- ═══ Enterprise Profile Header ═════════════════════════════════ -->
+    <div class="profile-header">
+        <div class="profile-header-left">
+            <div class="profile-avatar" title="{{ user.username }}">
+                {{ user.username[0]|upper }}
+            </div>
+            <div class="profile-header-info">
+                <h1 class="profile-header-name">{{ user.username }}</h1>
+                <div class="profile-header-meta">
+                    <span class="profile-role">
+                        {% if user.role == 'Admin' %}Administrator
+                        {% elif user.role == 'MD' %}Managing Director
+                        {% elif user.role == 'Team Lead' or user.is_team_lead %}Team Lead
+                        {% else %}Team Member{% endif %}
+                    </span>
+                    <span class="meta-separator">•</span>
+                    <span class="profile-status-indicator">
+                        <span class="status-dot"></span> Active
+                    </span>
                 </div>
             </div>
-            <div class="hero-actions">
-                {% if user.role == 'MD' %}
-                    <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-users-cog me-1"></i> Team Leads Status
-                    </a>
-                    {% if unack_count and unack_count > 0 %}
-                    <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-warning btn-sm text-dark fw-bold">
-                        <i class="fas fa-bell me-1"></i> Acknowledge ({{ unack_count }})
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-check-double me-1"></i> Acknowledgements
-                    </a>
-                    {% endif %}
-                {% elif user.is_team_lead %}
-                    <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-clipboard-check me-1"></i> My Lead Status
-                    </a>
-                    {% if unack_count and unack_count > 0 %}
-                    <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-warning btn-sm text-dark fw-bold">
-                        <i class="fas fa-bell me-1"></i> Acknowledge ({{ unack_count }})
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-check-double me-1"></i> Acknowledgements
-                    </a>
-                    {% endif %}
-                {% endif %}
-                <a href="{{ url_for('my_history') }}" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-history me-1"></i> Activity Log
-                </a>
-                <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-sm" style="color: #1e293b;">
-                    <i class="fas fa-arrow-left me-1"></i> Dashboard
-                </a>
-            </div>
         </div>
-    </div>
-
-    <!-- ═══ Content Grid ══════════════════════════════════════════════ -->
-    <div class="profile-grid">
-
-        <!-- ── Account Details ────────────────────────────────────── -->
-        <div class="section-card">
-            <div class="section-header">
-                <i class="fas fa-user-circle"></i>
-                <h3>Account Details</h3>
-            </div>
-            <div class="section-body">
-                <ul class="info-rows">
-                    <li>
-                        <span class="info-label"><i class="fas fa-at"></i> Username</span>
-                        <span class="info-value">{{ user.username }}</span>
-                    </li>
-                    <li>
-                        <span class="info-label"><i class="fas fa-id-card"></i> User ID</span>
-                        <span class="info-value">#{{ user.user_id }}</span>
-                    </li>
-                    <li>
-                        <span class="info-label"><i class="fas fa-user-tag"></i> System Role</span>
-                        <span class="info-value">
-                            {% if user.role == 'Admin' %}System Administrator
-                            {% elif user.role == 'MD' %}Managing Director
-                            {% elif user.role == 'Team Lead' %}Department Team Lead
-                            {% else %}Operational Team Member{% endif %}
-                        </span>
-                    </li>
-                    <li>
-                        <span class="info-label"><i class="fas fa-shield-alt"></i> Status</span>
-                        <span class="info-value">
-                            <span class="inline-badge success"><i class="fas fa-check-circle"></i> Active</span>
-                        </span>
-                    </li>
-                    {% if user.is_team_lead %}
-                    <li>
-                        <span class="info-label"><i class="fas fa-star"></i> Leadership</span>
-                        <span class="info-value">
-                            <span class="inline-badge primary"><i class="fas fa-user-tie"></i> Designated Lead</span>
-                        </span>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <span class="info-label"><i class="fas fa-globe"></i> Access Scope</span>
-                        <span class="info-value">
-                            {% if user.role in ['Admin', 'MD'] %}
-                                All Departments
-                            {% elif user.team %}
-                                {{ user.team.team_name }}
-                            {% else %}
-                                General
-                            {% endif %}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- ── Workspace & Team ───────────────────────────────────── -->
-        <div class="section-card">
-            <div class="section-header">
-                <i class="fas fa-layer-group"></i>
-                <h3>Workspace & Department</h3>
-            </div>
-            <div class="section-body">
-                {% if user.team %}
-                    <div class="workspace-highlight mb-3">
-                        <div class="workspace-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="workspace-info">
-                            <h5>{{ user.team.team_name }}</h5>
-                            <p>Department ID #{{ user.team.team_id }}</p>
-                        </div>
-                    </div>
-                    <ul class="info-rows">
-                        <li>
-                            <span class="info-label"><i class="fas fa-user-tie"></i> Department Lead</span>
-                            <span class="info-value">
-                                {% if user.team.designated_lead %}
-                                    {{ user.team.designated_lead.username }}
-                                {% else %}
-                                    <span class="text-muted">Not designated</span>
-                                {% endif %}
-                            </span>
-                        </li>
-                        <li>
-                            <span class="info-label"><i class="fas fa-users"></i> Team Members</span>
-                            <span class="info-value">{{ user.team.members | length }}</span>
-                        </li>
-                        <li>
-                            <span class="info-label"><i class="fas fa-briefcase"></i> Assignment</span>
-                            <span class="info-value">Daily Status Reports &amp; Quality Logs</span>
-                        </li>
-                    </ul>
-                {% elif user.role in ['Admin', 'MD'] %}
-                    <div class="workspace-highlight">
-                        <div class="workspace-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="workspace-info">
-                            <h5>Executive Oversight</h5>
-                            <p>Centralized access across all operational teams</p>
-                        </div>
-                    </div>
+        <div class="profile-header-actions">
+            {% if user.role == 'MD' %}
+                <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn-enterprise">
+                    <i class="fas fa-users-cog"></i> Team Leads Status
+                </a>
+                {% if unack_count and unack_count > 0 %}
+                <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn-enterprise btn-accent-indicator">
+                    <i class="fas fa-bell"></i> Acknowledgements <span class="header-badge-count">{{ unack_count }}</span>
+                </a>
                 {% else %}
-                    <div class="workspace-highlight" style="border-color: #fbbf24;">
-                        <div class="workspace-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="workspace-info">
-                            <h5>No Team Assigned</h5>
-                            <p>Contact your administrator for team assignment</p>
-                        </div>
-                    </div>
+                <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn-enterprise">
+                    <i class="fas fa-check-double"></i> Acknowledgements
+                </a>
                 {% endif %}
-            </div>
+            {% elif user.is_team_lead %}
+                <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn-enterprise">
+                    <i class="fas fa-clipboard-check"></i> My Lead Status
+                </a>
+                {% if unack_count and unack_count > 0 %}
+                <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn-enterprise btn-accent-indicator">
+                    <i class="fas fa-bell"></i> Acknowledgements <span class="header-badge-count">{{ unack_count }}</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn-enterprise">
+                    <i class="fas fa-check-double"></i> Acknowledgements
+                </a>
+                {% endif %}
+            {% endif %}
+            <a href="{{ url_for('my_history') }}" class="btn-enterprise">
+                <i class="fas fa-history"></i> Activity Log
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn-enterprise">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
         </div>
-
-        <!-- ── Session Security ───────────────────────────────────── -->
-        <div class="section-card full-width">
-            <div class="section-header">
-                <i class="fas fa-lock"></i>
-                <h3>Security & Session</h3>
-            </div>
-            <div class="section-body">
-                <div class="security-shield">
-                    <div class="shield-icon">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <div class="shield-text">
-                        <h6>Role-Based Access Control Active</h6>
-                        <p>Your access privileges are enforced per role. All actions are logged.</p>
-                    </div>
-                </div>
-                <div class="profile-grid" style="gap: 1rem;">
-                    <ul class="info-rows">
-                        <li>
-                            <span class="info-label"><i class="fas fa-hourglass-half"></i> Session Timeout</span>
-                            <span class="info-value">45 Minutes</span>
-                        </li>
-                        <li>
-                            <span class="info-label"><i class="fas fa-cookie-bite"></i> Cookie Protection</span>
-                            <span class="info-value">
-                                <span class="inline-badge success">HttpOnly &amp; SameSite</span>
-                            </span>
-                        </li>
-                    </ul>
-                    <ul class="info-rows">
-                        <li>
-                            <span class="info-label"><i class="fas fa-key"></i> Password Hash</span>
-                            <span class="info-value">
-                                <span class="inline-badge primary">Bcrypt</span>
-                            </span>
-                        </li>
-                        <li>
-                            <span class="info-label"><i class="fas fa-fingerprint"></i> Auth Method</span>
-                            <span class="info-value">
-                                <span class="inline-badge primary">Session-based</span>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        {% if user.role == 'MD' or user.is_team_lead %}
-        <!-- ── Report Acknowledgements & Oversight ───────────────── -->
-        <div class="section-card full-width">
-            <div class="section-header">
-                <i class="fas fa-clipboard-check"></i>
-                <h3>Report Acknowledgements &amp; Oversight</h3>
-            </div>
-            <div class="section-body">
-                <div class="profile-grid" style="gap: 1.25rem;">
-                    <!-- Acknowledge Reports -->
-                    <div class="leadership-action-card">
-                        <div>
-                            <div class="leadership-action-top">
-                                <div class="leadership-action-icon icon-ack">
-                                    <i class="fas fa-file-signature"></i>
-                                </div>
-                                <div class="leadership-action-info">
-                                    <h5>Daily Report Acknowledgement</h5>
-                                    <p>Review and sign off on submitted daily operational forms across your jurisdiction.</p>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                {% if unack_count and unack_count > 0 %}
-                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">
-                                        <i class="fas fa-exclamation-circle me-1"></i>{{ unack_count }} Report{{ 's' if unack_count != 1 else '' }} Awaiting Acknowledgment
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
-                                        <i class="fas fa-check-circle me-1"></i>All Reports Up To Date
-                                    </span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div>
-                            {% if user.role == 'MD' %}
-                            <a href="{{ url_for('acknowledgements.view_md_acknowledgements') }}" class="btn btn-sm btn-primary w-100">
-                                <i class="fas fa-check-double me-1"></i> Click to Acknowledge Reports
-                            </a>
-                            {% else %}
-                            <a href="{{ url_for('acknowledgements.view_acknowledgements') }}" class="btn btn-sm btn-primary w-100">
-                                <i class="fas fa-check-double me-1"></i> Click to Acknowledge Reports
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Team Lead Status -->
-                    <div class="leadership-action-card">
-                        <div>
-                            <div class="leadership-action-top">
-                                <div class="leadership-action-icon icon-leads">
-                                    <i class="fas fa-users-cog"></i>
-                                </div>
-                                <div class="leadership-action-info">
-                                    {% if user.role == 'MD' %}
-                                    <h5>Team Leads Acknowledgement Status</h5>
-                                    <p>Comprehensive oversight tracking sign-off compliance across Academic, Admin, and Audit leads.</p>
-                                    {% else %}
-                                    <h5>My Team Lead Status</h5>
-                                    <p>Track your department's report submission and acknowledgement status history.</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
-                                    <i class="fas fa-shield-alt me-1"></i>{% if user.role == 'MD' %}All Departments Scope{% else %}{{ user.team.team_name if user.team else 'Department Scope' }}{% endif %}
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <a href="{{ url_for('acknowledgements.view_team_leads_acknowledgements') }}" class="btn btn-sm btn-outline-primary w-100">
-                                <i class="fas fa-chart-line me-1"></i> View Team Lead Status
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
     </div>
+
+    <!-- ═══ Profile Tab Navigation Bar ═══════════════════════════════ -->
+    <div class="profile-tabs-bar">
+        <ul class="nav profile-tab-pills" id="profileTabsNav" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab-btn" data-bs-toggle="tab" data-bs-target="#paneOverview" type="button" role="tab" aria-controls="paneOverview" aria-selected="true">
+                    Profile Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="notes-tab-btn" data-bs-toggle="tab" data-bs-target="#paneNotes" type="button" role="tab" aria-controls="paneNotes" aria-selected="false">
+                    Notes &amp; Reminders
+                    <span class="tab-counter-badge ms-1" id="navNotesCountBadge">{{ notes_counts.all if notes_counts else 0 }}</span>
+                    <span class="tab-due-badge ms-1 {% if not (notes_counts and notes_counts.due_reminders > 0) %}d-none{% endif %}" id="navDueCountBadge" title="Due reminders">
+                        <i class="fas fa-bell bell-ring"></i> <span id="navDueCountNum">{{ notes_counts.due_reminders if notes_counts else 0 }}</span>
+                    </span>
+                </button>
+            </li>
+        </ul>
+        <div>
+            <button type="button" class="btn-new-note-trigger" onclick="openCreateNoteModal()">
+                <i class="fas fa-plus"></i> New Note
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══ Tab Content ═══════════════════════════════════════════════ -->
+    <div class="tab-content" id="profileTabsContent">
+
+        <!-- ── TAB 1: Profile Overview ────────────────────────────── -->
+        <div class="tab-pane fade show active" id="paneOverview" role="tabpanel" aria-labelledby="overview-tab-btn">
+            <div class="account-card-wrap">
+                <div class="account-info-card">
+                    <div class="account-card-header">
+                        <i class="far fa-user"></i>
+                        <h3>Account Information</h3>
+                    </div>
+                    <ul class="account-info-rows">
+                        <li class="account-info-row">
+                            <span class="account-label">Username</span>
+                            <span class="account-value">{{ user.username }}</span>
+                        </li>
+                        <li class="account-info-row">
+                            <span class="account-label">User ID</span>
+                            <span class="account-value">#{{ user.user_id }}</span>
+                        </li>
+                        <li class="account-info-row">
+                            <span class="account-label">System Role</span>
+                            <span class="account-value">
+                                {% if user.role == 'Admin' %}System Administrator
+                                {% elif user.role == 'MD' %}Managing Director
+                                {% elif user.role == 'Team Lead' or user.is_team_lead %}Department Team Lead
+                                {% else %}Operational Team Member{% endif %}
+                            </span>
+                        </li>
+                        <li class="account-info-row">
+                            <span class="account-label">Status</span>
+                            <span class="account-value">
+                                <span class="account-status-badge">
+                                    <span class="status-dot"></span> Active
+                                </span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> <!-- end #paneOverview -->
+
+    <!-- ── TAB 2: Notes & Reminders ───────────────────────────── -->
+    <div class="tab-pane fade" id="paneNotes" role="tabpanel" aria-labelledby="notes-tab-btn">
+
+        <!-- Active Reminders Due Alert -->
+        <div id="remindersDueBanner" class="reminders-alert-banner d-none">
+            <div class="reminders-alert-left">
+                <div class="reminders-alert-icon">
+                    <i class="fas fa-bell bell-ring"></i>
+                </div>
+                <div class="reminders-alert-text">
+                    <h5 id="remindersDueHeading">You have reminders due!</h5>
+                    <p id="remindersDueSubtext">Review your scheduled notes and follow-ups.</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button type="button" class="btn btn-warning btn-sm fw-bold text-dark" onclick="setNotesFilter('reminders')">
+                    <i class="fas fa-filter me-1"></i> View Due Reminders
+                </button>
+            </div>
+        </div>
+
+        <!-- Inline Quick-Add Note Bar -->
+        <div class="quick-add-card" id="quickAddCard">
+            <!-- Collapsed Trigger -->
+            <div class="quick-add-collapsed" id="quickAddCollapsed" onclick="expandQuickAdd()">
+                <div class="quick-add-placeholder">
+                    <i class="fas fa-edit text-primary"></i> Take a quick note or task...
+                </div>
+                <div class="quick-add-collapsed-icons">
+                    <span class="badge bg-light text-muted border py-1 px-2" title="Create note or reminder">
+                        <i class="fas fa-bolt text-warning me-1"></i> Quick Add
+                    </span>
+                </div>
+            </div>
+
+            <!-- Expanded Note Form -->
+            <div class="quick-add-expanded d-none" id="quickAddExpanded">
+                <input type="text" id="quickAddTitle" class="quick-add-title-input" placeholder="Title (optional)">
+                <textarea id="quickAddContent" class="quick-add-content-input" placeholder="Note content, action item, reminder details..." rows="3"></textarea>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                    <!-- Quick Priority -->
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Quick Priority">
+                        <input type="radio" class="btn-check" name="quickAddPriority" id="qaPriLow" value="low" autocomplete="off">
+                        <label class="btn btn-outline-success btn-sm" for="qaPriLow">Low</label>
+                        <input type="radio" class="btn-check" name="quickAddPriority" id="qaPriMed" value="medium" autocomplete="off" checked>
+                        <label class="btn btn-outline-warning btn-sm" for="qaPriMed">Medium</label>
+                        <input type="radio" class="btn-check" name="quickAddPriority" id="qaPriHigh" value="high" autocomplete="off">
+                        <label class="btn btn-outline-danger btn-sm" for="qaPriHigh">High</label>
+                    </div>
+
+                    <!-- Quick Reminder Input -->
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="fas fa-clock text-primary" style="font-size: 0.85rem;"></i>
+                        <input type="datetime-local" id="quickAddReminder" class="form-control form-control-sm" style="font-size: 0.78rem; width: auto;" title="Reminder Time (IST)">
+                    </div>
+
+                    <!-- Quick Pin Toggle -->
+                    <div class="form-check form-switch ms-1 mb-0">
+                        <input class="form-check-input" type="checkbox" id="quickAddPinned">
+                        <label class="form-check-label small text-muted" for="quickAddPinned"><i class="fas fa-thumbtack text-warning"></i> Pin</label>
+                    </div>
+                </div>
+
+                <div class="quick-add-toolbar">
+                    <!-- Color Swatches for Quick-Add -->
+                    <div class="color-swatch-list" id="quickAddSwatches">
+                        <div class="color-swatch-opt swatch-default selected" data-color="default" onclick="selectQuickAddColor('default')" title="White"><i class="fas fa-check"></i></div>
+                        <div class="color-swatch-opt swatch-yellow" data-color="yellow" onclick="selectQuickAddColor('yellow')" title="Yellow"></div>
+                        <div class="color-swatch-opt swatch-blue" data-color="blue" onclick="selectQuickAddColor('blue')" title="Sky Blue"></div>
+                        <div class="color-swatch-opt swatch-green" data-color="green" onclick="selectQuickAddColor('green')" title="Mint Green"></div>
+                        <div class="color-swatch-opt swatch-red" data-color="red" onclick="selectQuickAddColor('red')" title="Rose"></div>
+                        <div class="color-swatch-opt swatch-purple" data-color="purple" onclick="selectQuickAddColor('purple')" title="Lilac"></div>
+                    </div>
+                    <input type="hidden" id="quickAddColor" value="default">
+
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <button type="button" class="btn-enterprise" onclick="collapseQuickAdd()">Close</button>
+                        <button type="button" class="btn-new-note-trigger" id="btnSubmitQuickAdd" onclick="submitQuickAdd()">
+                            <i class="fas fa-plus"></i> Add Note
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Toolbar -->
+        <div class="notes-toolbar">
+            <div class="notes-search-wrap">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="notesSearchInput" class="notes-search-input" placeholder="Search in titles &amp; notes..." oninput="handleNotesSearch(this.value)">
+                <button type="button" id="notesSearchClear" class="notes-search-clear d-none" onclick="clearNotesSearch()" title="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="notes-filter-pills" id="notesFilterPills">
+                <button type="button" class="filter-pill-btn active" data-filter="all" onclick="setNotesFilter('all')">
+                    <i class="fas fa-layer-group"></i> All Notes
+                    <span class="badge rounded-pill bg-secondary ms-1" id="filterCountAll">{{ notes_counts.all if notes_counts else 0 }}</span>
+                </button>
+                <button type="button" class="filter-pill-btn" data-filter="pinned" onclick="setNotesFilter('pinned')">
+                    <i class="fas fa-thumbtack text-warning"></i> Pinned
+                    <span class="badge rounded-pill bg-secondary ms-1" id="filterCountPinned">{{ notes_counts.pinned if notes_counts else 0 }}</span>
+                </button>
+                <button type="button" class="filter-pill-btn" data-filter="reminders" onclick="setNotesFilter('reminders')">
+                    <i class="fas fa-clock text-info"></i> Reminders
+                    <span class="badge rounded-pill bg-secondary ms-1" id="filterCountReminders">{{ notes_counts.reminders if notes_counts else 0 }}</span>
+                </button>
+                <button type="button" class="filter-pill-btn" data-filter="completed" onclick="setNotesFilter('completed')">
+                    <i class="fas fa-check-circle text-success"></i> Completed
+                    <span class="badge rounded-pill bg-secondary ms-1" id="filterCountCompleted">{{ notes_counts.completed if notes_counts and notes_counts.completed is defined else 0 }}</span>
+                </button>
+                <button type="button" class="filter-pill-btn" data-filter="archived" onclick="setNotesFilter('archived')">
+                    <i class="fas fa-archive text-muted"></i> Archived
+                    <span class="badge rounded-pill bg-secondary ms-1" id="filterCountArchived">{{ notes_counts.archived if notes_counts else 0 }}</span>
+                </button>
+            </div>
+
+            <!-- Priority & View Toggle & Action -->
+            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+                <select id="priorityFilterSelect" class="form-select form-select-sm" style="width: auto; font-size: 0.82rem; font-weight: 600; border-radius: 9px;" onchange="handlePriorityFilter(this.value)">
+                    <option value="all">All Priorities</option>
+                    <option value="high">🔴 High Priority</option>
+                    <option value="medium">🟡 Medium Priority</option>
+                    <option value="low">🟢 Low Priority</option>
+                </select>
+
+                <!-- Grid vs List View Switcher -->
+                <div class="btn-group btn-group-sm" role="group" aria-label="View Switcher">
+                    <button type="button" class="btn btn-view-toggle active" id="btnGridView" onclick="setViewMode('grid')" title="Grid View">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-view-toggle" id="btnListView" onclick="setViewMode('list')" title="List / Table View">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+
+                <button type="button" class="btn-new-note-trigger" onclick="openCreateNoteModal()">
+                    <i class="fas fa-plus"></i> New Note
+                </button>
+            </div>
+        </div>
+
+        <!-- Notes Container -->
+        <div id="notesContainer">
+            <!-- Grid View Container -->
+            <div id="notesGridContainer">
+                <!-- Pinned Section -->
+                <div id="pinnedNotesSection" class="d-none">
+                    <div class="notes-section-title">
+                        <i class="fas fa-thumbtack text-warning"></i> Pinned Notes
+                    </div>
+                    <div class="notes-grid" id="pinnedNotesGrid"></div>
+                </div>
+
+                <!-- Regular / Others Section -->
+                <div id="regularNotesSection">
+                    <div class="notes-section-title d-none" id="regularNotesTitle">
+                        <i class="fas fa-sticky-note text-primary"></i> Other Notes
+                    </div>
+                    <div class="notes-grid" id="regularNotesGrid"></div>
+                </div>
+            </div>
+
+            <!-- List / Table View Container -->
+            <div id="notesListContainer" class="notes-table-wrap d-none">
+                <div class="table-responsive">
+                    <table class="notes-list-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px;" class="text-center">Done</th>
+                                <th style="min-width: 250px;">Title &amp; Note</th>
+                                <th style="width: 100px;">Priority</th>
+                                <th style="width: 190px;">Reminder</th>
+                                <th style="width: 120px;">Updated</th>
+                                <th style="width: 140px;" class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notesListTbody">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="notesEmptyState" class="notes-empty-state d-none">
+                <div class="notes-empty-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <h4 id="emptyStateTitle">No notes found</h4>
+                <p id="emptyStateSubtext">Capture important reminders, tasks, and notes right here on your profile.</p>
+                <button type="button" class="btn-new-note-trigger" onclick="openCreateNoteModal()">
+                    <i class="fas fa-plus"></i> Create First Note
+                </button>
+            </div>
+        </div>
+
+    </div> <!-- end #paneNotes -->
+    </div> <!-- end #profileTabsContent -->
+
+    <!-- ═══ Modal: Create / Edit Note ═════════════════════════════════ -->
+    <div class="modal fade" id="modalNote" tabindex="-1" aria-labelledby="modalNoteTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid var(--profile-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #F0F0ED; color: var(--profile-text-primary); border-radius: 8px;">
+                            <i class="fas fa-edit" style="font-size: 0.85rem;"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold text-dark" id="modalNoteTitle" style="font-size: 1.05rem;">Create Note</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 pt-3 pb-2">
+                    <form id="formNote" onsubmit="handleNoteFormSubmit(event)">
+                        <input type="hidden" id="noteFormId" value="">
+
+                        <!-- Title Input with Label and Bordered Field -->
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark mb-1">Title</label>
+                            <input type="text" class="form-control modal-note-input" id="noteFormTitle" placeholder="Title (e.g. Audit Action Items, Team Follow-up)" maxlength="200">
+                        </div>
+
+                        <!-- Content Textarea with Label and Bordered Field -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label small fw-semibold text-dark mb-0">Content <span class="text-danger">*</span></label>
+                                <span class="text-muted" style="font-size: 0.75rem;" id="noteFormCharCount">0 characters</span>
+                            </div>
+                            <textarea class="form-control modal-note-input" id="noteFormContent" rows="5" placeholder="Write your note here... (tasks, reminders, links, thoughts)" required oninput="updateCharCount(this.value)"></textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <!-- Priority Selector -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-dark mb-1"><i class="fas fa-flag me-1 text-muted"></i> Priority</label>
+                                <div class="d-flex gap-2">
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="radio" name="notePriority" id="priorityLow" value="low">
+                                        <label class="btn btn-sm btn-outline-success rounded-2 px-3" for="priorityLow">Low</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="radio" name="notePriority" id="priorityMed" value="medium" checked>
+                                        <label class="btn btn-sm btn-outline-warning rounded-2 px-3" for="priorityMed">Medium</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="radio" name="notePriority" id="priorityHigh" value="high">
+                                        <label class="btn btn-sm btn-outline-danger rounded-2 px-3" for="priorityHigh">High</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Color Swatches -->
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-dark mb-1"><i class="fas fa-palette me-1 text-muted"></i> Card Color</label>
+                                <div class="color-swatch-list" id="noteColorSwatches">
+                                    <div class="color-swatch-opt swatch-default selected" data-color="default" onclick="selectColorSwatch('default')" title="Default White"><i class="fas fa-check"></i></div>
+                                    <div class="color-swatch-opt swatch-yellow" data-color="yellow" onclick="selectColorSwatch('yellow')" title="Pastel Yellow"></div>
+                                    <div class="color-swatch-opt swatch-blue" data-color="blue" onclick="selectColorSwatch('blue')" title="Pastel Sky"></div>
+                                    <div class="color-swatch-opt swatch-green" data-color="green" onclick="selectColorSwatch('green')" title="Pastel Mint"></div>
+                                    <div class="color-swatch-opt swatch-red" data-color="red" onclick="selectColorSwatch('red')" title="Pastel Rose"></div>
+                                    <div class="color-swatch-opt swatch-purple" data-color="purple" onclick="selectColorSwatch('purple')" title="Pastel Lilac"></div>
+                                </div>
+                                <input type="hidden" id="noteFormColor" value="default">
+                            </div>
+                        </div>
+
+                        <!-- Reminder Section -->
+                        <div class="mt-3 p-3 rounded-3" style="background: #F7F7F5; border: 1px solid var(--profile-border);">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="form-label small fw-semibold text-dark mb-0 d-flex align-items-center gap-2">
+                                    <i class="fas fa-clock text-muted"></i> Schedule Reminder (IST)
+                                </label>
+                                <button type="button" class="btn btn-link btn-sm p-0 text-danger text-decoration-none small" id="btnClearReminder" onclick="clearReminderInput()" style="display: none;">
+                                    <i class="fas fa-times me-1"></i> Remove
+                                </button>
+                            </div>
+
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-6">
+                                    <input type="datetime-local" class="form-control modal-note-input" id="noteFormReminder" onchange="handleReminderInputChange(this.value)">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <span class="quick-preset-badge" onclick="setQuickReminderPreset('1hour')">+1 Hour</span>
+                                        <span class="quick-preset-badge" onclick="setQuickReminderPreset('today5pm')">Today 5 PM</span>
+                                        <span class="quick-preset-badge" onclick="setQuickReminderPreset('tomorrow9am')">Tomorrow 9 AM</span>
+                                        <span class="quick-preset-badge" onclick="setQuickReminderPreset('nextweek')">Next Monday</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pin & Mark as Done options -->
+                        <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="noteFormPinned">
+                                <label class="form-check-label small fw-semibold text-dark" for="noteFormPinned">
+                                    <i class="fas fa-thumbtack text-warning me-1"></i> Pin this note to top
+                                </label>
+                            </div>
+                            <div class="form-check form-switch" id="modalDoneWrap" style="display: none;">
+                                <input class="form-check-input" type="checkbox" id="noteFormDone">
+                                <label class="form-check-label small fw-semibold text-dark" for="noteFormDone">
+                                    <i class="fas fa-check-circle text-success me-1"></i> Mark as Completed
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-2 pb-4 px-4 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn-enterprise" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-new-note-trigger px-4 py-2" id="btnSaveNote" onclick="submitNoteForm()">
+                        <span class="spinner-border spinner-border-sm me-1 d-none" id="saveNoteSpinner" role="status" aria-hidden="true"></span>
+                        <i class="fas fa-check" id="saveNoteIcon"></i> Save Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Modal: Delete Confirmation ═══════════════════════════════ -->
+    <div class="modal fade" id="modalDeleteNote" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid var(--profile-border); box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                <div class="modal-body text-center p-4">
+                    <div class="d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 44px; height: 44px; background: #FEF3F2; color: #D92D20; font-size: 1.15rem; border-radius: 50%;">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1" style="font-size: 1rem;">Delete this note?</h5>
+                    <p class="text-muted small mb-4">This action is permanent and cannot be undone.</p>
+                    <input type="hidden" id="deleteNoteTargetId" value="">
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn-enterprise" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm rounded-2 px-3 fw-medium" style="background: #D92D20; border-color: #D92D20;" id="btnConfirmDeleteNote" onclick="executeNoteDelete()">
+                            Delete Note
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Floating Toast Notification Container ════════════════════ -->
+    <div class="notes-toast-container" id="notesToastContainer"></div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script>
+(function() {
+    'use strict';
+
+    // State Variables
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let currentPriority = 'all';
+    let currentViewMode = localStorage.getItem('notes_view_mode') || 'grid';
+    let currentNotes = [];
+    let noteModal = null;
+    let deleteModal = null;
+    let searchDebounceTimer = null;
+
+    // Helper: CSRF Headers
+    function getHeaders(customHeaders = {}) {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        const token = meta ? meta.getAttribute('content') : '';
+        return {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': token,
+            ...customHeaders
+        };
+    }
+
+    // Helper: HTML Escaper
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Helper: Floating Toast
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('notesToastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `notes-toast ${type}`;
+        
+        let icon = '<i class="fas fa-check-circle text-success"></i>';
+        if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle text-warning"></i>';
+        if (type === 'danger')  icon = '<i class="fas fa-times-circle text-danger"></i>';
+        if (type === 'info')    icon = '<i class="fas fa-info-circle text-info"></i>';
+
+        toast.innerHTML = `${icon}<span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.transition = 'all 0.3s ease';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3200);
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalEl = document.getElementById('modalNote');
+        if (modalEl) noteModal = new bootstrap.Modal(modalEl);
+
+        const deleteEl = document.getElementById('modalDeleteNote');
+        if (deleteEl) deleteModal = new bootstrap.Modal(deleteEl);
+
+        // Apply saved view mode
+        setViewMode(currentViewMode, false);
+
+        // Check URL hash for tab activation
+        if (window.location.hash === '#notes') {
+            const notesTabBtn = document.getElementById('notes-tab-btn');
+            if (notesTabBtn) {
+                const tab = new bootstrap.Tab(notesTabBtn);
+                tab.show();
+            }
+        }
+
+        // Tab click hash updating
+        const notesTabBtn = document.getElementById('notes-tab-btn');
+        if (notesTabBtn) {
+            notesTabBtn.addEventListener('shown.bs.tab', function() {
+                history.replaceState(null, null, '#notes');
+            });
+        }
+
+        const overviewTabBtn = document.getElementById('overview-tab-btn');
+        if (overviewTabBtn) {
+            overviewTabBtn.addEventListener('shown.bs.tab', function() {
+                history.replaceState(null, null, window.location.pathname);
+            });
+        }
+
+        // Global Keyboard Shortcut: Ctrl + Alt + N or Alt + N to open note
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey && e.altKey && e.key.toLowerCase() === 'n') || (e.altKey && e.key.toLowerCase() === 'n')) {
+                e.preventDefault();
+                if (notesTabBtn && !notesTabBtn.classList.contains('active')) {
+                    const tab = new bootstrap.Tab(notesTabBtn);
+                    tab.show();
+                }
+                openCreateNoteModal();
+            }
+        });
+
+        // Initial Load of notes
+        loadNotes();
+
+        // Check reminders summary every 30s
+        setInterval(checkRemindersSummary, 30000);
+    });
+
+    // ── View Mode Switcher (Grid vs List) ─────────────────────────────
+    window.setViewMode = function(mode, save = true) {
+        currentViewMode = mode;
+        if (save) {
+            localStorage.setItem('notes_view_mode', mode);
+        }
+
+        const btnGrid = document.getElementById('btnGridView');
+        const btnList = document.getElementById('btnListView');
+        const gridCont = document.getElementById('notesGridContainer');
+        const listCont = document.getElementById('notesListContainer');
+
+        if (mode === 'list') {
+            if (btnList) btnList.classList.add('active');
+            if (btnGrid) btnGrid.classList.remove('active');
+            if (gridCont) gridCont.classList.add('d-none');
+            if (listCont) listCont.classList.remove('d-none');
+        } else {
+            if (btnGrid) btnGrid.classList.add('active');
+            if (btnList) btnList.classList.remove('active');
+            if (gridCont) gridCont.classList.remove('d-none');
+            if (listCont) listCont.classList.add('d-none');
+        }
+
+        if (currentNotes && currentNotes.length > 0) {
+            renderNotes(currentNotes);
+        }
+    };
+
+    // ── Quick-Add Component Handlers ──────────────────────────────────
+    window.expandQuickAdd = function() {
+        const collapsed = document.getElementById('quickAddCollapsed');
+        const expanded = document.getElementById('quickAddExpanded');
+        if (collapsed) collapsed.classList.add('d-none');
+        if (expanded) {
+            expanded.classList.remove('d-none');
+            const titleInput = document.getElementById('quickAddTitle');
+            if (titleInput) titleInput.focus();
+        }
+    };
+
+    window.collapseQuickAdd = function() {
+        const collapsed = document.getElementById('quickAddCollapsed');
+        const expanded = document.getElementById('quickAddExpanded');
+        if (expanded) expanded.classList.add('d-none');
+        if (collapsed) collapsed.classList.remove('d-none');
+
+        // Reset inputs
+        const t = document.getElementById('quickAddTitle');
+        const c = document.getElementById('quickAddContent');
+        const r = document.getElementById('quickAddReminder');
+        const p = document.getElementById('quickAddPinned');
+        if (t) t.value = '';
+        if (c) c.value = '';
+        if (r) r.value = '';
+        if (p) p.checked = false;
+        selectQuickAddColor('default');
+    };
+
+    window.selectQuickAddColor = function(color) {
+        const input = document.getElementById('quickAddColor');
+        if (input) input.value = color;
+
+        document.querySelectorAll('#quickAddSwatches .color-swatch-opt').forEach(opt => {
+            if (opt.getAttribute('data-color') === color) {
+                opt.classList.add('selected');
+                opt.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                opt.classList.remove('selected');
+                opt.innerHTML = '';
+            }
+        });
+    };
+
+    window.submitQuickAdd = function() {
+        const title = (document.getElementById('quickAddTitle').value || '').trim();
+        const content = (document.getElementById('quickAddContent').value || '').trim();
+
+        if (!content) {
+            showToast('Please enter note content.', 'warning');
+            document.getElementById('quickAddContent').focus();
+            return;
+        }
+
+        let priority = 'medium';
+        const checkedPri = document.querySelector('input[name="quickAddPriority"]:checked');
+        if (checkedPri) priority = checkedPri.value;
+
+        const color = document.getElementById('quickAddColor').value || 'default';
+        const is_pinned = document.getElementById('quickAddPinned').checked;
+        const reminder_at = document.getElementById('quickAddReminder').value || null;
+
+        const payload = {
+            title: title,
+            content: content,
+            priority: priority,
+            color: color,
+            is_pinned: is_pinned,
+            reminder_at: reminder_at
+        };
+
+        const btn = document.getElementById('btnSubmitQuickAdd');
+        if (btn) btn.disabled = true;
+
+        fetch('/api/notes', {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Note added successfully! 📝', 'success');
+                collapseQuickAdd();
+                loadNotes();
+            } else {
+                showToast(data.message || 'Failed to add note', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error in quick add:', err);
+            showToast('An error occurred while creating note.', 'danger');
+        })
+        .finally(() => {
+            if (btn) btn.disabled = false;
+        });
+    };
+
+    // ── Fetch & Filter Notes ──────────────────────────────────────────
+    window.loadNotes = function() {
+        const url = `/api/notes?filter=${encodeURIComponent(currentFilter)}&search=${encodeURIComponent(currentSearch)}&priority=${encodeURIComponent(currentPriority)}`;
+
+        fetch(url, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    currentNotes = data.notes || [];
+                    renderNotes(currentNotes);
+                    updateCounters(data.counts);
+                } else {
+                    showToast(data.message || 'Error loading notes', 'danger');
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching notes:', err);
+            });
+    };
+
+    // ── Update Tab Badges & Counts ────────────────────────────────────
+    function updateCounters(counts) {
+        if (!counts) return;
+
+        const navNotesBadge = document.getElementById('navNotesCountBadge');
+        if (navNotesBadge) navNotesBadge.textContent = counts.all || 0;
+
+        const navDueBadge = document.getElementById('navDueCountBadge');
+        const navDueNum = document.getElementById('navDueCountNum');
+        if (navDueBadge && navDueNum) {
+            navDueNum.textContent = counts.due_reminders || 0;
+            if (counts.due_reminders > 0) {
+                navDueBadge.classList.remove('d-none');
+            } else {
+                navDueBadge.classList.add('d-none');
+            }
+        }
+
+        const fAll = document.getElementById('filterCountAll');
+        if (fAll) fAll.textContent = counts.all || 0;
+
+        const fPinned = document.getElementById('filterCountPinned');
+        if (fPinned) fPinned.textContent = counts.pinned || 0;
+
+        const fReminders = document.getElementById('filterCountReminders');
+        if (fReminders) fReminders.textContent = counts.reminders || 0;
+
+        const fCompleted = document.getElementById('filterCountCompleted');
+        if (fCompleted) fCompleted.textContent = counts.completed || 0;
+
+        const fArchived = document.getElementById('filterCountArchived');
+        if (fArchived) fArchived.textContent = counts.archived || 0;
+
+        // Reminders Due Banner
+        const dueBanner = document.getElementById('remindersDueBanner');
+        const dueHeading = document.getElementById('remindersDueHeading');
+        const dueSubtext = document.getElementById('remindersDueSubtext');
+        if (dueBanner) {
+            if (counts.due_reminders > 0) {
+                dueBanner.classList.remove('d-none');
+                if (dueHeading) {
+                    dueHeading.textContent = `You have ${counts.due_reminders} reminder${counts.due_reminders > 1 ? 's' : ''} due!`;
+                }
+                if (dueSubtext) {
+                    dueSubtext.textContent = 'Scheduled notes and follow-ups are waiting for your attention.';
+                }
+            } else {
+                dueBanner.classList.add('d-none');
+            }
+        }
+    }
+
+    // ── Render Notes (Grid or List) ───────────────────────────────────
+    function renderNotes(notes) {
+        const pinnedSection = document.getElementById('pinnedNotesSection');
+        const pinnedGrid = document.getElementById('pinnedNotesGrid');
+        const regularGrid = document.getElementById('regularNotesGrid');
+        const regularTitle = document.getElementById('regularNotesTitle');
+        const emptyState = document.getElementById('notesEmptyState');
+        const listTbody = document.getElementById('notesListTbody');
+
+        pinnedGrid.innerHTML = '';
+        regularGrid.innerHTML = '';
+        if (listTbody) listTbody.innerHTML = '';
+
+        if (!notes || notes.length === 0) {
+            pinnedSection.classList.add('d-none');
+            regularTitle.classList.add('d-none');
+            emptyState.classList.remove('d-none');
+
+            // Custom empty state messages per filter
+            const emptyTitle = document.getElementById('emptyStateTitle');
+            const emptySub = document.getElementById('emptyStateSubtext');
+            if (currentSearch) {
+                emptyTitle.textContent = `No notes matching "${currentSearch}"`;
+                emptySub.textContent = 'Try adjusting your search terms or clearing filters.';
+            } else if (currentFilter === 'pinned') {
+                emptyTitle.textContent = 'No pinned notes';
+                emptySub.textContent = 'Pin your most important notes to keep them right at the top.';
+            } else if (currentFilter === 'reminders') {
+                emptyTitle.textContent = 'No reminders scheduled';
+                emptySub.textContent = 'Add date and time reminders to your notes to never miss a follow-up.';
+            } else if (currentFilter === 'completed') {
+                emptyTitle.textContent = 'No completed notes';
+                emptySub.textContent = 'When you finish tasks, mark them as done and they will show up here.';
+            } else if (currentFilter === 'archived') {
+                emptyTitle.textContent = 'Archive is empty';
+                emptySub.textContent = 'Inactive notes you archive will appear here.';
+            } else {
+                emptyTitle.textContent = 'No notes yet';
+                emptySub.textContent = 'Create your first note to start organizing personal tasks, reminders, and links.';
+            }
+            return;
+        }
+
+        emptyState.classList.add('d-none');
+
+        if (currentViewMode === 'list') {
+            // Render Table Rows
+            notes.forEach(note => {
+                if (listTbody) listTbody.appendChild(createNoteRowElement(note));
+            });
+        } else {
+            // Render Grid Cards
+            const pinnedNotes = notes.filter(n => n.is_pinned && !n.is_archived);
+            const regularNotes = notes.filter(n => !(n.is_pinned && !n.is_archived));
+
+            if (pinnedNotes.length > 0 && currentFilter !== 'archived') {
+                pinnedSection.classList.remove('d-none');
+                regularTitle.classList.remove('d-none');
+                pinnedNotes.forEach(note => {
+                    pinnedGrid.appendChild(createNoteCardElement(note));
+                });
+            } else {
+                pinnedSection.classList.add('d-none');
+                regularTitle.classList.add('d-none');
+            }
+
+            regularNotes.forEach(note => {
+                regularGrid.appendChild(createNoteCardElement(note));
+            });
+        }
+    }
+
+    // ── Build Single Note Card Element (Grid View) ────────────────────
+    function createNoteCardElement(note) {
+        const card = document.createElement('div');
+        const colorTheme = `note-theme-${note.color || 'default'}`;
+        card.className = `note-card ${colorTheme} ${note.is_pinned ? 'pinned' : ''} ${note.is_done ? 'is-done' : ''}`;
+        card.id = `note-card-${note.id}`;
+
+        // Priority Badge or Completed Badge
+        let statusBadge = '';
+        if (note.is_done) {
+            statusBadge = '<span class="badge-done"><i class="fas fa-check-circle"></i> Done</span>';
+        } else if (note.priority === 'high') {
+            statusBadge = '<span class="note-priority-badge priority-high"><i class="fas fa-flag"></i> High</span>';
+        } else if (note.priority === 'medium') {
+            statusBadge = '<span class="note-priority-badge priority-medium"><i class="fas fa-flag"></i> Med</span>';
+        } else if (note.priority === 'low') {
+            statusBadge = '<span class="note-priority-badge priority-low"><i class="fas fa-flag"></i> Low</span>';
+        }
+
+        // Pin Button
+        const pinBtn = `
+            <button type="button" class="note-pin-btn ${note.is_pinned ? 'is-pinned' : ''}" onclick="togglePinNote(${note.id})" title="${note.is_pinned ? 'Unpin' : 'Pin to top'}">
+                <i class="fas fa-thumbtack"></i>
+            </button>
+        `;
+
+        // Interactive Checkbox
+        const checkboxHtml = `
+            <div class="task-checkbox-custom ${note.is_done ? 'checked' : ''}" onclick="toggleDoneNote(${note.id}, event)" title="${note.is_done ? 'Mark as incomplete' : 'Mark as completed'}">
+                <i class="fas fa-check"></i>
+            </div>
+        `;
+
+        // Reminder Pill & Snooze Options
+        let reminderHtml = '';
+        if (note.reminder_at_display) {
+            const snoozeMenu = `
+                <div class="dropdown d-inline-block ms-1">
+                    <button class="btn btn-sm p-0 border-0 text-muted" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Snooze reminder" onclick="event.stopPropagation()">
+                        <i class="fas fa-history" style="font-size: 0.8rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.82rem; min-width: 140px;">
+                        <li><h6 class="dropdown-header py-1" style="font-size: 0.72rem;">SNOOZE</h6></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 15, event)"><i class="fas fa-clock text-warning me-1"></i> +15 Mins</a></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 60, event)"><i class="fas fa-clock text-warning me-1"></i> +1 Hour</a></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 1440, event)"><i class="fas fa-sun text-warning me-1"></i> Tomorrow</a></li>
+                    </ul>
+                </div>
+            `;
+
+            if (note.is_reminder_due) {
+                reminderHtml = `
+                    <div class="note-reminder-pill reminder-due">
+                        <i class="fas fa-bell bell-ring"></i>
+                        <span>Due: ${escapeHtml(note.reminder_at_display)}</span>
+                        ${snoozeMenu}
+                        <button type="button" class="btn btn-sm btn-link p-0 ms-1 text-danger fw-bold text-decoration-none" onclick="dismissReminder(${note.id}, event)" title="Dismiss alert">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                reminderHtml = `
+                    <div class="note-reminder-pill reminder-upcoming">
+                        <i class="fas fa-clock"></i>
+                        <span>${escapeHtml(note.reminder_at_display)}</span>
+                        ${snoozeMenu}
+                    </div>
+                `;
+            }
+        }
+
+        // Title
+        const titleHtml = note.title ? `<div class="note-title">${escapeHtml(note.title)}</div>` : '';
+
+        // Content
+        const contentHtml = `<div class="note-content-preview">${escapeHtml(note.content)}</div>`;
+
+        // Archive Icon State
+        const archiveIcon = note.is_archived ? 'fa-box-open' : 'fa-archive';
+        const archiveTitle = note.is_archived ? 'Unarchive note' : 'Archive note';
+
+        // Card HTML
+        card.innerHTML = `
+            <div>
+                <div class="note-header">
+                    <div class="d-flex align-items-center">
+                        ${checkboxHtml}
+                        <div class="note-badges-wrap">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                    ${pinBtn}
+                </div>
+                ${titleHtml}
+                ${contentHtml}
+                ${reminderHtml}
+            </div>
+            <div class="note-footer">
+                <span class="note-date-text">
+                    <i class="far fa-clock me-1"></i>${escapeHtml(note.updated_at || note.created_at || '')}
+                </span>
+                <div class="note-card-actions">
+                    <button type="button" class="note-action-icon-btn" onclick="openEditNote(${note.id})" title="Edit note">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button type="button" class="note-action-icon-btn" onclick="toggleArchiveNote(${note.id})" title="${archiveTitle}">
+                        <i class="fas ${archiveIcon}"></i>
+                    </button>
+                    <button type="button" class="note-action-icon-btn btn-delete" onclick="confirmDeleteNote(${note.id})" title="Delete note">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        return card;
+    }
+
+    // ── Build Single Note Row Element (List / Table View) ─────────────
+    function createNoteRowElement(note) {
+        const tr = document.createElement('tr');
+        tr.className = `notes-list-row ${note.is_done ? 'is-done' : ''}`;
+        tr.id = `note-row-${note.id}`;
+
+        // Checkbox
+        const checkboxHtml = `
+            <div class="task-checkbox-custom ${note.is_done ? 'checked' : ''} mx-auto" onclick="toggleDoneNote(${note.id}, event)" title="${note.is_done ? 'Mark as incomplete' : 'Mark as completed'}">
+                <i class="fas fa-check"></i>
+            </div>
+        `;
+
+        // Priority Badge or Done
+        let priorityHtml = '';
+        if (note.is_done) {
+            priorityHtml = '<span class="badge-done"><i class="fas fa-check-circle"></i> Done</span>';
+        } else if (note.priority === 'high') {
+            priorityHtml = '<span class="note-priority-badge priority-high"><i class="fas fa-flag"></i> High</span>';
+        } else if (note.priority === 'medium') {
+            priorityHtml = '<span class="note-priority-badge priority-medium"><i class="fas fa-flag"></i> Med</span>';
+        } else if (note.priority === 'low') {
+            priorityHtml = '<span class="note-priority-badge priority-low"><i class="fas fa-flag"></i> Low</span>';
+        }
+
+        // Title and content snippet
+        const pinIcon = note.is_pinned ? '<i class="fas fa-thumbtack text-warning me-1" title="Pinned"></i>' : '';
+        const titleText = note.title ? `<div class="list-note-title fw-bold text-dark mb-0">${pinIcon}${escapeHtml(note.title)}</div>` : '';
+        const snippetText = `<div class="list-note-snippet text-muted small" style="max-width: 420px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(note.content)}</div>`;
+
+        // Reminder pill
+        let reminderHtml = '<span class="text-muted small">&mdash;</span>';
+        if (note.reminder_at_display) {
+            const snoozeMenu = `
+                <div class="dropdown d-inline-block ms-1">
+                    <button class="btn btn-sm p-0 border-0 text-muted" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Snooze" onclick="event.stopPropagation()">
+                        <i class="fas fa-history" style="font-size: 0.78rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.82rem; min-width: 140px;">
+                        <li><h6 class="dropdown-header py-1" style="font-size: 0.72rem;">SNOOZE</h6></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 15, event)"><i class="fas fa-clock text-warning me-1"></i> +15 Mins</a></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 60, event)"><i class="fas fa-clock text-warning me-1"></i> +1 Hour</a></li>
+                        <li><a class="dropdown-item py-1" href="javascript:void(0)" onclick="snoozeNote(${note.id}, 1440, event)"><i class="fas fa-sun text-warning me-1"></i> Tomorrow</a></li>
+                    </ul>
+                </div>
+            `;
+            if (note.is_reminder_due) {
+                reminderHtml = `
+                    <div class="note-reminder-pill reminder-due mb-0 py-1 px-2" style="font-size: 0.74rem;">
+                        <i class="fas fa-bell bell-ring"></i>
+                        <span>${escapeHtml(note.reminder_at_display)}</span>
+                        ${snoozeMenu}
+                    </div>
+                `;
+            } else {
+                reminderHtml = `
+                    <div class="note-reminder-pill reminder-upcoming mb-0 py-1 px-2" style="font-size: 0.74rem;">
+                        <i class="fas fa-clock"></i>
+                        <span>${escapeHtml(note.reminder_at_display)}</span>
+                        ${snoozeMenu}
+                    </div>
+                `;
+            }
+        }
+
+        // Archive Icon State
+        const archiveIcon = note.is_archived ? 'fa-box-open' : 'fa-archive';
+        const archiveTitle = note.is_archived ? 'Unarchive' : 'Archive';
+
+        tr.innerHTML = `
+            <td class="text-center">${checkboxHtml}</td>
+            <td>
+                ${titleText}
+                ${snippetText}
+            </td>
+            <td>${priorityHtml}</td>
+            <td>${reminderHtml}</td>
+            <td class="text-muted small">${escapeHtml(note.updated_at || note.created_at || '')}</td>
+            <td class="text-end">
+                <div class="d-inline-flex align-items-center gap-1">
+                    <button type="button" class="note-action-icon-btn" onclick="openEditNote(${note.id})" title="Edit">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button type="button" class="note-action-icon-btn" onclick="toggleArchiveNote(${note.id})" title="${archiveTitle}">
+                        <i class="fas ${archiveIcon}"></i>
+                    </button>
+                    <button type="button" class="note-action-icon-btn btn-delete" onclick="confirmDeleteNote(${note.id})" title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+
+        return tr;
+    }
+
+    // ── Toggle Done / Task Completion ─────────────────────────────────
+    window.toggleDoneNote = function(noteId, event) {
+        if (event) event.stopPropagation();
+
+        fetch(`/api/notes/${noteId}/toggle-done`, {
+            method: 'POST',
+            headers: getHeaders(),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast(d.is_done ? 'Note marked as completed! ✅' : 'Note marked as active', 'success');
+                loadNotes();
+                // Notify base.html global poller if active
+                if (window.triggerGlobalReminderCheck) {
+                    window.triggerGlobalReminderCheck();
+                }
+            } else {
+                showToast(d.message || 'Action failed', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error toggling done status:', err);
+            showToast('Failed to update status', 'danger');
+        });
+    };
+
+    // ── Snooze Reminder ───────────────────────────────────────────────
+    window.snoozeNote = function(noteId, minutes, event) {
+        if (event) event.stopPropagation();
+
+        fetch(`/api/notes/${noteId}/snooze`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ minutes: minutes }),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast(`Reminder snoozed for ${minutes} minutes ⏰`, 'info');
+                loadNotes();
+                if (window.triggerGlobalReminderCheck) {
+                    window.triggerGlobalReminderCheck();
+                }
+            } else {
+                showToast(d.message || 'Failed to snooze', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error snoozing reminder:', err);
+            showToast('Failed to snooze reminder', 'danger');
+        });
+    };
+
+    // ── Filter & Search Handlers ──────────────────────────────────────
+    window.setNotesFilter = function(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('#notesFilterPills .filter-pill-btn').forEach(btn => {
+            if (btn.getAttribute('data-filter') === filter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        loadNotes();
+    };
+
+    window.handleNotesSearch = function(val) {
+        currentSearch = val.trim();
+        const clearBtn = document.getElementById('notesSearchClear');
+        if (clearBtn) {
+            if (currentSearch) clearBtn.classList.remove('d-none');
+            else clearBtn.classList.add('d-none');
+        }
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(loadNotes, 250);
+    };
+
+    window.clearNotesSearch = function() {
+        const input = document.getElementById('notesSearchInput');
+        if (input) input.value = '';
+        currentSearch = '';
+        const clearBtn = document.getElementById('notesSearchClear');
+        if (clearBtn) clearBtn.classList.add('d-none');
+        loadNotes();
+    };
+
+    window.handlePriorityFilter = function(val) {
+        currentPriority = val;
+        loadNotes();
+    };
+
+    // ── Create & Edit Modal Operations ────────────────────────────────
+    window.openCreateNoteModal = function() {
+        document.getElementById('modalNoteTitle').textContent = 'Create Note';
+        document.getElementById('noteFormId').value = '';
+        document.getElementById('noteFormTitle').value = '';
+        document.getElementById('noteFormContent').value = '';
+        document.getElementById('noteFormCharCount').textContent = '0 characters';
+        document.getElementById('noteFormPinned').checked = false;
+        document.getElementById('noteFormReminder').value = '';
+        document.getElementById('btnClearReminder').style.display = 'none';
+
+        const doneWrap = document.getElementById('modalDoneWrap');
+        if (doneWrap) doneWrap.style.display = 'none';
+
+        // Set default priority
+        const medRadio = document.getElementById('priorityMed');
+        if (medRadio) medRadio.checked = true;
+
+        // Set default color
+        selectColorSwatch('default');
+
+        if (noteModal) noteModal.show();
+    };
+
+    window.openEditNote = function(noteId) {
+        const note = currentNotes.find(n => n.id === noteId);
+        if (!note) {
+            fetch(`/api/notes/${noteId}`, { credentials: 'same-origin' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) populateAndShowEditModal(d.note);
+                });
+            return;
+        }
+        populateAndShowEditModal(note);
+    };
+
+    function populateAndShowEditModal(note) {
+        document.getElementById('modalNoteTitle').textContent = 'Edit Note';
+        document.getElementById('noteFormId').value = note.id;
+        document.getElementById('noteFormTitle').value = note.title || '';
+        document.getElementById('noteFormContent').value = note.content || '';
+        updateCharCount(note.content || '');
+
+        document.getElementById('noteFormPinned').checked = Boolean(note.is_pinned);
+
+        // Done toggle inside modal
+        const doneWrap = document.getElementById('modalDoneWrap');
+        const doneInput = document.getElementById('noteFormDone');
+        if (doneWrap && doneInput) {
+            doneWrap.style.display = 'block';
+            doneInput.checked = Boolean(note.is_done);
+        }
+
+        // Priority
+        const pVal = note.priority || 'medium';
+        if (pVal === 'high') document.getElementById('priorityHigh').checked = true;
+        else if (pVal === 'low') document.getElementById('priorityLow').checked = true;
+        else document.getElementById('priorityMed').checked = true;
+
+        // Color
+        selectColorSwatch(note.color || 'default');
+
+        // Reminder
+        const reminderInput = document.getElementById('noteFormReminder');
+        const clearRemBtn = document.getElementById('btnClearReminder');
+        if (note.reminder_at) {
+            reminderInput.value = note.reminder_at;
+            clearRemBtn.style.display = 'inline-block';
+        } else {
+            reminderInput.value = '';
+            clearRemBtn.style.display = 'none';
+        }
+
+        if (noteModal) noteModal.show();
+    }
+
+    window.selectColorSwatch = function(color) {
+        document.getElementById('noteFormColor').value = color;
+        document.querySelectorAll('#noteColorSwatches .color-swatch-opt').forEach(opt => {
+            if (opt.getAttribute('data-color') === color) {
+                opt.classList.add('selected');
+                opt.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                opt.classList.remove('selected');
+                opt.innerHTML = '';
+            }
+        });
+    };
+
+    window.updateCharCount = function(val) {
+        const el = document.getElementById('noteFormCharCount');
+        if (el) {
+            el.textContent = `${val.length} character${val.length !== 1 ? 's' : ''}`;
+        }
+    };
+
+    window.handleReminderInputChange = function(val) {
+        const btn = document.getElementById('btnClearReminder');
+        if (btn) {
+            btn.style.display = val ? 'inline-block' : 'none';
+        }
+    };
+
+    window.clearReminderInput = function() {
+        const input = document.getElementById('noteFormReminder');
+        if (input) input.value = '';
+        const btn = document.getElementById('btnClearReminder');
+        if (btn) btn.style.display = 'none';
+    };
+
+    // ── Quick Reminder Presets (IST based) ────────────────────────────
+    window.setQuickReminderPreset = function(preset) {
+        const now = new Date();
+        let target = new Date(now);
+
+        if (preset === '1hour') {
+            target.setHours(target.getHours() + 1);
+        } else if (preset === 'today5pm') {
+            target.setHours(17, 0, 0, 0);
+            if (target <= now) {
+                target.setDate(target.getDate() + 1);
+            }
+        } else if (preset === 'tomorrow9am') {
+            target.setDate(target.getDate() + 1);
+            target.setHours(9, 0, 0, 0);
+        } else if (preset === 'nextweek') {
+            const day = target.getDay();
+            const daysToAdd = ((1 + 7 - day) % 7) || 7;
+            target.setDate(target.getDate() + daysToAdd);
+            target.setHours(9, 0, 0, 0);
+        }
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const formatted = `${target.getFullYear()}-${pad(target.getMonth() + 1)}-${pad(target.getDate())}T${pad(target.getHours())}:${pad(target.getMinutes())}`;
+
+        const input = document.getElementById('noteFormReminder');
+        if (input) {
+            input.value = formatted;
+            handleReminderInputChange(formatted);
+        }
+    };
+
+    // ── Submit Note Form ──────────────────────────────────────────────
+    window.handleNoteFormSubmit = function(e) {
+        e.preventDefault();
+        submitNoteForm();
+    };
+
+    window.submitNoteForm = function() {
+        const noteId = document.getElementById('noteFormId').value;
+        const title = document.getElementById('noteFormTitle').value.trim();
+        const content = document.getElementById('noteFormContent').value.trim();
+
+        if (!content) {
+            showToast('Please enter note content.', 'warning');
+            document.getElementById('noteFormContent').focus();
+            return;
+        }
+
+        let priority = 'medium';
+        const checkedPri = document.querySelector('input[name="notePriority"]:checked');
+        if (checkedPri) priority = checkedPri.value;
+
+        const color = document.getElementById('noteFormColor').value || 'default';
+        const is_pinned = document.getElementById('noteFormPinned').checked;
+        const reminder_at = document.getElementById('noteFormReminder').value || null;
+
+        const payload = {
+            title: title,
+            content: content,
+            priority: priority,
+            color: color,
+            is_pinned: is_pinned,
+            reminder_at: reminder_at
+        };
+
+        const doneInput = document.getElementById('noteFormDone');
+        if (doneInput && noteId) {
+            payload.is_done = doneInput.checked;
+        }
+
+        const spinner = document.getElementById('saveNoteSpinner');
+        const icon = document.getElementById('saveNoteIcon');
+        const btn = document.getElementById('btnSaveNote');
+
+        if (spinner) spinner.classList.remove('d-none');
+        if (icon) icon.classList.add('d-none');
+        if (btn) btn.disabled = true;
+
+        const url = noteId ? `/api/notes/${noteId}/update` : '/api/notes';
+        const method = 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: getHeaders(),
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (noteModal) noteModal.hide();
+                showToast(noteId ? 'Note updated successfully!' : 'Note created successfully!', 'success');
+                loadNotes();
+            } else {
+                showToast(data.message || 'Failed to save note', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error saving note:', err);
+            showToast('An error occurred while saving the note.', 'danger');
+        })
+        .finally(() => {
+            if (spinner) spinner.classList.add('d-none');
+            if (icon) icon.classList.remove('d-none');
+            if (btn) btn.disabled = false;
+        });
+    };
+
+    // ── Toggle Pin ────────────────────────────────────────────────────
+    window.togglePinNote = function(noteId) {
+        fetch(`/api/notes/${noteId}/pin`, {
+            method: 'POST',
+            headers: getHeaders(),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast(d.is_pinned ? 'Note pinned to top 📌' : 'Note unpinned', 'success');
+                loadNotes();
+            } else {
+                showToast(d.message || 'Action failed', 'danger');
+            }
+        })
+        .catch(err => console.error(err));
+    };
+
+    // ── Toggle Archive ────────────────────────────────────────────────
+    window.toggleArchiveNote = function(noteId) {
+        fetch(`/api/notes/${noteId}/archive`, {
+            method: 'POST',
+            headers: getHeaders(),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast(d.is_archived ? 'Note moved to archive 🗃️' : 'Note restored from archive', 'success');
+                loadNotes();
+            } else {
+                showToast(d.message || 'Action failed', 'danger');
+            }
+        })
+        .catch(err => console.error(err));
+    };
+
+    // ── Dismiss Reminder ──────────────────────────────────────────────
+    window.dismissReminder = function(noteId, event) {
+        if (event) event.stopPropagation();
+        fetch(`/api/notes/${noteId}/dismiss-reminder`, {
+            method: 'POST',
+            headers: getHeaders(),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                showToast('Reminder marked as seen', 'success');
+                loadNotes();
+            }
+        })
+        .catch(err => console.error(err));
+    };
+
+    // ── Delete Note ───────────────────────────────────────────────────
+    window.confirmDeleteNote = function(noteId) {
+        document.getElementById('deleteNoteTargetId').value = noteId;
+        if (deleteModal) deleteModal.show();
+    };
+
+    window.executeNoteDelete = function() {
+        const noteId = document.getElementById('deleteNoteTargetId').value;
+        if (!noteId) return;
+
+        const btn = document.getElementById('btnConfirmDeleteNote');
+        if (btn) btn.disabled = true;
+
+        fetch(`/api/notes/${noteId}/delete`, {
+            method: 'POST',
+            headers: getHeaders(),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                if (deleteModal) deleteModal.hide();
+                showToast('Note deleted successfully', 'success');
+                loadNotes();
+            } else {
+                showToast(d.message || 'Failed to delete note', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Error deleting note:', err);
+            showToast('An error occurred while deleting note.', 'danger');
+        })
+        .finally(() => {
+            if (btn) btn.disabled = false;
+        });
+    };
+
+    // ── Periodic Reminder Summary Check ───────────────────────────────
+    function checkRemindersSummary() {
+        fetch('/api/notes/summary', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success && d.counts) {
+                    updateCounters(d.counts);
+                }
+            })
+            .catch(() => {});
+    }
+
+})();
+</script>
 {% endblock %}

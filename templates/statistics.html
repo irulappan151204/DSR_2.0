@@ -1832,18 +1832,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const team3El = document.getElementById('team3Chart');
     if (team3El) buildGroupedBar(
         team3El.getContext('2d'),
-        ['Legacy Audit', 'New Audit'],
+        ['Audit'],
         [
-            { label: 'All Well', backgroundColor: COLORS.allWell, data: [team3Data.audit_issue_nature.all_well, team3Data.new_audit_issue_nature.all_well] },
-            { label: 'Manageable', backgroundColor: COLORS.manageable, data: [team3Data.audit_issue_nature.manageable, team3Data.new_audit_issue_nature.manageable] },
-            { label: 'Critical', backgroundColor: COLORS.critical, data: [team3Data.audit_issue_nature.critical, team3Data.new_audit_issue_nature.critical] }
+            { label: 'All Well', backgroundColor: COLORS.allWell, data: [team3Data.audit_issue_nature.all_well] },
+            { label: 'Manageable', backgroundColor: COLORS.manageable, data: [team3Data.audit_issue_nature.manageable] },
+            { label: 'Critical', backgroundColor: COLORS.critical, data: [team3Data.audit_issue_nature.critical] }
         ],
         {
             scales: { 
                 y: { beginAtZero: true },
                 x: { 
                     ticks: { 
-                        maxRotation: 45,
+                        maxRotation: 0,
                         minRotation: 0
                     }
                 }
@@ -1858,8 +1858,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Consistent bar width settings
             datasets: {
                 bar: {
-                    barPercentage: 0.6,
-                    categoryPercentage: 0.6
+                    barPercentage: 0.4,
+                    categoryPercentage: 0.4
                 }
             },
             onClick: (evt, activeEls) => {
@@ -1872,9 +1872,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const el = document.getElementById('legend-team3');
         if (el) {
             el.innerHTML = `
-                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team3Data.audit_issue_nature.all_well + team3Data.new_audit_issue_nature.all_well}</strong></span>
-                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team3Data.audit_issue_nature.manageable + team3Data.new_audit_issue_nature.manageable}</strong></span>
-                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team3Data.audit_issue_nature.critical + team3Data.new_audit_issue_nature.critical}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot green\"></span> All Well: <strong>${team3Data.audit_issue_nature.all_well}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot amber\"></span> Manageable: <strong>${team3Data.audit_issue_nature.manageable}</strong></span>
+                <span class=\"legend-item\"><span class=\"dot red\"></span> Critical: <strong>${team3Data.audit_issue_nature.critical}</strong></span>
             `;
         }
     }
