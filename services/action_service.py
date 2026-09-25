@@ -77,8 +77,10 @@ def get_ordered_action_hierarchy(actions):
 
     return ordered_actions
 
-def prepare_actions_dashboard(user, filter_date, start_date, end_date):
-    """Orchestrate action querying, status decoration, hierarchy building, and count calculation."""
+from utils.pagination import Pagination
+
+def prepare_actions_dashboard(user, filter_date, start_date, end_date, active_tab='pending', page=1, per_page=10, search_query=None):
+    """Orchestrate action querying, status decoration, hierarchy building, count calculation, and pagination."""
     now = datetime.now(ZoneInfo('Asia/Kolkata'))
 
     if not filter_date and not start_date and not end_date:
@@ -144,7 +146,7 @@ def prepare_actions_dashboard(user, filter_date, start_date, end_date):
 
     actions = get_ordered_action_hierarchy(actions)
 
-    # In-memory counts calculation
+    # In-memory counts calculation (over all actions in date range)
     parent_actions_list = [a for a in actions if a.parent_action_id is None]
     child_actions_list = [a for a in actions if a.parent_action_id is not None]
 
@@ -177,16 +179,57 @@ def prepare_actions_dashboard(user, filter_date, start_date, end_date):
         }
         priority_counts = {p: sum(1 for a in parent_actions_list if a.priority == p) for p in ['Critical', 'High', 'Medium', 'Low']}
 
+    # Search filtering on parent actions if search_query is supplied
+    filtered_parents = parent_actions_list
+    if search_query:
+        sq = search_query.lower()
+        filtered_parents = [
+            a for a in parent_actions_list
+            if (a.title and sq in a.title.lower()) or
+               (a.action_text and sq in a.action_text.lower()) or
+               (a.assigned_user and a.assigned_user.username and sq in a.assigned_user.username.lower()) or
+               (a.creator and a.creator.username and sq in a.creator.username.lower())
+        ]
+
+    pending_parent_actions = [a for a in filtered_parents if a.status != 'Finished']
+    completed_parent_actions = [a for a in filtered_parents if a.status == 'Finished']
+
+    if active_tab not in ('pending', 'completed'):
+        active_tab = 'pending'
+
+    pending_pagination = Pagination(
+        page=page if active_tab == 'pending' else 1,
+        per_page=per_page,
+        total_records=len(pending_parent_actions),
+        default_per_page=10
+    )
+
+    completed_pagination = Pagination(
+        page=page if active_tab == 'completed' else 1,
+        per_page=per_page,
+        total_records=len(completed_parent_actions),
+        default_per_page=10
+    )
+
+    paginated_pending = pending_parent_actions[pending_pagination.offset : pending_pagination.offset + pending_pagination.per_page]
+    paginated_completed = completed_parent_actions[completed_pagination.offset : completed_pagination.offset + completed_pagination.per_page]
+
     return {
         'users': users,
-        'actions': actions,
+        'actions': paginated_pending + paginated_completed,
+        'pending_actions': paginated_pending,
+        'completed_actions': paginated_completed,
+        'pending_pagination': pending_pagination,
+        'completed_pagination': completed_pagination,
+        'active_tab': active_tab,
         'action_counts': action_counts,
         'priority_counts': priority_counts,
         'team_action_counts': team_action_counts,
         'has_pending_actions': has_pending_actions,
         'filter_date': filter_date,
         'start_date': start_date,
-        'end_date': end_date
+        'end_date': end_date,
+        'q': search_query
     }
 
 def get_pending_actions_context(current_user):

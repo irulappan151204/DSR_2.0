@@ -21,6 +21,7 @@ from services.capa_service import (
     transition, log_event, store_uploads, bust_user_cache, bust_team_lead_cache,
     bust_audit_caches, _clean
 )
+from utils.pagination import Pagination
 
 critical_bp = Blueprint('critical', __name__, template_folder='templates/critical')
 
@@ -28,6 +29,10 @@ critical_bp = Blueprint('critical', __name__, template_folder='templates/critica
 @login_required
 def critical_home():
     status_filter = request.args.get('status') or ''
+    search_query = (request.args.get('q') or '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 25, type=int)
+
     query = get_visible_findings_query(current_user)
 
     counts = {status: 0 for status in CAPA_STATUSES}
@@ -38,14 +43,35 @@ def critical_home():
     if status_filter in CAPA_STATUSES:
         query = query.filter(CapaFinding.status == status_filter)
 
-    findings = query.order_by(CapaFinding.submitted_at.desc()).limit(500).all()
+    if search_query:
+        search_term = f"%{search_query}%"
+        query = query.filter(
+            db.or_(
+                CapaFinding.audit_reference.ilike(search_term),
+                CapaFinding.title.ilike(search_term),
+                CapaFinding.nature_of_issue.ilike(search_term),
+                CapaFinding.component.ilike(search_term),
+                CapaFinding.staff_name.ilike(search_term),
+                CapaFinding.description.ilike(search_term),
+            )
+        )
+
+    total_records = query.count()
+    pagination = Pagination(page=page, per_page=per_page, total_records=total_records, default_per_page=25)
+
+    findings = (query.order_by(CapaFinding.submitted_at.desc())
+                .offset(pagination.offset)
+                .limit(pagination.per_page)
+                .all())
 
     return render_template(
         'critical/list.html',
         findings=findings,
+        pagination=pagination,
         counts=counts,
         total=sum(counts.values()),
         status_filter=status_filter,
+        q=search_query,
         statuses=CAPA_STATUSES,
         status_labels=CAPA_STATUS_LABELS,
         is_auditor=can_audit(current_user),

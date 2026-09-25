@@ -14,6 +14,7 @@ from .critical import (
 )
 from .storage import FileStorage
 from .acknowledgements import Acknowledgement
+from .notes import Note
 from .forms.base import BaseForm
 from .forms import team1, team2, team3
 
@@ -27,7 +28,7 @@ for _mod in (team1, team2, team3):
 __all__ = [
     'User', 'Team', 'Issue', 'Report',
     'Action', 'CapaFinding', 'CapaEvent', 'CapaAttachment',
-    'FileStorage', 'Acknowledgement', 'BaseForm'
+    'FileStorage', 'Acknowledgement', 'Note', 'BaseForm'
 ] + [
     _name for _mod in (team1, team2, team3)
     for _name, _cls in inspect.getmembers(_mod, inspect.isclass)

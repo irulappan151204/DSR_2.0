@@ -10,18 +10,14 @@ def build_dashboard_context(current_user, selected_team_arg, selected_date_arg):
     """Orchestrates all dashboard calculations based on authorized team and date."""
     authorized_teams = get_authorized_dashboard_teams(current_user)
     authorized_keys = {t['key'] for t in authorized_teams}
-    if current_user.role == 'MD':
-        authorized_keys.add('all')
 
-    if current_user.role == 'MD':
-        default_team = 'all'
-    elif current_user.team_id:
+    if current_user.team_id:
         default_team = f'team{current_user.team_id}'
     else:
         default_team = authorized_teams[0]['key'] if authorized_teams else 'team1'
 
     selected_team = selected_team_arg
-    if not selected_team or selected_team not in authorized_keys:
+    if not selected_team or selected_team not in authorized_keys or selected_team == 'all':
         selected_team = default_team
 
     today_date = datetime.now().strftime('%Y-%m-%d')
@@ -149,21 +145,10 @@ def get_main_dashboard_data(current_user):
             }
         }
     elif current_user.role == 'MD':
-        users = User.query.all()
-        teams = Team.query.all()
-        total_issues = Issue.query.count()
-        open_issues = Issue.query.filter_by(status='Open').count()
-        recent_issues = Issue.query.order_by(Issue.created_at.desc()).limit(5).all()
         return {
-            'type': 'render',
-            'template': 'md_dashboard.html',
-            'context': {
-                'users': users,
-                'teams': teams,
-                'total_issues': total_issues,
-                'open_issues': open_issues,
-                'recent_issues': recent_issues
-            }
+            'type': 'redirect',
+            'endpoint': 'md_dashboard.md_dashboard',
+            'params': {'team': 'team1'}
         }
     return {
         'type': 'redirect',

@@ -18,20 +18,39 @@ def action_home():
     filter_date = request.args.get('filter_date')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
+    active_tab = request.args.get('tab', 'pending')
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    q = (request.args.get('q') or '').strip()
 
-    data = prepare_actions_dashboard(current_user, filter_date, start_date, end_date)
+    data = prepare_actions_dashboard(
+        current_user,
+        filter_date=filter_date,
+        start_date=start_date,
+        end_date=end_date,
+        active_tab=active_tab,
+        page=page,
+        per_page=per_page,
+        search_query=q
+    )
 
     return render_template(
         'actions/action_form.html',
         users=data['users'],
         actions=data['actions'],
+        pending_actions=data['pending_actions'],
+        completed_actions=data['completed_actions'],
+        pending_pagination=data['pending_pagination'],
+        completed_pagination=data['completed_pagination'],
+        active_tab=data['active_tab'],
         action_counts=data['action_counts'],
         priority_counts=data['priority_counts'],
         team_action_counts=data['team_action_counts'],
         has_pending_actions=data['has_pending_actions'],
         filter_date=data['filter_date'],
         start_date=data['start_date'],
-        end_date=data['end_date']
+        end_date=data['end_date'],
+        q=data['q']
     )
 
 @actions_bp.route('/actions/create', methods=['POST'])

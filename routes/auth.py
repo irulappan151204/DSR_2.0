@@ -33,6 +33,8 @@ def register_auth_routes(app):
                         return redirect(url_for('md_dashboard.md_dashboard', team='team2'))
                     elif user.team_id == 3:
                         return redirect(url_for('md_dashboard.md_dashboard', team='team3'))
+                elif user.role == 'MD':
+                    return redirect(url_for('md_dashboard.md_dashboard', team='team1'))
                 return redirect(url_for('dashboard'))
             app.logger.warning(f"Failed login attempt for username: '{username}' from {request.remote_addr}")
             flash('Invalid username or password', 'error')
@@ -51,6 +53,15 @@ def register_auth_routes(app):
     def profile():
         """Render the user profile page"""
         from acknowledgements import get_unack_count_for_user
+        from services.notes_service import get_notes_counts, get_notes_for_user
         unack_count = get_unack_count_for_user(current_user)
-        return render_template('profile.html', user=current_user, unack_count=unack_count)
+        notes_counts = get_notes_counts(current_user.user_id)
+        initial_notes = get_notes_for_user(current_user.user_id, filter_type='all')
+        return render_template(
+            'profile.html',
+            user=current_user,
+            unack_count=unack_count,
+            notes_counts=notes_counts,
+            initial_notes=initial_notes
+        )
 

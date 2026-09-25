@@ -243,3 +243,151 @@
     .capa-card { padding: 1rem; }
     .table-wrap { overflow-x: auto; }
 }
+
+/* --- Pagination & Toolbar --- */
+.capa-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.capa-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 380px;
+    flex: 1;
+}
+
+.capa-search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.capa-search-input-wrap .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.82rem;
+    pointer-events: none;
+}
+
+.capa-search-input {
+    width: 100%;
+    padding: 0.42rem 0.75rem 0.42rem 2.2rem;
+    font-size: 0.84rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    transition: var(--transition);
+}
+
+.capa-search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.capa-per-page-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.84rem;
+    color: #64748b;
+}
+
+.capa-per-page-select {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.84rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    cursor: pointer;
+}
+
+.capa-pagination-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.capa-pagination-info {
+    font-size: 0.84rem;
+    color: #64748b;
+}
+
+.capa-pagination-info strong {
+    color: #1e293b;
+}
+
+.capa-pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.capa-pagination-nav .page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.capa-pagination-nav .page-btn:hover:not(.disabled):not(.active) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+.capa-pagination-nav .page-btn.active {
+    background: var(--primary-color, #4f46e5);
+    border-color: var(--primary-color, #4f46e5);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.capa-pagination-nav .page-btn.disabled {
+    background: #f8fafc;
+    border-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.capa-pagination-nav .page-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 34px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
